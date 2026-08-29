@@ -8,7 +8,7 @@
       "id": "W1",
       "title": "GitHub共有とChatGPT継続準備",
       "short": "GitHub共有",
-      "status": "active",
+      "status": "done",
       "why": "現在の文書とモックをGitHubへ安全に保存し、ChatGPT側から正本を読んで再開できるようにする",
       "success": "機密情報を含まない初回コミットが非公開リポジトリへ反映され、ChatGPT側の再開手順が明確になっている",
       "drop_if": null,
@@ -26,25 +26,25 @@
         "prototypes",
         "reviews"
       ],
-      "next": "GitHub認証を回復し、非公開リポジトリへ初回コミットを反映する",
+      "next": "完了。ChatGPT側のアクセス設定はW2で行う",
       "waiting_for": null,
       "decision_needed": null,
       "steps": [
         {
           "t": "コミット対象に機密情報や不要な大容量ファイルがないことを確認する",
-          "done": false
+          "done": true
         },
         {
           "t": "現在の正本文書とモックを初回コミットにまとめる",
-          "done": false
+          "done": true
         },
         {
           "t": "非公開GitHubリポジトリへmainを反映する",
-          "done": false
+          "done": true
         },
         {
           "t": "ChatGPT側での再開手順を引き継ぎ文書と利用者向け案内へ残す",
-          "done": false
+          "done": true
         }
       ],
       "unlocks": [],
@@ -55,10 +55,56 @@
         {
           "d": "2026-08-30",
           "t": "GitHub共有とChatGPT側での継続準備を開始し、非公開共有を安全側の既定とした"
+        },
+        {
+          "d": "2026-08-30",
+          "t": "機密情報を点検した初回スナップショットを非公開GitHubリポジトリへ反映した"
         }
       ],
-      "conclusion": "共有準備中。GitHub認証の回復が必要",
-      "narrative": "文書とモックは小規模で、共有前の整理を進めている。保存済みのGitHub認証が失効しているため、認証を回復した後に非公開で反映する。アプリ本体の内容は変更しない。",
+      "conclusion": "非公開GitHubへの初回共有が完了",
+      "narrative": "文書とモックを点検し、非公開のGitHubへ初回共有した。アプリ本体の内容は変更していない。ChatGPT側で続けるための読み順と依頼文も残した。",
+      "narrative_updated_at": "2026-08-30"
+    },
+    {
+      "id": "W2",
+      "title": "ChatGPTのGitHubアクセス設定",
+      "short": "ChatGPTで再開",
+      "status": "active",
+      "why": "ChatGPTのチャットが非公開リポジトリの正本文書を直接参照できるようにする",
+      "success": "ChatGPTから対象リポジトリを検索でき、R2事後レビューを開始できる",
+      "drop_if": null,
+      "owner": "user",
+      "paths": [
+        "HANDOFF.md",
+        "README.md",
+        "reviews/CLAUDE_REVIEW_PACKET_V0_2_R2.md"
+      ],
+      "next": "ChatGPTのGitHub Appに対象リポジトリのアクセスを許可する",
+      "waiting_for": null,
+      "decision_needed": "ChatGPTのGitHub Appへ非公開リポジトリの読み取りアクセスを追加してよいか確認する",
+      "steps": [
+        {
+          "t": "ChatGPTのGitHub Appへ対象リポジトリのアクセスを許可する",
+          "done": false,
+          "by_user": true
+        },
+        {
+          "t": "ChatGPTから対象リポジトリを検索できることを確認する",
+          "done": false
+        }
+      ],
+      "unlocks": [],
+      "gate": null,
+      "metrics": [],
+      "context": "GitHubへの非公開共有は完了したが、現在のChatGPT GitHub連携から新規リポジトリはまだ検索できない。新規または非公開リポジトリは、GitHub Appの許可対象へ追加してから反映を待つ必要がある。アクセス追加はクラウド権限の変更なので、実行直前の利用者確認を残している。アプリ本体の変更は、R2事後レビューが終わるまで行わない。",
+      "log": [
+        {
+          "d": "2026-08-30",
+          "t": "ChatGPTのGitHub連携から新規リポジトリがまだ検索できないことを確認した"
+        }
+      ],
+      "conclusion": "GitHub共有済み。ChatGPTのアクセス許可待ち",
+      "narrative": "非公開GitHubへの保存は終わっている。ChatGPT側から正本を読めるようにするには、新しいリポジトリへのアクセス許可を追加する必要がある。許可後はレビューから再開し、アプリ本体はまだ変更しない。",
       "narrative_updated_at": "2026-08-30"
     }
   ]

@@ -1,6 +1,6 @@
 # Handoff
 
-最終更新: 2026-07-23 / Codex
+最終更新: 2026-08-30 / Codex
 
 ## 現在地
 
@@ -10,7 +10,7 @@
 | 実装 | `kajitori_minimal_pictogram_compact.html` 1ファイル |
 | 初期データ | 8カテゴリ、50タスク |
 | 保存 | ブラウザのlocalStorage |
-| Git | `main`ブランチで初期化済み。まだ初回コミット前 |
+| Git | 非公開リポジトリ `kkrod899/kajitori-game` の `main` へ初回push済み |
 | 共有思想 | `docs/PRODUCT_BRIEF.md` に整理済み |
 | 相互レビュー | Claude・Codex用の共通手順を作成済み |
 | Claude省トークン化 | 専用レビュー・パケットを作成済み |
@@ -24,6 +24,25 @@
 | 新規Decision | D-016〜D-018をAccepted、名称変更のD-019をProposedで追記 |
 | Claude事後レビュー | `reviews/CLAUDE_REVIEW_PACKET_V0_2_R2.md` を作成。レビュー実行待ち |
 | 本体変更 | 今回は未実施 |
+
+## GitHub・ChatGPT共有
+
+| 項目 | 状態 |
+|---|---|
+| GitHub | `https://github.com/kkrod899/kajitori-game`（Private） |
+| ローカル | `main` が `origin/main` を追跡 |
+| 機密情報チェック | 代表的なトークン・秘密鍵・APIキー形式の一致なし |
+| ChatGPTのGitHubアクセス | 新規リポジトリはまだ取得結果に現れていない。ChatGPTのGitHub Appで対象リポジトリへのアクセス許可が必要 |
+
+ChatGPT側で再開するときは、GitHub Appへこのリポジトリのアクセスを許可した後、次の順で正本を読む。
+
+1. `HANDOFF.md`
+2. `docs/PRODUCT_BRIEF.md`
+3. `docs/COLLABORATION_WORKFLOW.md`
+4. `docs/DECISIONS.md`
+5. `reviews/CLAUDE_REVIEW_PACKET_V0_2_R2.md`
+
+アプリ本体の変更はまだ始めず、最初にR2事後レビューを完了する。
 
 ## 確認済みの主な問題
 
@@ -41,7 +60,7 @@
 
 ## 次の推奨作業
 
-実装前に、Claudeが二層コンセプト反映後の文書を事後レビューします。アプリ本体と既存プロトタイプはまだ変更しません。
+まずChatGPTのGitHub Appへ `kkrod899/kajitori-game` のアクセスを許可する。その後、二層コンセプト反映後の文書を事後レビューする。アプリ本体と既存プロトタイプはまだ変更しない。
 
 Claudeへ渡す文面:
 

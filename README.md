@@ -30,3 +30,11 @@ AIごとの入口は [AGENTS.md](AGENTS.md) と [CLAUDE.md](CLAUDE.md) です。
 - チャットだけで合意を完結させず、決定事項を `docs/DECISIONS.md` に残す。
 - 作業完了時は `HANDOFF.md` を更新し、次の担当が会話履歴なしでも再開できる状態にする。
 - 家事の量を競わせるのではなく、家庭の認知負荷を減らす設計を優先する。
+
+## ChatGPTのチャット側で再開する
+
+このリポジトリは非公開のため、ChatGPTの「設定 → アプリ → GitHub」で `kkrod899/kajitori-game` へのアクセスを許可してから使います。新しく許可したリポジトリが表示されるまで数分かかることがあります。
+
+再開時の依頼文:
+
+> GitHubの `kkrod899/kajitori-game` を正本として参照してください。最初に `HANDOFF.md`、`docs/PRODUCT_BRIEF.md`、`docs/COLLABORATION_WORKFLOW.md`、`docs/DECISIONS.md` を読み、次に `reviews/CLAUDE_REVIEW_PACKET_V0_2_R2.md` の契約どおり事後レビューだけを行ってください。今回はアプリ本体を変更しないでください。
