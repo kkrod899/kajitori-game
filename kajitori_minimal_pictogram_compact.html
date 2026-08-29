@@ -1,0 +1,1552 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>家事取りゲーム Stable MVP</title>
+  <style>
+
+    :root {
+      --bg:#f7f4ef;
+      --screen:#fbfaf7;
+      --card:#fffdf9;
+      --soft:#f6f1e8;
+      --soft-2:#f2ece3;
+      --line:#ebe3d8;
+      --line-soft:#f2ebe2;
+      --ink:#3d3832;
+      --muted:#8f857a;
+      --muted-light:#b2a89b;
+      --sage:#7f926d;
+      --sage-soft:#eef2e8;
+      --beige:#f4eadc;
+      --terracotta:#c98261;
+      --terracotta-soft:#f8e9e0;
+      --gold:#bb934f;
+      --gold-soft:#f5edd9;
+      --blue-soft:#edf2f2;
+      --pink-soft:#f8ece7;
+      --shadow:0 6px 18px rgba(70,58,44,.045);
+      --font-text:"Hiragino Sans","Yu Gothic","Noto Sans JP",sans-serif;
+      --font-number:"Avenir Next","Helvetica Neue",Arial,sans-serif;
+    }
+
+    * { box-sizing:border-box; }
+
+    body {
+      margin:0;
+      min-height:100vh;
+      background:
+        radial-gradient(circle at 16% 8%, rgba(190,178,158,.14), transparent 28%),
+        radial-gradient(circle at 90% 90%, rgba(135,150,116,.10), transparent 32%),
+        #f6f3ee;
+      color:var(--ink);
+      font-family:var(--font-text);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:22px;
+    }
+
+    .num {
+      font-family:var(--font-number);
+      font-variant-numeric:tabular-nums lining-nums;
+      letter-spacing:.01em;
+    }
+
+    .phone {
+      width:390px;
+      max-width:100%;
+      height:844px;
+      background:#141414;
+      border-radius:42px;
+      padding:12px;
+      box-shadow:0 22px 64px rgba(40,32,24,.15);
+    }
+
+    .screen {
+      height:100%;
+      border-radius:32px;
+      overflow:hidden;
+      background:linear-gradient(180deg,#fcfbf8 0%, #f7f3ed 100%);
+      display:flex;
+      flex-direction:column;
+      position:relative;
+    }
+
+    .status {
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      padding:20px 22px 6px;
+      font-size:11px;
+      font-weight:700;
+      color:#3f3a34;
+    }
+
+    .header {
+      padding:10px 24px 14px;
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      gap:12px;
+    }
+
+    h1 {
+      margin:0;
+      font-size:19px;
+      font-weight:600;
+      letter-spacing:.12em;
+      color:#3f3a34;
+    }
+
+    .subtitle {
+      margin-top:7px;
+      color:var(--muted);
+      font-size:12px;
+      font-weight:600;
+      letter-spacing:.02em;
+    }
+
+    .reset {
+      width:34px;
+      height:34px;
+      border-radius:50%;
+      border:1px solid var(--line-soft);
+      background:rgba(255,255,255,.65);
+      color:#8f867b;
+      font-size:15px;
+      cursor:pointer;
+      box-shadow:0 2px 8px rgba(70,58,44,.035);
+    }
+
+    main {
+      flex:1;
+      overflow:auto;
+      padding:0 20px 92px;
+    }
+
+    .view { display:none; }
+    .view.active { display:block; }
+
+    .card {
+      background:rgba(255,253,249,.78);
+      border:1px solid var(--line-soft);
+      border-radius:18px;
+      box-shadow:var(--shadow);
+    }
+
+    .hero {
+      padding:18px 16px;
+      margin-top:2px;
+      border-radius:20px;
+      background:rgba(255,253,249,.64);
+    }
+
+    .hero-grid {
+      display:grid;
+      grid-template-columns:118px 1fr;
+      gap:18px;
+      align-items:center;
+    }
+
+    .ring {
+      width:108px;
+      height:108px;
+      border-radius:50%;
+      background:conic-gradient(var(--sage) 0deg, #e8e1d6 0deg 360deg);
+      display:grid;
+      place-items:center;
+      margin:0 auto;
+      position:relative;
+    }
+
+    .ring:before {
+      content:"";
+      width:86px;
+      height:86px;
+      border-radius:50%;
+      background:#fffdf9;
+      border:1px solid #eee7dd;
+      position:absolute;
+    }
+
+    .ring-inner {
+      position:relative;
+      z-index:1;
+      text-align:center;
+    }
+
+    .ring-inner b {
+      display:block;
+      font-size:25px;
+      line-height:1;
+      font-weight:500;
+      color:#3d3832;
+    }
+
+    .ring-inner span {
+      display:block;
+      margin-top:7px;
+      color:var(--muted);
+      font-size:10px;
+      font-weight:600;
+    }
+
+    .xp-line {
+      font-size:13px;
+      font-weight:600;
+      color:#524b43;
+      line-height:1.5;
+    }
+
+    .xp-line b {
+      font-size:15px;
+      font-weight:600;
+    }
+
+    .bar {
+      height:1px;
+      background:#e9e1d6;
+      border-radius:999px;
+      overflow:visible;
+      margin:9px 0 15px;
+      position:relative;
+    }
+
+    .bar span {
+      display:block;
+      height:3px;
+      width:0%;
+      background:#a99779;
+      border-radius:999px;
+      position:relative;
+      top:-1px;
+    }
+
+    .level {
+      font-size:13px;
+      font-weight:600;
+      line-height:1.7;
+      color:#4c463f;
+    }
+
+    .level small {
+      display:block;
+      color:var(--muted);
+      font-size:11px;
+      font-weight:600;
+    }
+
+    .stat-grid {
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:8px;
+      margin-top:15px;
+    }
+
+    .stat {
+      padding:10px 8px;
+      background:#faf7f1;
+      border:1px solid var(--line-soft);
+      border-radius:15px;
+      box-shadow:none;
+    }
+
+    .stat span {
+      display:block;
+      color:var(--muted);
+      font-size:10px;
+      font-weight:600;
+      margin-bottom:6px;
+    }
+
+    .stat b {
+      display:block;
+      font-size:18px;
+      line-height:1;
+      font-weight:500;
+      color:#49433c;
+    }
+
+    .tip {
+      margin-top:15px;
+      background:#f7f2ea;
+      border:1px solid var(--line-soft);
+      border-radius:15px;
+      padding:12px 13px;
+      font-size:12px;
+      color:#7f766b;
+      font-weight:600;
+      line-height:1.65;
+    }
+
+    .chips {
+      display:flex;
+      gap:7px;
+      overflow:auto;
+      padding:2px 1px 5px;
+      margin:17px 0 11px;
+    }
+
+    .chip {
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.54);
+      color:#8c8277;
+      border-radius:999px;
+      padding:8px 13px;
+      font-size:11px;
+      font-weight:600;
+      white-space:nowrap;
+      cursor:pointer;
+      font-family:var(--font-text);
+    }
+
+    .chip.active {
+      background:#f2ece3;
+      border-color:#d9ccbd;
+      color:#5f574e;
+    }
+
+    .section-title {
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      margin:20px 4px 10px;
+      font-size:13px;
+      font-weight:650;
+      color:#4a443d;
+      letter-spacing:.03em;
+    }
+
+    .badge {
+      min-width:24px;
+      height:24px;
+      padding:0 8px;
+      border-radius:999px;
+      background:#f0eadf;
+      border:1px solid var(--line);
+      color:#8b8175;
+      font-size:11px;
+      font-weight:600;
+      display:grid;
+      place-items:center;
+    }
+
+    .list {
+      display:grid;
+      gap:10px;
+    }
+
+    .task {
+      display:grid;
+      grid-template-columns:42px 1fr;
+      gap:13px;
+      align-items:flex-start;
+      padding:13px 13px;
+      border-radius:16px;
+      position:relative;
+      overflow:hidden;
+      background:rgba(255,253,249,.78);
+    }
+
+    .task.done {
+      opacity:.55;
+    }
+
+    .task.missed {
+      background:#fff8f4;
+      border-color:#efd8cd;
+    }
+
+    .icon {
+      width:42px;
+      height:42px;
+      border-radius:15px;
+      background:linear-gradient(180deg,#fff,#f8f4ed);
+      border:1px solid #ebe3d9;
+      display:grid;
+      place-items:center;
+      font-size:21px;
+      color:#857c70;
+    }
+
+    .task h3 {
+      margin:0 0 5px;
+      font-size:14px;
+      line-height:1.35;
+      padding-right:0;
+      font-weight:650;
+      letter-spacing:-.01em;
+      color:#3f3a34;
+    }
+
+    .task p {
+      margin:0;
+      font-size:11px;
+      color:var(--muted);
+      font-weight:550;
+      line-height:1.48;
+      display:-webkit-box;
+      -webkit-line-clamp:2;
+      -webkit-box-orient:vertical;
+      overflow:hidden;
+    }
+
+    .xp {
+      position:static;
+      display:inline-flex;
+      width:max-content;
+      margin-top:8px;
+      color:#9a7d45;
+      font-size:10px;
+      font-weight:600;
+      background:#f7f0df;
+      border:1px solid #eadcc0;
+      border-radius:999px;
+      padding:4px 7px;
+    }
+
+    .meta {
+      display:flex;
+      flex-wrap:wrap;
+      gap:6px;
+      margin-top:9px;
+    }
+
+    .pill {
+      border-radius:999px;
+      padding:4px 7px;
+      font-size:10px;
+      font-weight:600;
+      background:#f4efe8;
+      color:#81776c;
+      border:1px solid #eadfd2;
+      white-space:nowrap;
+    }
+
+    .pill.high {
+      background:#d08362;
+      color:#fff;
+      border-color:#d08362;
+    }
+
+    .pill.middle {
+      background:#c2a062;
+      color:#fff;
+      border-color:#c2a062;
+    }
+
+    .pill.low {
+      background:var(--sage-soft);
+      color:#6f7f5d;
+      border-color:#dce8d5;
+    }
+
+    .pill.done {
+      background:#eaf1e5;
+      color:#637d4f;
+      border-color:#d5e2cc;
+    }
+
+    .pill.missed {
+      background:#f8e9e4;
+      color:#a75d52;
+      border-color:#eed0c7;
+    }
+
+    .actions {
+      grid-column:2/3;
+      display:flex;
+      gap:8px;
+      margin-top:11px;
+    }
+
+    .mini-btn {
+      border:1px solid var(--line);
+      background:#fffefa;
+      color:#686056;
+      border-radius:13px;
+      padding:8px 10px;
+      font-size:11px;
+      font-weight:650;
+      cursor:pointer;
+      font-family:var(--font-text);
+      flex:1;
+      box-shadow:none;
+    }
+
+    .mini-btn.primary {
+      background:#8f9d7a;
+      border-color:#8f9d7a;
+      color:#fff;
+    }
+
+    .mini-btn.miss {
+      background:#fff8f4;
+      border-color:#efd8cd;
+      color:#a86656;
+    }
+
+    .mini-btn:disabled {
+      opacity:.42;
+      cursor:not-allowed;
+    }
+
+    .segmented {
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      background:#f7f2ea;
+      border:1px solid var(--line);
+      border-radius:13px;
+      padding:3px;
+      margin-top:3px;
+      margin-bottom:16px;
+    }
+
+    .segmented button {
+      border:0;
+      background:transparent;
+      padding:9px 8px;
+      border-radius:10px;
+      font-size:12px;
+      font-weight:600;
+      color:var(--muted);
+      cursor:pointer;
+      font-family:var(--font-text);
+    }
+
+    .segmented button.active {
+      background:#fffefa;
+      color:#5a534b;
+      box-shadow:0 1px 3px rgba(60,48,36,.04);
+    }
+
+    .category {
+      display:grid;
+      grid-template-columns:52px 1fr auto;
+      gap:12px;
+      align-items:center;
+      padding:13px;
+      border-radius:16px;
+      background:rgba(255,253,249,.78);
+    }
+
+    .big-icon {
+      width:52px;
+      height:52px;
+      border-radius:50%;
+      display:grid;
+      place-items:center;
+      font-size:23px;
+      border:1px solid var(--line-soft);
+      background:#f2f4ed;
+    }
+
+    .category:nth-child(2n) .big-icon {
+      background:#f5ebdc;
+    }
+
+    .category:nth-child(3n) .big-icon {
+      background:#edf2f2;
+    }
+
+    .category:nth-child(4n) .big-icon {
+      background:#f7eddf;
+    }
+
+    .category h3 {
+      margin:0 0 5px;
+      font-size:14px;
+      font-weight:650;
+      color:#403b34;
+    }
+
+    .category p {
+      margin:0;
+      font-size:11px;
+      color:var(--muted);
+      font-weight:550;
+      line-height:1.48;
+      display:-webkit-box;
+      -webkit-line-clamp:2;
+      -webkit-box-orient:vertical;
+      overflow:hidden;
+    }
+
+    .count {
+      font-size:13px;
+      font-weight:600;
+      color:#655e57;
+    }
+
+    .soft-box {
+      padding:15px;
+      background:#f7f2ea;
+      border:1px solid var(--line-soft);
+      border-radius:17px;
+      margin-top:4px;
+      margin-bottom:14px;
+    }
+
+    .soft-box h3 {
+      margin:0 0 10px;
+      font-size:16px;
+      font-weight:650;
+      color:#443f38;
+    }
+
+    .soft-box p {
+      margin:0;
+      color:var(--muted);
+      font-size:12px;
+      font-weight:550;
+      line-height:1.65;
+    }
+
+    .empty {
+      text-align:center;
+      color:var(--muted);
+      font-size:12px;
+      font-weight:600;
+      line-height:1.7;
+      padding:24px 14px;
+      border:1px dashed #d9cec0;
+      border-radius:17px;
+      background:#fbf8f3;
+    }
+
+    .bottom-nav {
+      position:absolute;
+      left:0;
+      right:0;
+      bottom:0;
+      padding:10px 14px 18px;
+      background:rgba(251,250,247,.96);
+      backdrop-filter:blur(14px);
+      border-top:1px solid var(--line-soft);
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      gap:6px;
+      z-index:20;
+    }
+
+    .tab {
+      border:0;
+      background:transparent;
+      border-radius:14px;
+      padding:8px 4px;
+      color:#9b9287;
+      cursor:pointer;
+      display:grid;
+      justify-items:center;
+      gap:4px;
+      font-size:10px;
+      font-weight:650;
+      font-family:var(--font-text);
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .tab .ico {
+      font-size:17px;
+      line-height:1;
+      opacity:.82;
+    }
+
+    .tab.active {
+      color:#a9844d;
+      background:transparent;
+    }
+
+    .toast {
+      position:absolute;
+      left:18px;
+      right:18px;
+      bottom:86px;
+      background:#4f4840;
+      color:#fff;
+      padding:13px 14px;
+      border-radius:16px;
+      font-size:12px;
+      font-weight:650;
+      box-shadow:0 10px 30px rgba(70,58,44,.14);
+      opacity:0;
+      transform:translateY(10px);
+      transition:.22s;
+      pointer-events:none;
+      z-index:30;
+    }
+
+    .toast.show {
+      opacity:1;
+      transform:translateY(0);
+    }
+
+    .pictogram {
+      width:22px;
+      height:22px;
+      display:block;
+      color:currentColor;
+    }
+
+    .pictogram * {
+      vector-effect:non-scaling-stroke;
+    }
+
+    .icon,
+    .big-icon {
+      color:#7f766c;
+    }
+
+    .big-icon {
+      color:#7d8970;
+    }
+
+    .category:nth-child(2n) .big-icon {
+      color:#b38355;
+    }
+
+    .category:nth-child(3n) .big-icon {
+      color:#7d949a;
+    }
+
+    .category:nth-child(4n) .big-icon {
+      color:#a88749;
+    }
+
+
+    /* Compact task density adjustments */
+    main {
+      flex:1;
+      overflow:auto;
+      padding:0 18px 88px;
+    }
+
+    .hero {
+      padding:14px 14px;
+      margin-top:2px;
+      border-radius:18px;
+    }
+
+    .hero-grid {
+      grid-template-columns:94px 1fr;
+      gap:14px;
+    }
+
+    .ring {
+      width:88px;
+      height:88px;
+    }
+
+    .ring:before {
+      width:68px;
+      height:68px;
+    }
+
+    .ring-inner b {
+      font-size:20px;
+    }
+
+    .ring-inner span {
+      margin-top:5px;
+      font-size:9px;
+    }
+
+    .xp-line {
+      font-size:11px;
+    }
+
+    .xp-line b {
+      font-size:14px;
+    }
+
+    .bar {
+      margin:7px 0 11px;
+    }
+
+    .level {
+      font-size:12px;
+      line-height:1.5;
+    }
+
+    .level small {
+      font-size:10px;
+    }
+
+    .stat-grid {
+      margin-top:12px;
+      gap:6px;
+    }
+
+    .stat {
+      padding:8px 7px;
+      border-radius:13px;
+    }
+
+    .stat span {
+      font-size:9px;
+      margin-bottom:4px;
+    }
+
+    .stat b {
+      font-size:16px;
+    }
+
+    .tip {
+      margin-top:11px;
+      padding:10px 11px;
+      font-size:11px;
+      line-height:1.45;
+      border-radius:13px;
+    }
+
+    .chips {
+      gap:6px;
+      margin:12px 0 8px;
+      padding-bottom:3px;
+    }
+
+    .chip {
+      padding:7px 10px;
+      font-size:10px;
+    }
+
+    .section-title {
+      margin:14px 4px 8px;
+      font-size:12px;
+    }
+
+    .badge {
+      min-width:22px;
+      height:22px;
+      font-size:10px;
+    }
+
+    .list {
+      gap:7px;
+    }
+
+    .task {
+      grid-template-columns:34px 1fr;
+      gap:10px;
+      padding:10px 11px;
+      border-radius:14px;
+      align-items:center;
+    }
+
+    .icon {
+      width:34px;
+      height:34px;
+      border-radius:12px;
+      font-size:17px;
+    }
+
+    .pictogram {
+      width:18px;
+      height:18px;
+    }
+
+    .task h3 {
+      margin:0;
+      font-size:13px;
+      line-height:1.28;
+      font-weight:650;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:8px;
+    }
+
+    .task p {
+      margin:3px 0 0;
+      font-size:10px;
+      line-height:1.35;
+      -webkit-line-clamp:1;
+    }
+
+    .meta {
+      gap:5px;
+      margin-top:7px;
+    }
+
+    .pill {
+      padding:3px 6px;
+      font-size:9px;
+      line-height:1.1;
+    }
+
+    .xp {
+      margin-top:0;
+      margin-left:auto;
+      flex-shrink:0;
+      font-size:9px;
+      padding:3px 6px;
+      border-radius:999px;
+      background:#f7f0df;
+    }
+
+    .actions {
+      grid-column:2/3;
+      gap:6px;
+      margin-top:8px;
+    }
+
+    .mini-btn {
+      padding:7px 8px;
+      font-size:10px;
+      border-radius:11px;
+    }
+
+    .category {
+      grid-template-columns:42px 1fr auto;
+      gap:10px;
+      padding:10px 11px;
+      border-radius:14px;
+    }
+
+    .big-icon {
+      width:42px;
+      height:42px;
+      font-size:19px;
+    }
+
+    .category h3 {
+      font-size:13px;
+      margin-bottom:3px;
+    }
+
+    .category p {
+      font-size:10px;
+      line-height:1.35;
+      -webkit-line-clamp:1;
+    }
+
+    .count {
+      font-size:12px;
+    }
+
+    .soft-box {
+      padding:12px 13px;
+      border-radius:15px;
+      margin-bottom:11px;
+    }
+
+    .soft-box h3 {
+      font-size:15px;
+      margin-bottom:7px;
+    }
+
+    .soft-box p {
+      font-size:11px;
+      line-height:1.5;
+    }
+
+    .segmented {
+      margin-bottom:11px;
+    }
+
+    .segmented button {
+      padding:8px 8px;
+      font-size:11px;
+    }
+
+    .bottom-nav {
+      padding:8px 14px 16px;
+    }
+
+    .tab {
+      padding:7px 4px;
+      font-size:9px;
+    }
+
+    .tab .ico {
+      font-size:16px;
+    }
+
+  </style>
+</head>
+<body>
+  <div class="phone">
+    <div class="screen">
+      <div class="status">
+        <span class="num" id="clock">9:41</span>
+        <span>家事取りゲーム</span>
+        <span>●●●</span>
+      </div>
+
+      <div class="header">
+        <div>
+          <h1 id="pageTitle">今日</h1>
+          <div class="subtitle" id="pageSub">今日の家事取り状況</div>
+        </div>
+        <button class="reset" onclick="resetApp()" title="リセット">↺</button>
+      </div>
+
+      <main>
+        <section class="view active" id="homeView">
+          <div class="card hero">
+            <div class="hero-grid">
+              <div class="ring" id="ring">
+                <div class="ring-inner">
+                  <b class="num" id="completionRate">0%</b>
+                  <span>今日の達成率</span>
+                </div>
+              </div>
+              <div>
+                <div class="xp-line"><b class="num" id="todayXp">0</b> / <span class="num" id="todayTotalXp">0</span> XP</div>
+                <div class="bar"><span id="xpBar"></span></div>
+                <div class="level">
+                  Lv. <span class="num" id="level">1</span><br><span id="rankName">先回り見習い</span>
+                  <small>次レベルまであと <span class="num" id="nextXp">500</span> XP</small>
+                </div>
+              </div>
+            </div>
+
+            <div class="stat-grid">
+              <div class="stat"><span>完了</span><b class="num" id="doneCount">0</b></div>
+              <div class="stat"><span>未回収</span><b class="num" id="todoCount">0</b></div>
+              <div class="stat"><span>取り逃がし</span><b class="num" id="missedCount">0</b></div>
+            </div>
+
+            <div class="tip" id="tipText">妻に聞かずに進められる家事から取る。</div>
+          </div>
+
+          <div class="chips" id="timeChips"></div>
+
+          <div class="section-title">
+            <span id="taskSectionTitle">今日の優先タスク</span>
+            <span class="badge num" id="visibleTaskCount">0</span>
+          </div>
+          <div class="list" id="todayTaskList"></div>
+        </section>
+
+        <section class="view" id="questsView">
+          <div class="segmented">
+            <button id="categoryButton" class="active" onclick="setQuestMode('category')">カテゴリ</button>
+            <button id="allButton" onclick="setQuestMode('all')">すべて</button>
+          </div>
+          <div class="list" id="categoryList"></div>
+          <div class="list" id="allTaskList" style="display:none;"></div>
+        </section>
+
+        <section class="view" id="missedView">
+          <div class="soft-box">
+            <h3>取り逃がしログ　<span class="num" id="missedLogCount">0</span>件</h3>
+            <p>妻が先にやった家事は、責める材料ではなく明日の攻略データ。リトライ化すると明日のタスクに追加されます。</p>
+          </div>
+          <div class="list" id="missedList"></div>
+        </section>
+
+        <section class="view" id="libraryView">
+          <div class="soft-box">
+            <h3>見えない家事の種類</h3>
+            <p>誰かに頼まれる前に、家庭をまわすために必要な気づき・判断・準備のこと。</p>
+          </div>
+          <div class="list" id="guideList"></div>
+        </section>
+      </main>
+
+      <nav class="bottom-nav">
+        <button class="tab active" id="tab-home" onclick="showView('home')">
+          <span class="ico">⌂</span><span>今日</span>
+        </button>
+        <button class="tab" id="tab-quests" onclick="showView('quests')">
+          <span class="ico">☷</span><span>クエスト</span>
+        </button>
+        <button class="tab" id="tab-missed" onclick="showView('missed')">
+          <span class="ico">◔</span><span>取り逃がし</span>
+        </button>
+        <button class="tab" id="tab-library" onclick="showView('library')">
+          <span class="ico">⌘</span><span>図鑑</span>
+        </button>
+      </nav>
+
+      <div class="toast" id="toast">保存しました</div>
+    </div>
+  </div>
+
+  <script>
+    // タブ切り替えは最優先。タスク処理が壊れてもここだけは動かす。
+    function showView(name) {
+      var titles = {
+        home: ["今日", "今日の家事取り状況"],
+        quests: ["クエスト", "育休特化タスク50個"],
+        missed: ["取り逃がし", "明日のリトライ候補"],
+        library: ["図鑑", "見えない家事の理解"]
+      };
+
+      var views = ["home", "quests", "missed", "library"];
+      for (var i = 0; i < views.length; i++) {
+        var view = document.getElementById(views[i] + "View");
+        var tab = document.getElementById("tab-" + views[i]);
+        if (view) view.className = view.className.replace(" active", "");
+        if (tab) tab.className = tab.className.replace(" active", "");
+      }
+
+      var targetView = document.getElementById(name + "View");
+      var targetTab = document.getElementById("tab-" + name);
+      if (targetView && targetView.className.indexOf("active") === -1) targetView.className += " active";
+      if (targetTab && targetTab.className.indexOf("active") === -1) targetTab.className += " active";
+
+      document.getElementById("pageTitle").textContent = titles[name][0];
+      document.getElementById("pageSub").textContent = titles[name][1];
+    }
+
+    function safeToast(message) {
+      var el = document.getElementById("toast");
+      if (!el) return;
+      el.textContent = message;
+      el.className = "toast show";
+      clearTimeout(window.__toastTimer);
+      window.__toastTimer = setTimeout(function() {
+        el.className = "toast";
+      }, 1500);
+    }
+  </script>
+
+  <script>
+    var SEED = {"version": "0.1.0", "app": "家事取りゲーム", "mode": "parental_leave_first", "categories": [{"id": "newborn", "name": "新生児対応", "icon": "🍼", "color": "sage"}, {"id": "older_child", "name": "上の子対応", "icon": "🧒", "color": "blue"}, {"id": "daycare", "name": "保育園準備", "icon": "🎒", "color": "beige"}, {"id": "stock", "name": "在庫管理", "icon": "📦", "color": "green"}, {"id": "schedule", "name": "予定管理", "icon": "📅", "color": "gold"}, {"id": "meal", "name": "食事・買い物", "icon": "🍳", "color": "peach"}, {"id": "housework", "name": "掃除・洗濯・ゴミ", "icon": "🧺", "color": "gray"}, {"id": "partner_care", "name": "妻ケア", "icon": "☕", "color": "pink"}], "tasks": [{"id": "baby_001", "title": "哺乳瓶を洗って消毒セット", "category": "newborn", "categoryName": "新生児対応", "timing": "daytime", "priority": "high", "xp": 35, "estimatedMinutes": 10, "isInvisibleTask": false, "recurrence": {"type": "daily"}, "description": "使った哺乳瓶を放置せず、次の授乳前に使える状態に戻す。", "successDefinition": "哺乳瓶が洗浄・消毒され、次回すぐ使える状態になっている"}, {"id": "baby_002", "title": "夜間授乳セットを準備", "category": "newborn", "categoryName": "新生児対応", "timing": "night", "priority": "high", "xp": 45, "estimatedMinutes": 8, "isInvisibleTask": true, "recurrence": {"type": "daily"}, "description": "夜中にバタつかないよう、オムツ・おしりふき・ガーゼ・着替えを近くに置く。", "successDefinition": "夜間対応に必要なものが一箇所に揃っている"}, {"id": "baby_003", "title": "オムツ替え台まわりを補充", "category": "newborn", "categoryName": "新生児対応", "timing": "evening", "priority": "high", "xp": 30, "estimatedMinutes": 5, "isInvisibleTask": true, "recurrence": {"type": "daily"}, "description": "オムツ・おしりふき・袋・保湿剤などを不足前に補充する。", "successDefinition": "次のオムツ替えで不足が起きない"}, {"id": "baby_004", "title": "赤ちゃんの着替えストックを確認", "category": "newborn", "categoryName": "新生児対応", "timing": "evening", "priority": "middle", "xp": 28, "estimatedMinutes": 5, "isInvisibleTask": true, "recurrence": {"type": "daily"}, "description": "吐き戻しや漏れに備えて、すぐ出せる着替えを確認する。", "successDefinition": "肌着・服・ガーゼがすぐ取れる場所にある"}, {"id": "baby_005", "title": "沐浴・風呂上がりセットを準備", "category": "newborn", "categoryName": "新生児対応", "timing": "evening", "priority": "high", "xp": 40, "estimatedMinutes": 10, "isInvisibleTask": true, "recurrence": {"type": "daily"}, "description": "タオル、着替え、保湿剤、オムツを風呂前にセットする。", "successDefinition": "風呂上がりに探し物が発生しない"}, {"id": "baby_006", "title": "ガーゼ・スタイ・タオルを回収して洗濯へ", "category": "newborn", "categoryName": "新生児対応", "timing": "daytime", "priority": "middle", "xp": 22, "estimatedMinutes": 5, "isInvisibleTask": false, "recurrence": {"type": "daily"}, "description": "散らばったガーゼ類を集めて洗濯導線に乗せる。", "successDefinition": "使用済み布類が洗濯カゴに集まっている"}, {"id": "baby_007", "title": "寝床まわりの安全確認", "category": "newborn", "categoryName": "新生児対応", "timing": "night", "priority": "high", "xp": 35, "estimatedMinutes": 3, "isInvisibleTask": true, "recurrence": {"type": "daily"}, "description": "顔まわりに布・タオル・柔らかい物がないか確認する。", "successDefinition": "寝床まわりが安全で、余計な物が置かれていない"}, {"id": "baby_008", "title": "赤ちゃん用品の一時置き場をリセット", "category": "newborn", "categoryName": "新生児対応", "timing": "night", "priority": "middle", "xp": 24, "estimatedMinutes": 7, "isInvisibleTask": false, "recurrence": {"type": "daily"}, "description": "オムツ、服、ガーゼ、薬、保湿剤などを定位置に戻す。", "successDefinition": "翌朝に赤ちゃん用品を探さなくてよい状態"}, {"id": "baby_009", "title": "授乳後の片付けを巻き取る", "category": "newborn", "categoryName": "新生児対応", "timing": "anytime", "priority": "high", "xp": 30, "estimatedMinutes": 5, "isInvisibleTask": false, "recurrence": {"type": "daily"}, "description": "授乳後の哺乳瓶・ガーゼ・周辺片付けを自分で処理する。", "successDefinition": "授乳後の片付けが妻に残っていない"}, {"id": "baby_010", "title": "赤ちゃんの消耗品ゴミをまとめる", "category": "newborn", "categoryName": "新生児対応", "timing": "night", "priority": "middle", "xp": 20, "estimatedMinutes": 5, "isInvisibleTask": false, "recurrence": {"type": "daily"}, "description": "オムツゴミや使用済み袋をまとめ、臭いや溢れを防ぐ。", "successDefinition": "ゴミが溢れず、翌朝すぐ捨てられる状態"}, {"id": "older_001", "title": "上の子の朝の着替えを先に用意", "category": "older_child", "categoryName": "上の子対応", "timing": "morning", "priority": "high", "xp": 30, "estimatedMinutes": 5, "isInvisibleTask": true, "recurrence": {"type": "weekday"}, "description": "朝に迷わないよう、天気と予定に合う服を準備する。", "successDefinition": "上の子の着替えがすぐ始められる"}, {"id": "older_002", "title": "上の子の朝食まわりを準備", "category": "older_child", "categoryName": "上の子対応", "timing": "morning", "priority": "high", "xp": 35, "estimatedMinutes": 15, "isInvisibleTask": false, "recurrence": {"type": "daily"}, "description": "朝食、食器、飲み物、食後の片付けまで見越して動く。", "successDefinition": "朝食開始から片付けまで妻に依頼しない"}, {"id": "older_003", "title": "上の子の遊び相手を30分担当", "category": "older_child", "categoryName": "上の子対応", "timing": "daytime", "priority": "middle", "xp": 35, "estimatedMinutes": 30, "isInvisibleTask": false, "recurrence": {"type": "daily"}, "description": "妻が休む・授乳する・家事を止める時間を作る。", "successDefinition": "30分以上、上の子対応を自分が主担当する"}, {"id": "older_004", "title": "上の子の風呂準備", "category": "older_child", "categoryName": "上の子対応", "timing": "evening", "priority": "high", "xp": 30, "estimatedMinutes": 8, "isInvisibleTask": true, "recurrence": {"type": "daily"}, "description": "着替え、タオル、保湿、歯磨き導線まで先に作る。", "successDefinition": "風呂後に探し物がない"}, {"id": "older_005", "title": "上の子の寝る前ルーティンを担当", "category": "older_child", "categoryName": "上の子対応", "timing": "night", "priority": "high", "xp": 45, "estimatedMinutes": 30, "isInvisibleTask": false, "recurrence": {"type": "daily"}, "description": "歯磨き、トイレ、絵本、寝室移動まで主担当する。", "successDefinition": "寝る前ルーティンを妻に戻さず完了する"}, {"id": "older_006", "title": "上の子の食後片付け", "category": "older_child", "categoryName": "上の子対応", "timing": "anytime", "priority": "middle", "xp": 20, "estimatedMinutes": 8, "isInvisibleTask": false, "recurrence": {"type": "daily"}, "description": "食器、椅子、床、手口拭きまでセットで片付ける。", "successDefinition": "食後の汚れが残っていない"}, {"id": "older_007", "title": "上の子のメンタルケア時間を作る", "category": "older_child", "categoryName": "上の子対応", "timing": "evening", "priority": "middle", "xp": 30, "estimatedMinutes": 15, "isInvisibleTask": true, "recurrence": {"type": "daily"}, "description": "下の子対応で寂しくならないよう、上の子だけの時間を取る。", "successDefinition": "上の子と1対1で15分以上関わる"}, {"id": "older_008", "title": "上の子の明日の予定を確認", "category": "older_child", "categoryName": "上の子対応", "timing": "night", "priority": "middle", "xp": 28, "estimatedMinutes": 5, "isInvisibleTask": true, "recurrence": {"type": "daily"}, "description": "保育園、外出、天気、持ち物に影響する予定を確認する。", "successDefinition": "明日の動きに必要な準備が見えている"}, {"id": "daycare_001", "title": "保育園バッグの中身を確認", "category": "daycare", "categoryName": "保育園準備", "timing": "night", "priority": "high", "xp": 45, "estimatedMinutes": 10, "isInvisibleTask": true, "recurrence": {"type": "weekday"}, "description": "着替え、袋、タオル、連絡帳などを確認する。", "successDefinition": "翌朝そのまま持っていける状態になっている"}, {"id": "daycare_002", "title": "保育園の着替えストック補充", "category": "daycare", "categoryName": "保育園準備", "timing": "night", "priority": "high", "xp": 40, "estimatedMinutes": 10, "isInvisibleTask": true, "recurrence": {"type": "weekly", "daysOfWeek": [0, 2, 4]}, "description": "園に置く服・肌着・靴下などの不足を確認する。", "successDefinition": "保育園の着替え不足が発生しない"}, {"id": "daycare_003", "title": "連絡帳・園アプリの確認", "category": "daycare", "categoryName": "保育園準備", "timing": "night", "priority": "high", "xp": 42, "estimatedMinutes": 5, "isInvisibleTask": true, "recurrence": {"type": "weekday"}, "description": "園からの連絡、持ち物、提出物、体調メモを確認する。", "successDefinition": "園からの連絡を見落としていない"}, {"id": "daycare_004", "title": "水筒・コップ・タオルを準備", "category": "daycare", "categoryName": "保育園準備", "timing": "morning", "priority": "high", "xp": 30, "estimatedMinutes": 6, "isInvisibleTask": false, "recurrence": {"type": "weekday"}, "description": "朝の出発前に必要物をセットする。", "successDefinition": "出発直前に妻が準備しなくていい"}, {"id": "daycare_005", "title": "保育園提出物の有無を確認", "category": "daycare", "categoryName": "保育園準備", "timing": "night", "priority": "middle", "xp": 35, "estimatedMinutes": 5, "isInvisibleTask": true, "recurrence": {"type": "weekly", "daysOfWeek": [0, 3]}, "description": "プリント、申請、提出期限がないか見る。", "successDefinition": "提出物の見落としがない"}, {"id": "daycare_006", "title": "明日の天気に合わせた持ち物確認", "category": "daycare", "categoryName": "保育園準備", "timing": "night", "priority": "middle", "xp": 30, "estimatedMinutes": 4, "isInvisibleTask": true, "recurrence": {"type": "daily"}, "description": "雨具、上着、帽子、替え服などを調整する。", "successDefinition": "天気由来の忘れ物がない"}, {"id": "daycare_007", "title": "登園前の玄関セットを作る", "category": "daycare", "categoryName": "保育園準備", "timing": "morning", "priority": "middle", "xp": 25, "estimatedMinutes": 5, "isInvisibleTask": true, "recurrence": {"type": "weekday"}, "description": "靴、バッグ、帽子、上着を玄関で出発できる形にする。", "successDefinition": "出発時のバタつきが減っている"}, {"id": "stock_001", "title": "オムツ残量チェック", "category": "stock", "categoryName": "在庫管理", "timing": "morning", "priority": "high", "xp": 40, "estimatedMinutes": 3, "isInvisibleTask": true, "recurrence": {"type": "daily"}, "description": "サイズ別に残量を見て、数日以内に足りるか判断する。", "successDefinition": "オムツ切れのリスクがない"}, {"id": "stock_002", "title": "おしりふき残量チェック", "category": "stock", "categoryName": "在庫管理", "timing": "morning", "priority": "middle", "xp": 30, "estimatedMinutes": 3, "isInvisibleTask": true, "recurrence": {"type": "daily"}, "description": "開封中とストックの両方を確認する。", "successDefinition": "おしりふきが切れない"}, {"id": "stock_003", "title": "ミルク・授乳関連用品の残量確認", "category": "stock", "categoryName": "在庫管理", "timing": "morning", "priority": "high", "xp": 45, "estimatedMinutes": 5, "isInvisibleTask": true, "recurrence": {"type": "daily"}, "description": "ミルク、消毒用品、乳首、哺乳瓶まわりの不足を確認する。", "successDefinition": "次の買い足しタイミングが判断できている"}, {"id": "stock_004", "title": "洗剤・柔軟剤・食器洗剤の残量確認", "category": "stock", "categoryName": "在庫管理", "timing": "daytime", "priority": "middle", "xp": 30, "estimatedMinutes": 4, "isInvisibleTask": true, "recurrence": {"type": "weekly", "daysOfWeek": [1, 5]}, "description": "洗濯・食器・掃除の消耗品をまとめて見る。", "successDefinition": "洗剤類の不足で家事が止まらない"}, {"id": "stock_005", "title": "ゴミ袋・ポリ袋の残量確認", "category": "stock", "categoryName": "在庫管理", "timing": "daytime", "priority": "middle", "xp": 25, "estimatedMinutes": 3, "isInvisibleTask": true, "recurrence": {"type": "weekly", "daysOfWeek": [0, 3]}, "description": "燃えるゴミ、不燃、オムツ用袋などを確認する。", "successDefinition": "ゴミ処理に必要な袋が足りている"}, {"id": "stock_006", "title": "トイレットペーパー・ティッシュ補充", "category": "stock", "categoryName": "在庫管理", "timing": "daytime", "priority": "middle", "xp": 28, "estimatedMinutes": 5, "isInvisibleTask": true, "recurrence": {"type": "weekly", "daysOfWeek": [2, 6]}, "description": "トイレ・リビング・寝室など使用場所の残量を確認する。", "successDefinition": "使う場所で紙類が切れていない"}, {"id": "stock_007", "title": "保湿剤・薬・体温計まわり確認", "category": "stock", "categoryName": "在庫管理", "timing": "night", "priority": "middle", "xp": 35, "estimatedMinutes": 5, "isInvisibleTask": true, "recurrence": {"type": "weekly", "daysOfWeek": [2]}, "description": "子ども用保湿剤、薬、体温計、爪切りなどを確認する。", "successDefinition": "体調対応に必要な物がすぐ出せる"}, {"id": "stock_008", "title": "買い物リストを更新", "category": "stock", "categoryName": "在庫管理", "timing": "evening", "priority": "high", "xp": 40, "estimatedMinutes": 8, "isInvisibleTask": true, "recurrence": {"type": "daily"}, "description": "不足しそうな物をその場で買い物リストに入れる。", "successDefinition": "気づいた不足が脳内だけに残っていない"}, {"id": "schedule_001", "title": "明日の予定を確認", "category": "schedule", "categoryName": "予定管理", "timing": "night", "priority": "high", "xp": 45, "estimatedMinutes": 5, "isInvisibleTask": true, "recurrence": {"type": "daily"}, "description": "保育園、通院、ゴミの日、来客、外出予定を確認する。", "successDefinition": "明日の段取りが自分の中で見えている"}, {"id": "schedule_002", "title": "予防接種・通院予定を確認", "category": "schedule", "categoryName": "予定管理", "timing": "night", "priority": "high", "xp": 55, "estimatedMinutes": 10, "isInvisibleTask": true, "recurrence": {"type": "weekly", "daysOfWeek": [0]}, "description": "日付、時間、持ち物、移動、上の子対応まで確認する。", "successDefinition": "通院・予防接種に関する不明点がない"}, {"id": "schedule_003", "title": "ゴミの日を確認", "category": "schedule", "categoryName": "予定管理", "timing": "night", "priority": "middle", "xp": 25, "estimatedMinutes": 3, "isInvisibleTask": true, "recurrence": {"type": "daily"}, "description": "翌朝のゴミ種別を確認し、必要なら夜にまとめる。", "successDefinition": "翌朝に慌てずゴミを出せる"}, {"id": "schedule_004", "title": "保育園行事・提出期限を確認", "category": "schedule", "categoryName": "予定管理", "timing": "night", "priority": "middle", "xp": 35, "estimatedMinutes": 7, "isInvisibleTask": true, "recurrence": {"type": "weekly", "daysOfWeek": [1, 4]}, "description": "行事、持ち物、提出物、支払いなどを確認する。", "successDefinition": "園関連の期限を見落としていない"}, {"id": "schedule_005", "title": "週末の家族予定と休憩枠を確認", "category": "schedule", "categoryName": "予定管理", "timing": "night", "priority": "middle", "xp": 40, "estimatedMinutes": 10, "isInvisibleTask": true, "recurrence": {"type": "weekly", "daysOfWeek": [4]}, "description": "外出、買い物、子ども対応、妻の休憩時間をざっくり設計する。", "successDefinition": "週末の負担が妻任せになっていない"}, {"id": "meal_001", "title": "夕食の方針を15時までに決める", "category": "meal", "categoryName": "食事・買い物", "timing": "daytime", "priority": "high", "xp": 45, "estimatedMinutes": 8, "isInvisibleTask": true, "recurrence": {"type": "daily"}, "description": "作る、買う、残り物、惣菜の判断を先に済ませる。", "successDefinition": "夕方に妻が献立判断をしなくてよい"}, {"id": "meal_002", "title": "冷蔵庫の使い切り候補を確認", "category": "meal", "categoryName": "食事・買い物", "timing": "daytime", "priority": "middle", "xp": 30, "estimatedMinutes": 5, "isInvisibleTask": true, "recurrence": {"type": "daily"}, "description": "賞味期限や残り物を見て、使うべき食材を判断する。", "successDefinition": "使うべき食材が把握できている"}, {"id": "meal_003", "title": "上の子の食事・おやつ準備", "category": "meal", "categoryName": "食事・買い物", "timing": "evening", "priority": "high", "xp": 35, "estimatedMinutes": 15, "isInvisibleTask": false, "recurrence": {"type": "daily"}, "description": "食べられるもの、量、片付けまで見越して準備する。", "successDefinition": "上の子の食事対応を妻に戻さない"}, {"id": "meal_004", "title": "買い物に行く/注文する判断", "category": "meal", "categoryName": "食事・買い物", "timing": "daytime", "priority": "middle", "xp": 35, "estimatedMinutes": 7, "isInvisibleTask": true, "recurrence": {"type": "daily"}, "description": "今日中に買うべきか、明日でよいか、ネット注文かを決める。", "successDefinition": "買い物判断が妻の脳内タスクとして残っていない"}, {"id": "meal_005", "title": "食器・キッチンを一度リセット", "category": "meal", "categoryName": "食事・買い物", "timing": "night", "priority": "high", "xp": 35, "estimatedMinutes": 15, "isInvisibleTask": false, "recurrence": {"type": "daily"}, "description": "シンク、食器、調理台を翌朝使える状態に戻す。", "successDefinition": "翌朝キッチンがすぐ使える"}, {"id": "house_001", "title": "洗濯を回す/干す/乾燥まで進める", "category": "housework", "categoryName": "掃除・洗濯・ゴミ", "timing": "morning", "priority": "high", "xp": 40, "estimatedMinutes": 15, "isInvisibleTask": false, "recurrence": {"type": "daily"}, "description": "洗濯を途中で止めず、次工程まで進める。", "successDefinition": "洗濯物が洗濯機内に放置されていない"}, {"id": "house_002", "title": "洗濯物を畳んで定位置へ戻す", "category": "housework", "categoryName": "掃除・洗濯・ゴミ", "timing": "daytime", "priority": "middle", "xp": 35, "estimatedMinutes": 20, "isInvisibleTask": false, "recurrence": {"type": "daily"}, "description": "畳むだけでなく、家族ごとの定位置に戻す。", "successDefinition": "畳んだ洗濯物が山になっていない"}, {"id": "house_003", "title": "リビング床の危険物・小物回収", "category": "housework", "categoryName": "掃除・洗濯・ゴミ", "timing": "night", "priority": "middle", "xp": 25, "estimatedMinutes": 8, "isInvisibleTask": false, "recurrence": {"type": "daily"}, "description": "子どもが踏む・口に入れる・散らかる物を回収する。", "successDefinition": "床に危ない物や不要な物が残っていない"}, {"id": "house_004", "title": "洗面台・排水口をリセット", "category": "housework", "categoryName": "掃除・洗濯・ゴミ", "timing": "daytime", "priority": "low", "xp": 20, "estimatedMinutes": 7, "isInvisibleTask": false, "recurrence": {"type": "weekly", "daysOfWeek": [2, 6]}, "description": "髪の毛、ぬめり、水はねを軽く掃除する。", "successDefinition": "洗面台を気持ちよく使える"}, {"id": "house_005", "title": "ゴミをまとめて次に出せる状態にする", "category": "housework", "categoryName": "掃除・洗濯・ゴミ", "timing": "night", "priority": "middle", "xp": 30, "estimatedMinutes": 8, "isInvisibleTask": true, "recurrence": {"type": "daily"}, "description": "ゴミ箱の満杯確認、袋交換、翌朝出すゴミをまとめる。", "successDefinition": "翌朝にゴミ出しだけで済む"}, {"id": "care_001", "title": "妻の休憩時間を30分確保", "category": "partner_care", "categoryName": "妻ケア", "timing": "daytime", "priority": "high", "xp": 55, "estimatedMinutes": 30, "isInvisibleTask": true, "recurrence": {"type": "daily"}, "description": "子ども対応や家事を引き取り、妻が中断されない時間を作る。", "successDefinition": "妻が30分以上、家事・育児から離れられる"}, {"id": "care_002", "title": "妻に確認せず進められる家事を1つ選ぶ", "category": "partner_care", "categoryName": "妻ケア", "timing": "morning", "priority": "high", "xp": 50, "estimatedMinutes": 5, "isInvisibleTask": true, "recurrence": {"type": "daily"}, "description": "質問で妻の脳内負荷を増やさず、自分で判断して1つ巻き取る。", "successDefinition": "妻に聞かず、自分の判断で家事を1つ完了する"}]};
+    var STORAGE_KEY = "kajitori_stable_mvp_v2";
+    var activeTiming = "all";
+    var questMode = "category";
+    var state = null;
+
+    var timingOptions = [
+      ["all", "全部"],
+      ["morning", "朝"],
+      ["daytime", "昼"],
+      ["evening", "夕方"],
+      ["night", "夜"],
+      ["anytime", "随時"]
+    ];
+
+    var timingLabel = {
+      morning: "朝",
+      daytime: "昼",
+      evening: "夕方",
+      night: "夜",
+      anytime: "随時"
+    };
+
+    var priorityLabel = {
+      high: "高",
+      middle: "中",
+      low: "低"
+    };
+
+    var guideDescriptions = {
+      newborn: "哺乳瓶、オムツ、沐浴、寝床安全など。夜と夕方が主戦場。",
+      older_child: "上の子の朝支度、食事、風呂、寝る前、メンタルケア。",
+      daycare: "バッグ、着替え、連絡帳、提出物、天気対応。朝の崩壊を防ぐ。",
+      stock: "オムツ、ミルク、洗剤、ゴミ袋など。切れる前に気づくのが勝ち。",
+      schedule: "通院、予防接種、ゴミの日、園行事。妻の脳内カレンダーを奪う。",
+      meal: "夕食判断、買い物判断、冷蔵庫確認。夕方の詰みを防ぐ。",
+      housework: "洗濯、床、洗面台、ゴミ。途中放置せず最後まで戻す。",
+      partner_care: "妻の休憩時間確保と、妻に聞かずに進める判断訓練。"
+    };
+
+
+    var iconSvgMap = {
+      newborn: '<svg class="pictogram" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4h6"/><path d="M8 7h8l1 3v8a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2v-8l1-3Z"/><path d="M9 11h6"/><path d="M10 15h4"/></svg>',
+      older_child: '<svg class="pictogram" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="7" r="3"/><path d="M6.5 20a5.5 5.5 0 0 1 11 0"/><path d="M8.5 13.5 6 16"/><path d="m15.5 13.5 2.5 2.5"/></svg>',
+      daycare: '<svg class="pictogram" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round"><path d="M8 9V7a4 4 0 0 1 8 0v2"/><path d="M6 9h12l1 10H5L6 9Z"/><path d="M9 13h6"/></svg>',
+      stock: '<svg class="pictogram" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8.5 12 4l8 4.5-8 4.5-8-4.5Z"/><path d="M4 8.5v7L12 20l8-4.5v-7"/><path d="M12 13v7"/></svg>',
+      schedule: '<svg class="pictogram" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="6" width="14" height="14" rx="2"/><path d="M8 4v4"/><path d="M16 4v4"/><path d="M5 10h14"/><path d="M9 14h2"/><path d="M13 14h2"/></svg>',
+      meal: '<svg class="pictogram" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4v8"/><path d="M5 4v4a2 2 0 0 0 4 0V4"/><path d="M7 12v8"/><path d="M15 4v16"/><path d="M15 4c3 2 3 6 0 8"/></svg>',
+      housework: '<svg class="pictogram" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round"><path d="M7 9h10l-1 10H8L7 9Z"/><path d="M9 9V6a3 3 0 0 1 6 0v3"/><path d="M10 13h4"/><path d="M10 16h4"/></svg>',
+      partner_care: '<svg class="pictogram" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round"><path d="M8 9h8v4a4 4 0 0 1-8 0V9Z"/><path d="M16 10h1a2 2 0 0 1 0 4h-1"/><path d="M7 20h10"/><path d="M9 5c0-1 1-1 1-2"/><path d="M13 5c0-1 1-1 1-2"/></svg>'
+    };
+
+    function iconForCategory(categoryId) {
+      return iconSvgMap[categoryId] || '<svg class="pictogram" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="7"/><path d="M12 8v4l3 2"/></svg>';
+    }
+
+
+    function boot() {
+      try {
+        state = loadState();
+        ensureTodayTasks();
+        renderEverything();
+        updateClock();
+        setInterval(updateClock, 30000);
+      } catch (e) {
+        safeToast("初期化エラー：" + e.message);
+        renderFallback();
+      }
+    }
+
+    function todayKey() {
+      var d = new Date();
+      var y = d.getFullYear();
+      var m = String(d.getMonth() + 1).padStart(2, "0");
+      var day = String(d.getDate()).padStart(2, "0");
+      return y + "-" + m + "-" + day;
+    }
+
+    function displayDate(dateString) {
+      var d = new Date(dateString + "T00:00:00");
+      var week = "日月火水木金土".charAt(d.getDay());
+      return (d.getMonth() + 1) + "月" + d.getDate() + "日（" + week + "）";
+    }
+
+    function updateClock() {
+      var el = document.getElementById("clock");
+      if (el) {
+        el.textContent = new Date().toLocaleTimeString("ja-JP", { hour: "2-digit", minute: "2-digit" });
+      }
+    }
+
+    function loadState() {
+      var fallback = { tasksByDate: {}, missedLog: [], retryQueue: [] };
+      try {
+        var raw = localStorage.getItem(STORAGE_KEY);
+        if (raw) return JSON.parse(raw);
+      } catch(e) {}
+      return fallback;
+    }
+
+    function saveState() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      } catch(e) {}
+    }
+
+    function isDue(task, dateString) {
+      var d = new Date(dateString + "T00:00:00");
+      var day = d.getDay();
+      var rule = task.recurrence || { type:"daily" };
+      if (rule.type === "daily") return true;
+      if (rule.type === "weekday") return day >= 1 && day <= 5;
+      if (rule.type === "weekly") return rule.daysOfWeek && rule.daysOfWeek.indexOf(day) !== -1;
+      return true;
+    }
+
+    function ensureTodayTasks() {
+      var date = todayKey();
+      if (!state.tasksByDate[date]) state.tasksByDate[date] = [];
+
+      var existing = {};
+      for (var i = 0; i < state.tasksByDate[date].length; i++) {
+        existing[state.tasksByDate[date][i].sourceId] = true;
+      }
+
+      for (var j = 0; j < SEED.tasks.length; j++) {
+        var t = SEED.tasks[j];
+        if (isDue(t, date) && !existing[t.id]) {
+          var inst = JSON.parse(JSON.stringify(t));
+          inst.id = date + "_" + t.id;
+          inst.sourceId = t.id;
+          inst.date = date;
+          inst.status = "todo";
+          state.tasksByDate[date].push(inst);
+        }
+      }
+
+      saveState();
+    }
+
+    function todayTasks() {
+      return state.tasksByDate[todayKey()] || [];
+    }
+
+    function stats() {
+      var tasks = todayTasks();
+      var totalXp = 0, doneXp = 0, done = 0, missed = 0, todo = 0;
+      for (var i = 0; i < tasks.length; i++) {
+        totalXp += tasks[i].xp;
+        if (tasks[i].status === "done") { doneXp += tasks[i].xp; done++; }
+        else if (tasks[i].status === "missed") { missed++; }
+        else { todo++; }
+      }
+      return {
+        totalXp: totalXp,
+        doneXp: doneXp,
+        rate: totalXp ? Math.round(doneXp / totalXp * 100) : 0,
+        done: done,
+        missed: missed,
+        todo: todo
+      };
+    }
+
+    function sortTasks(a, b) {
+      var statusOrder = { todo:0, missed:1, done:2 };
+      var priorityOrder = { high:0, middle:1, low:2 };
+      return (statusOrder[a.status] - statusOrder[b.status]) ||
+             (priorityOrder[a.priority] - priorityOrder[b.priority]) ||
+             (b.xp - a.xp);
+    }
+
+    function categoryById(id) {
+      for (var i = 0; i < SEED.categories.length; i++) {
+        if (SEED.categories[i].id === id) return SEED.categories[i];
+      }
+      return null;
+    }
+
+    function htmlEscape(value) {
+      return String(value || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    function renderEverything() {
+      renderHome();
+      renderQuestScreen();
+      renderMissedScreen();
+      renderLibrary();
+      document.getElementById("pageSub").textContent = displayDate(todayKey());
+    }
+
+    function renderHome() {
+      var s = stats();
+      document.getElementById("completionRate").textContent = s.rate + "%";
+      document.getElementById("todayXp").textContent = s.doneXp;
+      document.getElementById("todayTotalXp").textContent = s.totalXp;
+      document.getElementById("doneCount").textContent = s.done;
+      document.getElementById("todoCount").textContent = s.todo;
+      document.getElementById("missedCount").textContent = s.missed;
+
+      var deg = Math.round(s.rate * 3.6);
+      document.getElementById("ring").style.background =
+        "conic-gradient(var(--sage) 0 " + deg + "deg, #e8e4dc " + deg + "deg 360deg)";
+      document.getElementById("xpBar").style.width = s.rate + "%";
+
+      var lifetime = lifetimeXp();
+      var level = Math.floor(lifetime / 500) + 1;
+      document.getElementById("level").textContent = level;
+      document.getElementById("rankName").textContent =
+        level >= 5 ? "先回り名人" : level >= 3 ? "生活防衛員" : "先回り見習い";
+      document.getElementById("nextXp").textContent = level * 500 - lifetime;
+
+      var chips = document.getElementById("timeChips");
+      chips.innerHTML = "";
+      for (var i = 0; i < timingOptions.length; i++) {
+        var opt = timingOptions[i];
+        var btn = document.createElement("button");
+        btn.className = "chip" + (activeTiming === opt[0] ? " active" : "");
+        btn.textContent = opt[1];
+        btn.setAttribute("data-timing", opt[0]);
+        btn.onclick = function() {
+          activeTiming = this.getAttribute("data-timing");
+          renderHome();
+        };
+        chips.appendChild(btn);
+      }
+
+      var list = todayTasks().filter(function(t) {
+        return activeTiming === "all" || t.timing === activeTiming;
+      }).sort(sortTasks);
+
+      document.getElementById("visibleTaskCount").textContent = list.length;
+      var title = "今日の優先タスク";
+      for (var k = 0; k < timingOptions.length; k++) {
+        if (timingOptions[k][0] === activeTiming && activeTiming !== "all") title = timingOptions[k][1] + "のタスク";
+      }
+      document.getElementById("taskSectionTitle").textContent = title;
+
+      var host = document.getElementById("todayTaskList");
+      host.innerHTML = "";
+      if (!list.length) {
+        host.innerHTML = '<div class="empty">この時間帯のタスクはありません。<br>休憩するか、随時タスクを1つ拾う時間です。</div>';
+        return;
+      }
+
+      for (var j = 0; j < list.length; j++) {
+        host.appendChild(taskCard(list[j], true));
+      }
+    }
+
+    function lifetimeXp() {
+      var total = 0;
+      var dates = Object.keys(state.tasksByDate);
+      for (var i = 0; i < dates.length; i++) {
+        var tasks = state.tasksByDate[dates[i]];
+        for (var j = 0; j < tasks.length; j++) {
+          if (tasks[j].status === "done") total += tasks[j].xp;
+        }
+      }
+      return total;
+    }
+
+    function taskCard(task, actions) {
+      var cat = categoryById(task.category);
+      var div = document.createElement("div");
+      div.className = "card task " + task.status;
+      var status = task.status === "done" ? '<span class="pill done">完了</span>' :
+                   task.status === "missed" ? '<span class="pill missed">取り逃がし</span>' : "";
+      div.innerHTML =
+        '<div class="icon">' + iconForCategory(task.category) + '</div>' +
+        '<div>' +
+          '<h3><span>' + htmlEscape(task.title) + '</span><span class="xp num">+' + task.xp + ' XP</span></h3>' +
+          '<p>' + htmlEscape(task.description || task.successDefinition || "") + '</p>' +
+          '<div class="meta">' +
+            '<span class="pill">' + htmlEscape(task.categoryName) + '</span>' +
+            '<span class="pill ' + task.priority + '">' + (priorityLabel[task.priority] || "") + '</span>' +
+            '<span class="pill">' + (timingLabel[task.timing] || "随時") + '</span>' +
+            status +
+          '</div>' +
+        '</div>';
+
+      if (actions) {
+        var action = document.createElement("div");
+        action.className = "actions";
+        var disabled = task.status !== "todo" ? "disabled" : "";
+        action.innerHTML =
+          '<button class="mini-btn primary" ' + disabled + '>完了</button>' +
+          '<button class="mini-btn miss" ' + disabled + '>取り逃がし</button>';
+        action.children[0].onclick = function() { completeTask(task.id); };
+        action.children[1].onclick = function() { missTask(task.id); };
+        div.appendChild(action);
+      }
+
+      return div;
+    }
+
+    function completeTask(id) {
+      var tasks = todayTasks();
+      for (var i = 0; i < tasks.length; i++) {
+        if (tasks[i].id === id && tasks[i].status === "todo") {
+          tasks[i].status = "done";
+          saveState();
+          safeToast("完了：+" + tasks[i].xp + " XP");
+          renderEverything();
+          return;
+        }
+      }
+    }
+
+    function missTask(id) {
+      var tasks = todayTasks();
+      for (var i = 0; i < tasks.length; i++) {
+        if (tasks[i].id === id && tasks[i].status === "todo") {
+          tasks[i].status = "missed";
+          state.missedLog.unshift({
+            id: "miss_" + Date.now(),
+            date: todayKey(),
+            converted: false,
+            task: JSON.parse(JSON.stringify(tasks[i]))
+          });
+          saveState();
+          safeToast("取り逃がし登録しました");
+          renderEverything();
+          return;
+        }
+      }
+    }
+
+    function retryMiss(id) {
+      for (var i = 0; i < state.missedLog.length; i++) {
+        if (state.missedLog[i].id === id && !state.missedLog[i].converted) {
+          state.missedLog[i].converted = true;
+          saveState();
+          safeToast("明日のリトライに追加しました");
+          renderMissedScreen();
+          return;
+        }
+      }
+    }
+
+    function setQuestMode(mode) {
+      questMode = mode;
+      renderQuestScreen();
+    }
+
+    function renderQuestScreen() {
+      document.getElementById("categoryButton").className = questMode === "category" ? "active" : "";
+      document.getElementById("allButton").className = questMode === "all" ? "active" : "";
+      document.getElementById("categoryList").style.display = questMode === "category" ? "grid" : "none";
+      document.getElementById("allTaskList").style.display = questMode === "all" ? "grid" : "none";
+
+      var catHost = document.getElementById("categoryList");
+      catHost.innerHTML = "";
+      for (var i = 0; i < SEED.categories.length; i++) {
+        var cat = SEED.categories[i];
+        var count = 0, invisible = 0;
+        for (var j = 0; j < SEED.tasks.length; j++) {
+          if (SEED.tasks[j].category === cat.id) {
+            count++;
+            if (SEED.tasks[j].isInvisibleTask) invisible++;
+          }
+        }
+        var div = document.createElement("div");
+        div.className = "card category";
+        div.innerHTML =
+          '<div class="big-icon">' + iconForCategory(cat.id) + '</div>' +
+          '<div><h3>' + cat.name + '</h3><p>' + (guideDescriptions[cat.id] || "") + '<br>見えない家事：<span class="num">' + invisible + '</span>件</p></div>' +
+          '<div class="count"><span class="num">' + count + '</span>件</div>';
+        catHost.appendChild(div);
+      }
+
+      var allHost = document.getElementById("allTaskList");
+      allHost.innerHTML = "";
+      for (var k = 0; k < SEED.tasks.length; k++) {
+        var mock = JSON.parse(JSON.stringify(SEED.tasks[k]));
+        mock.id = "master_" + mock.id;
+        mock.status = "todo";
+        allHost.appendChild(taskCard(mock, false));
+      }
+    }
+
+    function renderMissedScreen() {
+      var host = document.getElementById("missedList");
+      document.getElementById("missedLogCount").textContent = state.missedLog.length;
+      host.innerHTML = "";
+      if (!state.missedLog.length) {
+        host.innerHTML = '<div class="empty">まだ取り逃がしはありません。<br>妻が先にやった家事に気づいたら「取り逃がし」で記録します。</div>';
+        return;
+      }
+
+      for (var i = 0; i < state.missedLog.length; i++) {
+        var miss = state.missedLog[i];
+        var card = taskCard(miss.task, false);
+        var action = document.createElement("div");
+        action.className = "actions";
+        action.innerHTML = '<button class="mini-btn primary" ' + (miss.converted ? "disabled" : "") + '>' + (miss.converted ? "追加済み" : "明日リトライ") + '</button>';
+        action.children[0].setAttribute("data-id", miss.id);
+        action.children[0].onclick = function() { retryMiss(this.getAttribute("data-id")); };
+        card.appendChild(action);
+        host.appendChild(card);
+      }
+    }
+
+    function renderLibrary() {
+      var host = document.getElementById("guideList");
+      host.innerHTML = "";
+      for (var i = 0; i < SEED.categories.length; i++) {
+        var cat = SEED.categories[i];
+        var count = 0;
+        for (var j = 0; j < SEED.tasks.length; j++) {
+          if (SEED.tasks[j].category === cat.id) count++;
+        }
+        var div = document.createElement("div");
+        div.className = "card category";
+        div.innerHTML =
+          '<div class="big-icon">' + iconForCategory(cat.id) + '</div>' +
+          '<div><h3>' + cat.name + '</h3><p>' + (guideDescriptions[cat.id] || "") + '<br>初期タスク：<span class="num">' + count + '</span>件</p></div>' +
+          '<div class="count">›</div>';
+        host.appendChild(div);
+      }
+    }
+
+    function renderFallback() {
+      document.getElementById("todayTaskList").innerHTML =
+        '<div class="empty">初期化に失敗しました。<br>ただし下のタブ切り替えは動作確認できます。</div>';
+    }
+
+    function resetApp() {
+      try {
+        localStorage.removeItem(STORAGE_KEY);
+      } catch(e) {}
+      state = loadState();
+      ensureTodayTasks();
+      renderEverything();
+      safeToast("リセットしました");
+    }
+
+    window.addEventListener("load", boot);
+  </script>
+</body>
+</html>

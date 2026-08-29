@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>v0.2 UI concept — 静かな作戦室</title>
+<style>
+:root{
+  --bg:#15171b; --surface:#1d2026; --card:#252932; --card-2:#2b3039;
+  --line:#353b46; --ink:#eae6df; --ink-2:#b6bcc5; --muted:#8b929c;
+  --sage:#8fb09a; --terracotta:#d68f6d; --gold:#d8b46a;
+  --r:18px; --tap:46px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  background:var(--bg); color:var(--ink);
+  font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Noto Sans JP",sans-serif;
+  -webkit-font-smoothing:antialiased; line-height:1.6;
+}
+button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
+
+/* ---------- desktop frame ---------- */
+.stage{display:flex;gap:44px;justify-content:center;align-items:flex-start;padding:40px 24px 64px;flex-wrap:wrap}
+.notes{width:300px;padding-top:8px}
+.notes h1{font-size:22px;letter-spacing:.04em;margin-bottom:4px}
+.notes .sub{color:var(--muted);font-size:13px;margin-bottom:26px}
+.notes h2{font-size:11px;letter-spacing:.16em;color:var(--muted);margin:0 0 12px}
+.intent{border-left:2px solid var(--sage);padding:2px 0 2px 12px;margin-bottom:16px;font-size:13px;color:var(--ink-2)}
+.intent b{display:block;color:var(--ink);font-size:13px;margin-bottom:2px}
+.tokens{display:flex;flex-direction:column;gap:8px;margin-top:6px}
+.token{display:flex;align-items:center;gap:10px;font-size:12px;color:var(--ink-2)}
+.sw{width:22px;height:22px;border-radius:6px;border:1px solid var(--line);flex:none}
+.switcher{margin:30px 0 0;display:flex;flex-wrap:wrap;gap:8px}
+.switcher button{
+  border:1px solid var(--line);border-radius:999px;padding:9px 14px;font-size:12.5px;
+  color:var(--ink-2);background:var(--surface);min-height:38px;
+}
+.switcher button[aria-pressed="true"]{background:var(--sage);color:#16211a;border-color:var(--sage);font-weight:600}
+
+/* ---------- phone ---------- */
+.phone{
+  width:390px;height:844px;flex:none;background:var(--surface);
+  border-radius:38px;border:1px solid var(--line);overflow:hidden;
+  display:flex;flex-direction:column;position:relative;
+  box-shadow:0 26px 60px rgba(0,0,0,.45);
+}
+.screen{flex:1;overflow-y:auto;padding:22px 20px 12px;display:none}
+.screen.on{display:block}
+
+.topline{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:18px}
+.date{font-size:12.5px;color:var(--muted);letter-spacing:.06em}
+.day-chip{
+  display:inline-flex;align-items:center;gap:7px;min-height:var(--tap);
+  border:1px solid var(--line);border-radius:999px;padding:0 16px;background:var(--card);font-size:14px;
+}
+.day-chip .dot{width:8px;height:8px;border-radius:50%;background:var(--gold);flex:none}
+.day-chip .edit{color:var(--muted);font-size:12px}
+
+.lead{font-size:19px;font-weight:600;letter-spacing:.02em;margin:2px 0 4px}
+.lead-sub{font-size:13.5px;color:var(--muted);margin-bottom:18px}
+
+/* task card */
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:17px 16px 14px;margin-bottom:14px}
+.card h3{font-size:17px;font-weight:600;letter-spacing:.01em;margin-bottom:12px}
+.meta{display:flex;gap:9px;font-size:14px;color:var(--ink-2);margin-bottom:9px;align-items:flex-start}
+.meta .tag{
+  flex:none;font-size:11px;letter-spacing:.06em;color:var(--muted);
+  border:1px solid var(--line);border-radius:6px;padding:2px 6px;margin-top:2px;
+}
+.meta.why .tag{color:var(--gold);border-color:#5a4a2c}
+.meta.done .tag{color:var(--sage);border-color:#3b5244}
+.est{font-size:12.5px;color:var(--muted);margin:12px 0 13px}
+.btn{
+  display:flex;align-items:center;justify-content:center;width:100%;min-height:var(--tap);
+  border-radius:12px;font-size:15px;font-weight:600;
+}
+.btn.primary{background:var(--sage);color:#16211a}
+.btn.ghost{border:1px solid var(--line);color:var(--ink-2);font-weight:500}
+.btn-row{display:flex;gap:9px}
+.btn-row .btn{font-size:14px}
+
+/* notice / focus */
+.focus{
+  background:linear-gradient(160deg,#2c3239,#242830);border:1px solid #3d4652;
+  border-radius:22px;padding:22px 18px 18px;margin-bottom:14px;
+}
+.focus .kicker{font-size:11px;letter-spacing:.18em;color:var(--gold);margin-bottom:12px}
+.focus h3{font-size:23px;line-height:1.45;font-weight:600;margin-bottom:16px}
+.focus .meta{font-size:14px}
+.focus .actions{margin-top:18px;display:flex;flex-direction:column;gap:9px}
+
+.rest{text-align:center;padding:54px 14px 30px}
+.rest .mark{width:56px;height:56px;margin:0 auto 22px;border-radius:50%;border:1px solid var(--line);
+  display:flex;align-items:center;justify-content:center;background:var(--card)}
+.rest .mark span{width:22px;height:2px;background:var(--sage);border-radius:2px}
+.rest h3{font-size:20px;font-weight:600;margin-bottom:12px}
+.rest p{font-size:14px;color:var(--ink-2);margin-bottom:8px}
+.rest .fine{font-size:13px;color:var(--muted)}
+
+/* done list */
+.done-head{font-size:11px;letter-spacing:.16em;color:var(--muted);margin:26px 0 12px}
+.done-item{display:flex;gap:11px;align-items:flex-start;padding:13px 14px;background:var(--card);
+  border:1px solid var(--line);border-radius:14px;margin-bottom:9px;font-size:14.5px}
+.done-item .tick{color:var(--sage);flex:none;font-size:13px;margin-top:1px}
+.done-item.fresh{border-color:#42604f;background:var(--card-2)}
+.undo{display:flex;align-items:center;justify-content:space-between;gap:12px;
+  border:1px dashed var(--line);border-radius:14px;padding:10px 12px 10px 14px;margin-top:4px}
+.undo span{font-size:13px;color:var(--muted)}
+.undo button{min-height:40px;padding:0 16px;border:1px solid var(--line);border-radius:10px;font-size:14px}
+
+/* 先読み */
+.sec-head{display:flex;align-items:baseline;gap:10px;margin:22px 0 12px}
+.sec-head h3{font-size:14px;font-weight:600;letter-spacing:.04em}
+.sec-head .n{font-size:12px;color:var(--muted)}
+.seed{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:15px 15px 13px;margin-bottom:11px}
+.seed h4{font-size:15.5px;font-weight:600;margin-bottom:8px}
+.seed .why{font-size:13.5px;color:var(--ink-2);margin-bottom:13px}
+.seed .btn{min-height:42px;font-size:13.5px}
+.hint{font-size:12.5px;color:var(--muted);border-top:1px solid var(--line);padding-top:13px;margin-top:16px}
+
+/* notice bar (気づいた) */
+.notice{
+  display:flex;align-items:center;gap:10px;width:100%;min-height:var(--tap);
+  border:1px dashed var(--line);border-radius:14px;padding:0 15px;margin:6px 0 10px;
+  font-size:13.5px;color:var(--ink-2);text-align:left;
+}
+.notice .plus{color:var(--terracotta);font-size:16px;flex:none}
+
+/* tabs */
+.tabs{display:flex;border-top:1px solid var(--line);background:var(--surface);padding:8px 6px 26px;flex:none}
+.tab{flex:1;min-height:var(--tap);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;
+  font-size:11px;color:var(--muted);letter-spacing:.04em}
+.tab .ic{width:17px;height:17px;border:1.5px solid currentColor;border-radius:5px}
+.tab[aria-current="page"]{color:var(--ink)}
+.tab[aria-current="page"] .ic{background:var(--sage);border-color:var(--sage)}
+
+@media (prefers-reduced-motion:no-preference){
+  .screen.on{animation:fade .18s ease-out}
+  @keyframes fade{from{opacity:.4}to{opacity:1}}
+}
+@media (max-width:900px){
+  .stage{padding:0;gap:0}
+  .notes{display:none}
+  .phone{width:100%;height:100dvh;border:none;border-radius:0;box-shadow:none}
+  .mobile-switch{display:flex}
+}
+.mobile-switch{display:none;gap:6px;padding:8px 12px;overflow-x:auto;border-bottom:1px solid var(--line)}
+.mobile-switch button{border:1px solid var(--line);border-radius:999px;padding:7px 12px;font-size:12px;color:var(--ink-2);white-space:nowrap;min-height:38px}
+.mobile-switch button[aria-pressed="true"]{background:var(--sage);color:#16211a}
+</style>
+</head>
+<body>
+
+<div class="stage">
+  <aside class="notes">
+    <h1>静かな作戦室</h1>
+    <p class="sub">v0.2 UI concept / 今日・先読み</p>
+
+    <h2>意図</h2>
+    <div class="intent"><b>一番大きいのは「次の一手」</b>スコアではなくタスク名が最大の文字。視線が迷う余地を作らない。</div>
+    <div class="intent"><b>理由と終わりを1行ずつ</b>「なぜ今か」「どこで終わりか」を添え、判断基準ごと持ち帰らせる。</div>
+    <div class="intent"><b>肩を持たない配色</b>暗く落ち着いた面で夜間の刺激を抑え、数値・ゲージ・称賛演出を一切置かない。</div>
+
+    <h2>カラートークン</h2>
+    <div class="tokens">
+      <div class="token"><i class="sw" style="background:#1d2026"></i>surface #1D2026 — 面</div>
+      <div class="token"><i class="sw" style="background:#252932"></i>card #252932 — カード</div>
+      <div class="token"><i class="sw" style="background:#8fb09a"></i>sage #8FB09A — 進む操作</div>
+      <div class="token"><i class="sw" style="background:#d8b46a"></i>gold #D8B46A — 理由・余力</div>
+      <div class="token"><i class="sw" style="background:#d68f6d"></i>terracotta #D68F6D — 自分の気づき</div>
+      <div class="token"><i class="sw" style="background:#eae6df"></i>ink #EAE6DF — 本文14px以上</div>
+    </div>
+
+    <div class="switcher" id="switcher"></div>
+  </aside>
+
+  <div class="phone">
+    <div class="mobile-switch" id="switcher-m"></div>
+
+    <!-- 候補 -->
+    <section class="screen on" data-state="candidates">
+      <div class="topline">
+        <span class="date">7月23日 火</span>
+      </div>
+      <button class="day-chip"><i class="dot"></i>回す日<span class="edit">変更</span></button>
+      <p class="lead" style="margin-top:18px">今日の候補は2件</p>
+      <p class="lead-sub">やる順番は自分で選ぶ。選ばなかった分は残らない。</p>
+
+      <article class="card">
+        <h3>夜間セットを補充</h3>
+        <div class="meta why"><span class="tag">理由</span><span>寝る前にそろえておくと、夜中に探さずに済む</span></div>
+        <div class="meta done"><span class="tag">終わり</span><span>オムツ、ガーゼ、着替えが所定数そろった</span></div>
+        <p class="est">目安 5分</p>
+        <button class="btn primary">今やる</button>
+      </article>
+
+      <article class="card">
+        <h3>オムツの次サイズを確認</h3>
+        <div class="meta why"><span class="tag">理由</span><span>生後3か月。サイズアップの兆候を確認する時期</span></div>
+        <div class="meta done"><span class="tag">終わり</span><span>体重・跡・漏れを確認し、買うか保留を決めた</span></div>
+        <p class="est">目安 3分</p>
+        <div class="btn-row">
+          <button class="btn primary">今やる</button>
+          <button class="btn ghost">あとで</button>
+        </div>
+      </article>
+
+      <button class="notice"><i class="plus">＋</i>提案になかったことに気づいた</button>
+    </section>
+
+    <!-- 実行中 -->
+    <section class="screen" data-state="running">
+      <div class="topline"><span class="date">7月23日 火</span></div>
+      <div class="focus">
+        <p class="kicker">今やっていること</p>
+        <h3>夜間セットを補充</h3>
+        <div class="meta done"><span class="tag">終わり</span><span>オムツ、ガーゼ、着替えが所定数そろった</span></div>
+        <div class="actions">
+          <button class="btn primary">完了</button>
+          <div class="btn-row">
+            <button class="btn ghost">あとで</button>
+            <button class="btn ghost">今日は見送る</button>
+          </div>
+        </div>
+      </div>
+      <p class="lead-sub" style="margin:16px 0 10px">残りの候補 1件 ・ オムツの次サイズを確認</p>
+      <button class="notice"><i class="plus">＋</i>提案になかったことに気づいた</button>
+    </section>
+
+    <!-- 守る日0件 -->
+    <section class="screen" data-state="rest">
+      <div class="topline"><span class="date">7月23日 火</span></div>
+      <button class="day-chip"><i class="dot" style="background:var(--terracotta)"></i>守る日<span class="edit">変更</span></button>
+      <div class="rest">
+        <div class="mark"><span></span></div>
+        <h3>今日は増やさなくて大丈夫</h3>
+        <p>眠れていない日は、家庭が回っているだけで十分です。</p>
+        <p class="fine">今日出さなかった候補は、明日に持ち越されません。<br>気が向いたときだけ、先を見に来てください。</p>
+      </div>
+      <button class="btn ghost" style="min-height:44px">先読みを見る</button>
+      <div style="height:14px"></div>
+      <button class="notice"><i class="plus">＋</i>提案になかったことに気づいた</button>
+    </section>
+
+    <!-- 完了直後 -->
+    <section class="screen" data-state="completed">
+      <div class="topline"><span class="date">7月23日 火</span></div>
+      <button class="day-chip"><i class="dot"></i>回す日<span class="edit">変更</span></button>
+
+      <p class="done-head">今日できたこと</p>
+      <div class="done-item fresh"><i class="tick">✓</i><span>夜間セットを補充</span></div>
+      <div class="undo"><span>1件を追加しました</span><button>取り消す</button></div>
+      <div class="done-item" style="margin-top:12px"><i class="tick">✓</i><span>洗濯を定位置まで戻した</span></div>
+
+      <p class="lead" style="margin-top:26px;font-size:17px">残りの候補</p>
+      <article class="card" style="margin-top:12px">
+        <h3>オムツの次サイズを確認</h3>
+        <div class="meta why"><span class="tag">理由</span><span>生後3か月。サイズアップの兆候を確認する時期</span></div>
+        <div class="btn-row" style="margin-top:12px">
+          <button class="btn primary">今やる</button>
+          <button class="btn ghost">今日は見送る</button>
+        </div>
+      </article>
+
+      <button class="notice"><i class="plus">＋</i>提案になかったことに気づいた</button>
+    </section>
+
+    <!-- 先読み -->
+    <section class="screen" data-state="ahead">
+      <div class="topline"><span class="date">先読み</span></div>
+      <p class="lead">早めに持っておくこと</p>
+      <p class="lead-sub">選ぶまで今日には入りません。</p>
+
+      <div class="sec-head"><h3>明日</h3><span class="n">2件</span></div>
+      <article class="seed">
+        <h4>金曜の保育園セット</h4>
+        <p class="why">明日は布団カバーの持ち帰り日</p>
+        <div class="btn-row">
+          <button class="btn primary">今日準備へ入れる</button>
+          <button class="btn ghost">そのまま</button>
+        </div>
+      </article>
+      <article class="seed">
+        <h4>燃えるゴミを出す準備</h4>
+        <p class="why">朝は抱っこで手が塞がりやすい</p>
+        <div class="btn-row">
+          <button class="btn primary">今日準備へ入れる</button>
+          <button class="btn ghost">そのまま</button>
+        </div>
+      </article>
+
+      <div class="sec-head"><h3>今週</h3><span class="n">2件</span></div>
+      <article class="seed">
+        <h4>3〜4か月健診の書類</h4>
+        <p class="why">受診票の記入欄が事前記入。当日の朝に書くと遅れやすい</p>
+        <div class="btn-row">
+          <button class="btn primary">今日準備へ入れる</button>
+          <button class="btn ghost">後で見る</button>
+        </div>
+      </article>
+      <article class="seed">
+        <h4>ミルクとオムツの残量を見る</h4>
+        <p class="why">前回の補充から2週間</p>
+        <div class="btn-row">
+          <button class="btn primary">今日準備へ入れる</button>
+          <button class="btn ghost">今は不要</button>
+        </div>
+      </article>
+
+      <p class="hint">この先：寝返り前の安全対策、離乳の準備。時期が近づいたら「今週」へ上がります。</p>
+    </section>
+
+    <nav class="tabs">
+      <button class="tab" data-tab="today" aria-current="page"><i class="ic"></i>今日</button>
+      <button class="tab" data-tab="ahead"><i class="ic"></i>先読み</button>
+      <button class="tab"><i class="ic"></i>担当</button>
+      <button class="tab"><i class="ic"></i>成長</button>
+    </nav>
+  </div>
+</div>
+
+<script>
+(function(){
+  var states = [
+    ['candidates','候補'],
+    ['running','実行中'],
+    ['rest','守る日0件'],
+    ['completed','完了直後'],
+    ['ahead','先読み']
+  ];
+  var screens = document.querySelectorAll('.screen');
+  var tabs = document.querySelectorAll('.tab');
+
+  function show(name){
+    screens.forEach(function(s){ s.classList.toggle('on', s.dataset.state === name); });
+    document.querySelectorAll('[data-go]').forEach(function(b){
+      b.setAttribute('aria-pressed', String(b.dataset.go === name));
+    });
+    tabs.forEach(function(t){
+      var isAhead = name === 'ahead';
+      var mine = t.dataset.tab === (isAhead ? 'ahead' : 'today');
+      if (mine) t.setAttribute('aria-current','page'); else t.removeAttribute('aria-current');
+    });
+    document.querySelector('.screen.on').scrollTop = 0;
+  }
+
+  ['switcher','switcher-m'].forEach(function(id){
+    var host = document.getElementById(id);
+    states.forEach(function(s){
+      var b = document.createElement('button');
+      b.textContent = s[1];
+      b.dataset.go = s[0];
+      b.setAttribute('aria-pressed', String(s[0] === 'candidates'));
+      b.addEventListener('click', function(){ show(s[0]); });
+      host.appendChild(b);
+    });
+  });
+
+  tabs.forEach(function(t){
+    if (!t.dataset.tab) return;
+    t.addEventListener('click', function(){
+      show(t.dataset.tab === 'ahead' ? 'ahead' : 'candidates');
+    });
+  });
+
+  document.querySelectorAll('.rest .btn.ghost').forEach(function(b){
+    b.addEventListener('click', function(){ show('ahead'); });
+  });
+})();
+</script>
+</body>
+</html>
