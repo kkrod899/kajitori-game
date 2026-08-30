@@ -79,9 +79,9 @@
         "README.md",
         "reviews/CLAUDE_REVIEW_PACKET_V0_2_R2.md"
       ],
-      "next": "ChatGPTのGitHub Appに対象リポジトリのアクセスを許可する",
+      "next": "スマートフォン準備後にGitHub Mobile本人確認を再送する",
       "waiting_for": null,
-      "decision_needed": "ChatGPTのGitHub Appへ非公開リポジトリの読み取りアクセスを追加してよいか確認する",
+      "decision_needed": "GitHub Mobileの確認を受け取れる状態で再試行する",
       "steps": [
         {
           "t": "ChatGPTのGitHub Appへ対象リポジトリのアクセスを許可する",
@@ -101,6 +101,10 @@
         {
           "d": "2026-08-30",
           "t": "ChatGPTのGitHub連携から新規リポジトリがまだ検索できないことを確認した"
+        },
+        {
+          "d": "2026-08-30",
+          "t": "アクセス追加の許可を受けてGitHub Mobile本人確認を送ったが、承認前に時間切れとなり権限は未変更のまま"
         }
       ],
       "conclusion": "GitHub共有済み。ChatGPTのアクセス許可待ち",
