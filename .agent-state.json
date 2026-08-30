@@ -69,28 +69,28 @@
       "id": "W2",
       "title": "ChatGPTのGitHubアクセス設定",
       "short": "ChatGPTで再開",
-      "status": "active",
+      "status": "done",
       "why": "ChatGPTのチャットが非公開リポジトリの正本文書を直接参照できるようにする",
       "success": "ChatGPTから対象リポジトリを検索でき、R2事後レビューを開始できる",
       "drop_if": null,
-      "owner": "user",
+      "owner": "codex",
       "paths": [
         "HANDOFF.md",
         "README.md",
         "reviews/CLAUDE_REVIEW_PACKET_V0_2_R2.md"
       ],
-      "next": "スマートフォン準備後にGitHub Mobile本人確認を再送する",
+      "next": "完了。次はW3のR2事後レビューを行う",
       "waiting_for": null,
-      "decision_needed": "GitHub Mobileの確認を受け取れる状態で再試行する",
+      "decision_needed": null,
       "steps": [
         {
           "t": "ChatGPTのGitHub Appへ対象リポジトリのアクセスを許可する",
-          "done": false,
+          "done": true,
           "by_user": true
         },
         {
           "t": "ChatGPTから対象リポジトリを検索できることを確認する",
-          "done": false
+          "done": true
         }
       ],
       "unlocks": [],
@@ -105,10 +105,57 @@
         {
           "d": "2026-08-30",
           "t": "アクセス追加の許可を受けてGitHub Mobile本人確認を送ったが、承認前に時間切れとなり権限は未変更のまま"
+        },
+        {
+          "d": "2026-08-30",
+          "t": "本人確認を再実行し、ChatGPT連携へ対象リポジトリだけを追加して、正本文書を読み取れることまで確認した"
         }
       ],
-      "conclusion": "GitHub共有済み。ChatGPTのアクセス許可待ち",
-      "narrative": "非公開GitHubへの保存は終わっている。ChatGPT側から正本を読めるようにするには、新しいリポジトリへのアクセス許可を追加する必要がある。許可後はレビューから再開し、アプリ本体はまだ変更しない。",
+      "conclusion": "ChatGPTから正本文書を読める状態",
+      "narrative": "ChatGPT連携へ対象リポジトリだけを追加し、検索と正本文書の読み取りまで確認した。既存の許可対象は維持している。次は新しいチャットで事後レビューから再開できる。",
+      "narrative_updated_at": "2026-08-30"
+    },
+    {
+      "id": "W3",
+      "title": "ChatGPTでv0.2二層コンセプトのR2事後レビュー",
+      "short": "ChatGPT事後レビュー",
+      "status": "active",
+      "why": "実装前に二層コンセプトの文書上の欠陥と境界リスクを独立して確認する",
+      "success": "指定パケットどおりのレビュー結果が得られ、各指摘へ対応判断できる",
+      "drop_if": null,
+      "owner": "user",
+      "paths": [
+        "docs/V0_2_UX_SPEC.md",
+        "docs/PRODUCT_BRIEF.md",
+        "docs/DECISIONS.md",
+        "reviews/CLAUDE_REVIEW_PACKET_V0_2_R2.md"
+      ],
+      "next": "ChatGPTの新しいチャットでREADME記載の依頼文を送る",
+      "waiting_for": null,
+      "decision_needed": null,
+      "steps": [
+        {
+          "t": "R2レビューを実行する",
+          "done": false,
+          "by_user": true
+        },
+        {
+          "t": "各FindingへAccepted、Rejected、Deferredで応答する",
+          "done": false
+        }
+      ],
+      "unlocks": [],
+      "gate": null,
+      "metrics": [],
+      "context": "v0.2の二層コンセプト文書とレビュー用パケットは作成済みで、アプリ本体はまだ変更していない。GitHub共有とChatGPTの対象リポジトリアクセスが整い、ChatGPTから正本文書を直接読めることを確認した。次は指定範囲だけを読む独立事後レビューを行い、実装前ブロッカーを整理する。レビュー完了前に旧HTMLへ場当たり的な修正は行わない。",
+      "log": [
+        {
+          "d": "2026-08-30",
+          "t": "ChatGPT側で正本を参照してR2事後レビューを開始できる状態になった"
+        }
+      ],
+      "conclusion": "ChatGPTでR2事後レビューを始められる",
+      "narrative": "GitHub連携と正本文書の読み取り確認は完了した。次は新しいChatGPTチャットで指定パケットに沿った事後レビューだけを行う。アプリ本体はまだ変更しない。",
       "narrative_updated_at": "2026-08-30"
     }
   ]

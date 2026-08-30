@@ -32,7 +32,7 @@
 | GitHub | `https://github.com/kkrod899/kajitori-game`（Private） |
 | ローカル | `main` が `origin/main` を追跡 |
 | 機密情報チェック | 代表的なトークン・秘密鍵・APIキー形式の一致なし |
-| ChatGPTのGitHubアクセス | 新規リポジトリはまだ取得結果に現れていない。ChatGPTのGitHub Appで対象リポジトリへのアクセス許可が必要 |
+| ChatGPTのGitHubアクセス | ChatGPT Codex Connectorへ個別許可済み。リポジトリ検索と`HANDOFF.md`の読み取りを確認済み |
 
 ChatGPT側で再開するときは、GitHub Appへこのリポジトリのアクセスを許可した後、次の順で正本を読む。
 
@@ -60,7 +60,7 @@ ChatGPT側で再開するときは、GitHub Appへこのリポジトリのアク
 
 ## 次の推奨作業
 
-まずChatGPTのGitHub Appへ `kkrod899/kajitori-game` のアクセスを許可する。その後、二層コンセプト反映後の文書を事後レビューする。アプリ本体と既存プロトタイプはまだ変更しない。
+ChatGPTの新しいチャットで、二層コンセプト反映後の文書を事後レビューする。アプリ本体と既存プロトタイプはまだ変更しない。
 
 Claudeへ渡す文面:
 
