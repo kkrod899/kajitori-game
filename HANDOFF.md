@@ -34,7 +34,7 @@
 | 機密情報チェック | 代表的なトークン・秘密鍵・APIキー形式の一致なし |
 | ChatGPTのGitHubアクセス | ChatGPT Codex Connectorへ個別許可済み。リポジトリ検索と`HANDOFF.md`の読み取りを確認済み |
 
-ChatGPT側で再開するときは、GitHub Appへこのリポジトリのアクセスを許可した後、次の順で正本を読む。
+ChatGPT側で再開するときは、接続済みのGitHub Appからこのリポジトリを参照し、次の順で正本を読む。
 
 1. `HANDOFF.md`
 2. `docs/PRODUCT_BRIEF.md`
