@@ -166,7 +166,7 @@
       "id": "W4",
       "title": "スマホURL公開導線の準備",
       "short": "スマホURL化",
-      "status": "active",
+      "status": "done",
       "why": "既存HTMLを壊さず、Macやターミナルなしでスマホから開ける入口を用意する",
       "success": "正本に静的配信とホーム画面起動の設定が揃い、公開範囲を確認したうえで一度だけ有効化できる",
       "drop_if": "公開範囲を保てず、ユーザーが公開URLを明示的に許可しない場合",
@@ -187,7 +187,7 @@
         "HANDOFF.md",
         ".agent-state.json"
       ],
-      "next": "監査結果を反映してリポジトリ公開とPages有効化を行う",
+      "next": "公開URLをスマホでホーム画面に追加し、7〜14日の実生活テストを始める",
       "waiting_for": null,
       "decision_needed": null,
       "steps": [
@@ -214,7 +214,7 @@
         },
         {
           "t": "選択に沿ってGitHub Pagesまたは代替ホスティングを一度だけ有効化する",
-          "done": false,
+          "done": true,
           "by_user": true
         }
       ],
@@ -241,7 +241,7 @@
           "zero_if_missing": false
         }
       ],
-      "context": "現行アプリはv0.2 Slice 01実装済みの1ファイルHTMLで、既存キー`kajitori_stable_mvp_v2`と旧rootデータを保持する。今回の案件は本体の状態遷移や保存形式を変更せず、URL入口・ホーム画面起動・キャッシュ補助を追加する配信準備に限定する。GitHub Pagesは静的配信に向くが、個人アカウントでは非公開リポジトリでもサイトが公開になり得るため、公開操作はユーザーの選択を待つ。",
+      "context": "現行アプリはv0.2 Slice 01実装済みの1ファイルHTMLで、既存キー`kajitori_stable_mvp_v2`と旧rootデータを保持する。今回の案件は本体の状態遷移や保存形式を変更せず、URL入口・ホーム画面起動・キャッシュ補助を追加する配信準備に限定した。公開前監査後にユーザーの許可を得てリポジトリをPublicへ変更し、GitHub PagesをGitHub Actions方式で一度公開した。",
       "log": [
         {
           "d": "2026-09-04",
@@ -254,11 +254,19 @@
         {
           "d": "2026-09-04",
           "t": "現行v0.2の保存キーを維持した入口・PWA設定・手動Pagesワークフローを追加し、スマホ幅と再読み込み後の保存状態を確認した"
+        },
+        {
+          "d": "2026-09-05",
+          "t": "監査後のユーザー許可に沿ってリポジトリをPublicへ変更し、PagesのGitHub Actions方式を保存した"
+        },
+        {
+          "d": "2026-09-05",
+          "t": "Pagesワークフロー#1のSuccessと公開URLからのv0.2表示、standalone manifest、起動先、アイコンを確認した"
         }
       ],
-      "conclusion": "スマホURL化の準備が完了、公開は判断待ち",
-      "narrative": "現行v0.2 Slice 01の状態遷移と保存データを残したまま、スマホで開く入口、ホーム画面起動設定、キャッシュ補助を追加した。公開サイトになる可能性があるため、Pagesワークフローは手動実行に留め、公開操作は選択が決まるまで行わない。",
-      "narrative_updated_at": "2026-09-04"
+      "conclusion": "スマホURL公開とPages配信が完了",
+      "narrative": "現行v0.2 Slice 01の状態遷移、保存データ、保存キーを残したまま、スマホで開く入口、ホーム画面起動設定、キャッシュ補助を公開した。公開前の現行ツリー・履歴監査後にユーザーの許可を得てリポジトリをPublicへ変更し、Pagesワークフロー#1のSuccessと公開URL上のアプリ表示を確認した。",
+      "narrative_updated_at": "2026-09-05"
     },
     {
       "id": "W5",
@@ -306,7 +314,7 @@
         "reviews/TEMPLATE.md",
         "sw.js"
       ],
-      "next": "リポジトリを公開し、Pagesを一度だけ有効化する",
+      "next": "公開後の更新でも秘密情報を追加しない",
       "waiting_for": null,
       "decision_needed": null,
       "steps": [

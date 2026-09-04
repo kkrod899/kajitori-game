@@ -1,6 +1,6 @@
 # Handoff
 
-最終更新: 2026-09-04 / Codex
+最終更新: 2026-09-05 / Codex
 
 ## 現在地
 
@@ -11,7 +11,7 @@
 | v0.2の核 | 状態主役、余力0〜3件、利用者が選ぶ現在の一手、静的先読み、証拠イベント |
 | 旧初期データ | 8カテゴリ・50タスクの保存データは保持。v0.2では全面移植せず限定テンプレートで核を検証 |
 | 保存 | ブラウザlocalStorage。既存キー`kajitori_stable_mvp_v2`を維持し、`v02`名前空間を追加 |
-| Git | Private repository `kkrod899/kajitori-game` / `main` |
+| Git | Public repository `kkrod899/kajitori-game` / `main` |
 | 共有思想 | `docs/PRODUCT_BRIEF.md` |
 | 実装仕様 | `docs/V0_2_UX_SPEC.md` — Slice 01 implemented / post-review Ready |
 | Slice定義 | `docs/V0_2_SLICE_01.md` |
@@ -20,7 +20,7 @@
 | 実装後レビュー | `reviews/2026-08-30-0004-chatgpt-v0-2-slice-01-post.md` — **Ready / P0・P1なし** |
 | Decision | D-020〜D-023をAcceptedで追加。D-019名称変更はProposedのまま |
 | 現在のフェーズ | 機能追加より先に、主要利用者本人による7〜14日実生活テストへ進む |
-| スマホURL化 | URL入口、ホーム画面起動、オフライン補助、手動Pagesワークフローを準備済み。公開は未実施 |
+| スマホURL化 | GitHub Pages公開済み。`https://kkrod899.github.io/kajitori-game/` から現行v0.2を起動できる |
 
 ## 2026-08-30に完了したこと
 
@@ -149,6 +149,24 @@ MVP肥大対策として、担当領域の選択・認定と通知設定UIをLat
 
 R2レビューは完了済みなので、次回はR2を再実行しない。実利用フィードバックがある場合は、その観察を正本として次Sliceの定義から再開する。
 
+## 2026-09-05に完了したこと
+
+### 3. スマホURL公開
+
+公開前の現行ツリー・到達可能な履歴の監査で、固定パスワード・APIキー・秘密トークン・秘密鍵は確認されなかったため、ユーザーの許可に沿って公開した。
+
+| 項目 | 確認結果 |
+|---|---|
+| リポジトリ | `kkrod899/kajitori-game` をPublicへ変更 |
+| Pages公開元 | GitHub Actions |
+| ワークフロー | [Publish the app to GitHub Pages #1](https://github.com/kkrod899/kajitori-game/actions/runs/33923047647) — Success |
+| 公開URL | [https://kkrod899.github.io/kajitori-game/](https://kkrod899.github.io/kajitori-game/) |
+| 表示確認 | 公開URLから`家事取りゲーム v0.2`を表示し、初回設定画面まで確認 |
+| ホーム画面起動 | 公開manifestで`display: standalone`、起動先、180/192/512pxアイコンを確認 |
+| 保存形式 | アプリ本体と`kajitori_stable_mvp_v2`は変更なし |
+
+この公開方式では、リポジトリのソース・文書・レビュー・案件状態は誰でも閲覧できる。一方、利用データはサーバーへ送られず、URLを知るだけで他端末のlocalStorageを読める状態ではない。同じ端末・同じブラウザを使える人には保存データが見える点は残る。
+
 ## スマホURL化の現在地
 
 | 項目 | 状態 |
@@ -157,10 +175,11 @@ R2レビューは完了済みなので、次回はR2を再実行しない。実�
 | ホーム画面 | `manifest.webmanifest`、iPhone用メタデータ、180/192/512pxアイコンを追加 |
 | オフライン補助 | 同じ端末で一度開いた後に、キャッシュ済みのアプリ本体を再表示できるservice workerを追加 |
 | 公開ワークフロー | `.github/workflows/pages.yml` は手動実行だけ。アプリ用ファイルだけを配信し、文書・レビュー・状態ファイルは含めない |
-| 公開状態 | GitHub Pagesはまだ有効化していない。個人アカウントでは非公開リポジトリでもサイトが公開になり得るため、公開範囲の判断待ち |
+| 公開状態 | GitHub PagesをGitHub Actionsから有効化済み。ワークフロー#1がSuccess |
+| 公開URL | `https://kkrod899.github.io/kajitori-game/`。リポジトリとPagesサイトは公開範囲 |
 | データ | 現行v0.2の保存キー `kajitori_stable_mvp_v2` は維持。以前の `file://` 保存データはURL版へ自動移行しない |
 
-詳細な一度だけの公開操作と、非公開ホスティングへ切り替える場合の境界は `docs/MOBILE_ACCESS.md` に記載した。GitHub Pagesの公開範囲は [GitHub公式ドキュメント](https://docs.github.com/en/enterprise-cloud@latest/pages/getting-started-with-github-pages/securing-your-github-pages-site-with-https) を確認する。
+公開状態、スマホでの開き方、保存データの境界は `docs/MOBILE_ACCESS.md` に記載した。非公開サイトが必要になった場合は、GitHub Pagesをその用途に使わず、認証付きホスティングを別途選ぶ。
 
 ## 未決定事項
 
