@@ -1,13 +1,13 @@
 # Handoff
 
-最終更新: 2026-08-30 / Codex
+最終更新: 2026-09-04 / Codex
 
 ## 現在地
 
 | 項目 | 状態 |
 |---|---|
 | プロダクト | 家事取りゲーム HTMLモック |
-| 実装 | `kajitori_minimal_pictogram_compact.html` 1ファイル |
+| 実装 | `kajitori_minimal_pictogram_compact.html` 1ファイル（v0.2本体機能は未着手） |
 | 初期データ | 8カテゴリ、50タスク |
 | 保存 | ブラウザのlocalStorage |
 | Git | 非公開リポジトリ `kkrod899/kajitori-game` の `main` へ初回push済み |
@@ -23,7 +23,8 @@
 | 二層コンセプト | 状態主役の判断層と、見えない仕事の目撃者となる尊厳層をユーザー承認済み |
 | 新規Decision | D-016〜D-018をAccepted、名称変更のD-019をProposedで追記 |
 | Claude事後レビュー | `reviews/CLAUDE_REVIEW_PACKET_V0_2_R2.md` を作成。レビュー実行待ち |
-| 本体変更 | 今回は未実施 |
+| スマホURL化 | 配信入口、PWA設定、ホーム画面用アイコン、手動Pagesワークフローを追加。公開は未実施 |
+| 本体変更 | 保存キー・タスク処理は未変更。PWAメタデータと狭い画面の外枠だけ追加 |
 
 ## GitHub・ChatGPT共有
 
@@ -42,7 +43,22 @@ ChatGPT側で再開するときは、接続済みのGitHub Appからこのリポ
 4. `docs/DECISIONS.md`
 5. `reviews/CLAUDE_REVIEW_PACKET_V0_2_R2.md`
 
-アプリ本体の変更はまだ始めず、最初にR2事後レビューを完了する。
+アプリ本体のv0.2機能変更はまだ始めず、今回の差分は配信入口・PWAメタデータ・狭い画面の外枠に限定した。
+
+## スマホURL化の現在地
+
+| 項目 | 状態 |
+|---|---|
+| URL入口 | `index.html` が既存HTMLを開く。GitHub PagesのプロジェクトURL直下を入口にできる |
+| ホーム画面 | `manifest.webmanifest`、iPhone用メタデータ、180/192/512pxアイコンを追加 |
+| オフライン補助 | 同じ端末で一度開いた後に使えるservice workerを追加。オンライン時は新しい内容を優先する |
+| 公開ワークフロー | `.github/workflows/pages.yml` は手動実行だけ。アプリ用ファイルだけを配信し、文書・レビュー・状態ファイルは含めない |
+| 公開状態 | GitHub Pagesはまだ有効化していない。個人アカウントの非公開リポジトリでもサイトを非公開アプリとして扱えるとは限らないため、ユーザー判断待ち |
+| データ | `kajitori_stable_mvp_v2` は維持。以前の `file://` 保存データはURL版へ自動移行しない |
+
+公開URLを許可する場合の一度だけの操作と、非公開ホスティングへ切り替える場合の境界は `docs/MOBILE_ACCESS.md` にまとめた。GitHub Pagesの利用条件は [GitHub公式ドキュメント](https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site) を参照する。
+
+指定依頼に含まれていた `docs/V0_2_SLICE_01.md` と `reviews/2026-08-30-0004-chatgpt-v0-2-slice-01-post.md` は、この正本には存在しなかったため、作成・推測・代替扱いはしていない。
 
 ## 確認済みの主な問題
 

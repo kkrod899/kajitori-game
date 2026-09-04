@@ -4,6 +4,14 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>家事取りゲーム Stable MVP</title>
+  <meta name="theme-color" content="#7f926d" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="家事取り" />
+  <link rel="manifest" href="./manifest.webmanifest" />
+  <link rel="icon" type="image/svg+xml" href="./icons/icon.svg" />
+  <link rel="apple-touch-icon" href="./icons/icon-180.png" />
   <style>
 
     :root {
@@ -963,6 +971,37 @@
       font-size:16px;
     }
 
+    @media (max-width: 480px), (display-mode: standalone) {
+      body {
+        padding:0;
+        align-items:stretch;
+      }
+
+      .phone {
+        width:100%;
+        max-width:none;
+        height:100vh;
+        min-height:100vh;
+        padding:0;
+        border-radius:0;
+        box-shadow:none;
+      }
+
+      .screen {
+        height:100%;
+        border-radius:0;
+      }
+    }
+
+    @supports (height: 100dvh) {
+      @media (max-width: 480px), (display-mode: standalone) {
+        .phone {
+          height:100dvh;
+          min-height:100dvh;
+        }
+      }
+    }
+
   </style>
 </head>
 <body>
@@ -1547,6 +1586,14 @@
     }
 
     window.addEventListener("load", boot);
+  </script>
+  <script>
+    (function registerOfflineShell() {
+      if (!("serviceWorker" in navigator) || !window.isSecureContext) return;
+      window.addEventListener("load", function() {
+        navigator.serviceWorker.register("./sw.js", { scope: "./" }).catch(function() {});
+      });
+    }());
   </script>
 </body>
 </html>

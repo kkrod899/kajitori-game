@@ -22,6 +22,8 @@ AIごとの入口は [AGENTS.md](AGENTS.md) と [CLAUDE.md](CLAUDE.md) です。
 |---|---|
 | [kajitori_minimal_pictogram_compact.html](kajitori_minimal_pictogram_compact.html) | 50件の初期タスク、XP、レベル、取り逃がしログを含むHTMLモック |
 | [docs/V0_2_UX_SPEC.md](docs/V0_2_UX_SPEC.md) | 合意済みの3点とClaude第2レビューを反映したv0.2 UX仕様 |
+| [index.html](index.html) | スマホURLの入口。既存HTMLへ安全に引き継ぐ |
+| [docs/MOBILE_ACCESS.md](docs/MOBILE_ACCESS.md) | Pagesの公開範囲、ホーム画面追加、保存データの注意点 |
 
 ## 開発上の基本ルール
 
@@ -30,6 +32,10 @@ AIごとの入口は [AGENTS.md](AGENTS.md) と [CLAUDE.md](CLAUDE.md) です。
 - チャットだけで合意を完結させず、決定事項を `docs/DECISIONS.md` に残す。
 - 作業完了時は `HANDOFF.md` を更新し、次の担当が会話履歴なしでも再開できる状態にする。
 - 家事の量を競わせるのではなく、家庭の認知負荷を減らす設計を優先する。
+
+## スマホから使う
+
+スマホ用の入口とホーム画面追加の設定は正本に含まれています。GitHub Pagesは自動公開ではなく、公開範囲を確認してから一度だけ手動実行する設計です。個人アカウントの非公開リポジトリでもサイトが非公開アプリになるとは限らないため、先に [docs/MOBILE_ACCESS.md](docs/MOBILE_ACCESS.md) を確認してください。
 
 ## ChatGPTのチャット側で再開する
 

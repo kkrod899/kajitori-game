@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">家事取りゲーム</title>
+  <desc id="desc">家の形と確認の印を描いたアイコン</desc>
+  <rect width="512" height="512" rx="116" fill="#7f926d"/>
+  <path d="M122 252 256 142l134 110v128a22 22 0 0 1-22 22H144a22 22 0 0 1-22-22V252Z" fill="none" stroke="#fffdf9" stroke-width="28" stroke-linejoin="round"/>
+  <path d="M211 402V292h90v110" fill="none" stroke="#fffdf9" stroke-width="28" stroke-linejoin="round"/>
+  <circle cx="384" cy="378" r="58" fill="#c98261" stroke="#fffdf9" stroke-width="16"/>
+  <path d="m354 378 20 20 40-46" fill="none" stroke="#fffdf9" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

@@ -157,6 +157,84 @@
       "conclusion": "ChatGPTでR2事後レビューを始められる",
       "narrative": "GitHub連携と正本文書の読み取り確認は完了した。次は新しいChatGPTチャットで指定パケットに沿った事後レビューだけを行う。アプリ本体はまだ変更しない。",
       "narrative_updated_at": "2026-08-30"
+    },
+    {
+      "id": "W4",
+      "title": "スマホURL公開導線の準備",
+      "short": "スマホURL化",
+      "status": "active",
+      "why": "既存HTMLを壊さず、Macやターミナルなしでスマホから開ける入口を用意する",
+      "success": "正本に静的配信とホーム画面起動の設定が揃い、公開範囲を確認したうえで一度だけ有効化できる",
+      "drop_if": "公開範囲を保てず、ユーザーが公開URLを明示的に許可しない場合",
+      "owner": "codex",
+      "paths": [
+        "index.html",
+        "manifest.webmanifest",
+        "sw.js",
+        "icons",
+        "kajitori_minimal_pictogram_compact.html",
+        "README.md",
+        "HANDOFF.md",
+        ".agent-state.json"
+      ],
+      "next": "公開URLを許可するか、認証付きの非公開ホスティングを選ぶ",
+      "waiting_for": null,
+      "decision_needed": "個人アカウントのGitHub Pagesは公開サイトになるため、公開URLを許可するか非公開ホスティングを選ぶ必要がある",
+      "steps": [
+        {
+          "t": "現行HTMLの保存キーと初期化動作を確認する",
+          "done": true
+        },
+        {
+          "t": "静的配信の入口とホーム画面起動設定を追加する",
+          "done": true,
+          "check": {"glob": "manifest.webmanifest", "expect_gte": 1}
+        },
+        {
+          "t": "スマホ表示、リンク、PWA設定、保存キーの回帰を検証する",
+          "done": true
+        },
+        {
+          "t": "公開URLを許可するか、非公開ホスティングを選ぶ",
+          "done": false,
+          "by_user": true
+        },
+        {
+          "t": "選択に沿ってGitHub Pagesまたは代替ホスティングを一度だけ有効化する",
+          "done": false,
+          "by_user": true
+        }
+      ],
+      "unlocks": [],
+      "gate": {
+        "when": "公開範囲の選択と静的配信設定の検証が完了する",
+        "verify": "公開URLが許可された場合だけPagesを有効化し、許可されない場合は公開操作をしない",
+        "allow": "公開範囲または認証付きホスティングが確認でき、localStorageの保存先が同一オリジンである",
+        "deny": "公開範囲が未選択、または公開サイトを非公開として扱う必要がある"
+      },
+      "metrics": [
+        {"k": "保存キー", "file": "kajitori_minimal_pictogram_compact.html"},
+        {"k": "PWAマニフェスト", "glob": "manifest.webmanifest", "zero_if_missing": false},
+        {"k": "アイコン", "glob": "icons/*", "zero_if_missing": false}
+      ],
+      "context": "スマホで毎日使うには、既存の1ファイルHTMLをURLから開ける入口が必要になった。現行アプリはブラウザの同一オリジンlocalStorageへ保存する旧モックで、v0.2本体の作り替えはこの案件の対象にしない。GitHub Pagesは静的配信とホーム画面追加に向くが、個人アカウントでは公開サイトになるため、公開操作はユーザーの選択を待つ。認証付きの非公開ホスティングは別サービスの設定が必要なので、GitHub Pagesの準備と公開可否を分離する。",
+      "log": [
+        {
+          "d": "2026-09-04",
+          "t": "スマホURL化を新規案件として登録し、既存localStorageを保った薄い配信設定だけを対象にした"
+        },
+        {
+          "d": "2026-09-04",
+          "t": "指定された2資料が正本に存在せず、現行文書とHTMLを照合して本体改修ではなく配信準備へ範囲を限定した"
+        },
+        {
+          "d": "2026-09-04",
+          "t": "既存保存キーを維持した入口・PWA設定・手動Pagesワークフローを追加し、スマホ幅と再読み込み後の保存状態を確認した"
+        }
+      ],
+      "conclusion": "スマホURL化の準備が完了、公開は判断待ち",
+      "narrative": "既存の保存データを残したまま、スマホで開く入口とホーム画面起動の準備を終えた。公開サイトになる可能性があるため、設定は手動実行に留め、公開操作は選択が決まるまで行わない。",
+      "narrative_updated_at": "2026-09-04"
     }
   ]
 }

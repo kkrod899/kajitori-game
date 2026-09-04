@@ -1,0 +1,33 @@
+{
+  "name": "家事取りゲーム",
+  "short_name": "家事取り",
+  "description": "家のことを自分で気づき、考え、最後まで閉じるためのローカルWebアプリ",
+  "lang": "ja",
+  "dir": "ltr",
+  "id": "./kajitori_minimal_pictogram_compact.html",
+  "start_url": "./kajitori_minimal_pictogram_compact.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f6f3ee",
+  "theme_color": "#7f926d",
+  "icons": [
+    {
+      "src": "./icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "./icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "./icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
