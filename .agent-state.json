@@ -187,9 +187,9 @@
         "HANDOFF.md",
         ".agent-state.json"
       ],
-      "next": "公開URLを許可するか、認証付きの非公開ホスティングを選ぶ",
+      "next": "監査結果を反映してリポジトリ公開とPages有効化を行う",
       "waiting_for": null,
-      "decision_needed": "個人アカウントのGitHub Pagesは公開サイトになるため、公開URLを許可するか非公開ホスティングを選ぶ必要がある",
+      "decision_needed": null,
       "steps": [
         {
           "t": "現行HTMLの保存キーと初期化動作を確認する",
@@ -209,7 +209,7 @@
         },
         {
           "t": "公開URLを許可するか、非公開ホスティングを選ぶ",
-          "done": false,
+          "done": true,
           "by_user": true
         },
         {
@@ -258,6 +258,113 @@
       ],
       "conclusion": "スマホURL化の準備が完了、公開は判断待ち",
       "narrative": "現行v0.2 Slice 01の状態遷移と保存データを残したまま、スマホで開く入口、ホーム画面起動設定、キャッシュ補助を追加した。公開サイトになる可能性があるため、Pagesワークフローは手動実行に留め、公開操作は選択が決まるまで行わない。",
+      "narrative_updated_at": "2026-09-04"
+    },
+    {
+      "id": "W5",
+      "title": "公開前の秘密情報・公開範囲監査",
+      "short": "公開前監査",
+      "status": "done",
+      "why": "公開前に固定資格情報、個人情報、Pages配信範囲、localStorageの漏えい境界を確認する",
+      "success": "現行ツリーの秘密情報と公開範囲を根拠付きで判定し、未確認範囲を残す",
+      "drop_if": null,
+      "owner": "codex",
+      "paths": [
+        ".agent-state.json",
+        ".github/workflows/pages.yml",
+        ".gitignore",
+        "AGENTS.md",
+        "CLAUDE.md",
+        "HANDOFF.md",
+        "README.md",
+        "docs/COLLABORATION_WORKFLOW.md",
+        "docs/DECISIONS.md",
+        "docs/MOBILE_ACCESS.md",
+        "docs/PRODUCT_BRIEF.md",
+        "docs/V0_2_SLICE_01.md",
+        "docs/V0_2_UX_SPEC.md",
+        "icons/icon-180.png",
+        "icons/icon-192.png",
+        "icons/icon-512.png",
+        "icons/icon.svg",
+        "index.html",
+        "instructions/2026-07-23-0001-codex-concept-revision-v0-2.md",
+        "kajitori_minimal_pictogram_compact.html",
+        "manifest.webmanifest",
+        "prototypes/README.md",
+        "prototypes/claude_v0_2_ui_concept.html",
+        "reviews/0000-baseline-codex.md",
+        "reviews/2026-07-22-0001-claude-product-ux.md",
+        "reviews/2026-07-22-0002-claude-v0_2-ux.md",
+        "reviews/2026-07-23-0003-claude-v0-2-r2.md",
+        "reviews/2026-08-30-0004-chatgpt-v0_2-slice-01-post.md",
+        "reviews/CLAUDE_REVIEW_PACKET.md",
+        "reviews/CLAUDE_REVIEW_PACKET_V0_2.md",
+        "reviews/CLAUDE_REVIEW_PACKET_V0_2_R2.md",
+        "reviews/CLAUDE_UI_CONCEPT_PACKET_V0_2.md",
+        "reviews/README.md",
+        "reviews/TEMPLATE.md",
+        "sw.js"
+      ],
+      "next": "リポジトリを公開し、Pagesを一度だけ有効化する",
+      "waiting_for": null,
+      "decision_needed": null,
+      "steps": [
+        {
+          "t": "現行35ファイルの秘密鍵・パスワード・APIキー・トークン形式を確認する",
+          "done": true
+        },
+        {
+          "t": "Pagesの配信対象とアプリのネットワーク送信境界を確認する",
+          "done": true
+        },
+        {
+          "t": "localStorageに保存される家庭・子ども関連データの端末内境界を確認する",
+          "done": true
+        },
+        {
+          "t": "過去コミット履歴を確認する",
+          "done": true
+        }
+      ],
+      "unlocks": [],
+      "gate": {
+        "when": "現行ツリーと過去コミット履歴の公開リスク確認が完了する",
+        "verify": "秘密情報がないこと、または見つかった資格情報を失効・履歴除去したことを確認する",
+        "allow": "公開して困る秘密情報が現行ツリーと履歴にない",
+        "deny": "秘密情報が残っている、または履歴の確認が未完了"
+      },
+      "metrics": [
+        {
+          "k": "現行追跡ファイル数",
+          "method": "git ls-files の結果"
+        },
+        {
+          "k": "セキュリティ監査結果",
+          "method": "Codex Security 完了レポートのfinding severity別集計"
+        }
+      ],
+      "context": "指定コミットの現行ツリーと到達可能なGit履歴を監査し、固定パスワード・APIキー・秘密トークン・秘密鍵は確認されなかった。Pagesはアプリ本体とPWAファイルだけを手動配信し、利用データは外部送信されず同一オリジンlocalStorageに保存される。リポジトリpublic化時は文書・レビュー・案件状態も公開される。",
+      "log": [
+        {
+          "d": "2026-09-04",
+          "t": "現行35ファイルを監査し、秘密鍵・パスワード・APIキー・固定トークン形式を検出しなかった"
+        },
+        {
+          "d": "2026-09-04",
+          "t": "家庭・子ども関連データの暗号化なしlocalStorage保存を低重大度の端末内プライバシー境界として記録した"
+        },
+        {
+          "d": "2026-09-04",
+          "t": "公開リポジトリでは文書・レビュー・案件状態も閲覧可能になるため、公開URLとリポジトリ全体を分けて判断する必要を確認した"
+        },
+        {
+          "d": "2026-09-04",
+          "t": "到達可能な17コミットと63 blobを追加確認し、秘密鍵・各種APIキー・トークン・認証URL・連絡先・ローカルパス・怪しいファイル名を検出しなかった"
+        }
+      ],
+      "conclusion": "現行ツリー・到達可能な履歴に高重大度の秘密漏えいなし",
+      "narrative": "現行ツリーと到達可能なGit履歴を秘密値そのものを出力しない形で確認し、固定資格情報・外部送信・連絡先・ローカルパスは見つからなかった。実利用時の家庭・子ども関連データはlocalStorageに残るため、同じ端末・ブラウザを触れる人には見える。公開対象の企画・運用文書はリポジトリ上で閲覧可能になる。",
       "narrative_updated_at": "2026-09-04"
     }
   ]
