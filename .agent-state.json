@@ -119,7 +119,7 @@
       "id": "W3",
       "title": "ChatGPTでv0.2二層コンセプトのR2事後レビュー",
       "short": "ChatGPT事後レビュー",
-      "status": "active",
+      "status": "done",
       "why": "実装前に二層コンセプトの文書上の欠陥と境界リスクを独立して確認する",
       "success": "指定パケットどおりのレビュー結果が得られ、各指摘へ対応判断できる",
       "drop_if": null,
@@ -130,33 +130,37 @@
         "docs/DECISIONS.md",
         "reviews/CLAUDE_REVIEW_PACKET_V0_2_R2.md"
       ],
-      "next": "ChatGPTの新しいチャットでREADME記載の依頼文を送る",
+      "next": "完了。v0.2 Slice 01の7〜14日実生活テストへ",
       "waiting_for": null,
       "decision_needed": null,
       "steps": [
         {
           "t": "R2レビューを実行する",
-          "done": false,
+          "done": true,
           "by_user": true
         },
         {
           "t": "各FindingへAccepted、Rejected、Deferredで応答する",
-          "done": false
+          "done": true
         }
       ],
       "unlocks": [],
       "gate": null,
       "metrics": [],
-      "context": "v0.2の二層コンセプト文書とレビュー用パケットは作成済みで、アプリ本体はまだ変更していない。GitHub共有とChatGPTの対象リポジトリアクセスが整い、ChatGPTから正本文書を直接読めることを確認した。次は指定範囲だけを読む独立事後レビューを行い、実装前ブロッカーを整理する。レビュー完了前に旧HTMLへ場当たり的な修正は行わない。",
+      "context": "v0.2の二層コンセプト文書とレビュー用パケットを正本として、実装後のSlice 01を確認した。状態鮮度、証拠境界、3件上限、あとで遷移、localStorage移行を確認し、P0/P1なしのReady判定になっている。次は機能追加ではなく7〜14日の実生活テストを行う。",
       "log": [
         {
           "d": "2026-08-30",
-          "t": "ChatGPT側で正本を参照してR2事後レビューを開始できる状態になった"
+          "t": "ChatGPT側で正本を参照し、v0.2 Slice 01の事後レビューを完了した"
+        },
+        {
+          "d": "2026-08-30",
+          "t": "状態鮮度・証拠境界・3件上限・あとで遷移を含む受入条件を確認し、P0/P1なしのReadyとした"
         }
       ],
-      "conclusion": "ChatGPTでR2事後レビューを始められる",
-      "narrative": "GitHub連携と正本文書の読み取り確認は完了した。次は新しいChatGPTチャットで指定パケットに沿った事後レビューだけを行う。アプリ本体はまだ変更しない。",
-      "narrative_updated_at": "2026-08-30"
+      "conclusion": "v0.2 Slice 01実装・事後レビューReady",
+      "narrative": "v0.2 Slice 01の実装と事後レビューが完了し、P0/P1の未解決事項はない。保育園の次の平日判定はP2として実生活テストで不要提案率を観察する。",
+      "narrative_updated_at": "2026-09-04"
     },
     {
       "id": "W4",
@@ -171,9 +175,15 @@
         "index.html",
         "manifest.webmanifest",
         "sw.js",
-        "icons",
+        "icons/icon.svg",
+        "icons/icon-180.png",
+        "icons/icon-192.png",
+        "icons/icon-512.png",
         "kajitori_minimal_pictogram_compact.html",
         "README.md",
+        "docs/MOBILE_ACCESS.md",
+        ".github/workflows/pages.yml",
+        "docs/DECISIONS.md",
         "HANDOFF.md",
         ".agent-state.json"
       ],
@@ -188,7 +198,10 @@
         {
           "t": "静的配信の入口とホーム画面起動設定を追加する",
           "done": true,
-          "check": {"glob": "manifest.webmanifest", "expect_gte": 1}
+          "check": {
+            "glob": "manifest.webmanifest",
+            "expect_gte": 1
+          }
         },
         {
           "t": "スマホ表示、リンク、PWA設定、保存キーの回帰を検証する",
@@ -213,11 +226,22 @@
         "deny": "公開範囲が未選択、または公開サイトを非公開として扱う必要がある"
       },
       "metrics": [
-        {"k": "保存キー", "file": "kajitori_minimal_pictogram_compact.html"},
-        {"k": "PWAマニフェスト", "glob": "manifest.webmanifest", "zero_if_missing": false},
-        {"k": "アイコン", "glob": "icons/*", "zero_if_missing": false}
+        {
+          "k": "保存キー",
+          "file": "kajitori_minimal_pictogram_compact.html"
+        },
+        {
+          "k": "PWAマニフェスト",
+          "glob": "manifest.webmanifest",
+          "zero_if_missing": false
+        },
+        {
+          "k": "アイコン",
+          "glob": "icons/*",
+          "zero_if_missing": false
+        }
       ],
-      "context": "スマホで毎日使うには、既存の1ファイルHTMLをURLから開ける入口が必要になった。現行アプリはブラウザの同一オリジンlocalStorageへ保存する旧モックで、v0.2本体の作り替えはこの案件の対象にしない。GitHub Pagesは静的配信とホーム画面追加に向くが、個人アカウントでは公開サイトになるため、公開操作はユーザーの選択を待つ。認証付きの非公開ホスティングは別サービスの設定が必要なので、GitHub Pagesの準備と公開可否を分離する。",
+      "context": "現行アプリはv0.2 Slice 01実装済みの1ファイルHTMLで、既存キー`kajitori_stable_mvp_v2`と旧rootデータを保持する。今回の案件は本体の状態遷移や保存形式を変更せず、URL入口・ホーム画面起動・キャッシュ補助を追加する配信準備に限定する。GitHub Pagesは静的配信に向くが、個人アカウントでは非公開リポジトリでもサイトが公開になり得るため、公開操作はユーザーの選択を待つ。",
       "log": [
         {
           "d": "2026-09-04",
@@ -225,15 +249,15 @@
         },
         {
           "d": "2026-09-04",
-          "t": "指定された2資料が正本に存在せず、現行文書とHTMLを照合して本体改修ではなく配信準備へ範囲を限定した"
+          "t": "リモート正本にv0.2 Slice 01資料と現行実装が先行反映されていることを確認し、現行本体を保ったまま配信準備を統合する方針に更新した"
         },
         {
           "d": "2026-09-04",
-          "t": "既存保存キーを維持した入口・PWA設定・手動Pagesワークフローを追加し、スマホ幅と再読み込み後の保存状態を確認した"
+          "t": "現行v0.2の保存キーを維持した入口・PWA設定・手動Pagesワークフローを追加し、スマホ幅と再読み込み後の保存状態を確認した"
         }
       ],
       "conclusion": "スマホURL化の準備が完了、公開は判断待ち",
-      "narrative": "既存の保存データを残したまま、スマホで開く入口とホーム画面起動の準備を終えた。公開サイトになる可能性があるため、設定は手動実行に留め、公開操作は選択が決まるまで行わない。",
+      "narrative": "現行v0.2 Slice 01の状態遷移と保存データを残したまま、スマホで開く入口、ホーム画面起動設定、キャッシュ補助を追加した。公開サイトになる可能性があるため、Pagesワークフローは手動実行に留め、公開操作は選択が決まるまで行わない。",
       "narrative_updated_at": "2026-09-04"
     }
   ]

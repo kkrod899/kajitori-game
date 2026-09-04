@@ -2,7 +2,7 @@
 
 育休中の家事・育児を、単なる作業消化ではなく「気づく・考える・計画する・最後まで閉じる」家庭運営のゲームとして扱うプロジェクトです。
 
-現在は、スマートフォン風UIを1ファイルで試せるHTMLモックの段階です。
+現在は、状態から次の一手を選ぶv0.2 Slice 01を1ファイルで試せるHTMLモックの段階です。
 
 ## 入口
 
@@ -20,9 +20,12 @@ AIごとの入口は [AGENTS.md](AGENTS.md) と [CLAUDE.md](CLAUDE.md) です。
 
 | ファイル | 内容 |
 |---|---|
-| [kajitori_minimal_pictogram_compact.html](kajitori_minimal_pictogram_compact.html) | 50件の初期タスク、XP、レベル、取り逃がしログを含むHTMLモック |
-| [docs/V0_2_UX_SPEC.md](docs/V0_2_UX_SPEC.md) | 合意済みの3点とClaude第2レビューを反映したv0.2 UX仕様 |
+| [kajitori_minimal_pictogram_compact.html](kajitori_minimal_pictogram_compact.html) | v0.2 Slice 01。状態主役カード、余力0〜3件、先読み、証拠イベントを含むHTMLアプリ |
+| [docs/V0_2_UX_SPEC.md](docs/V0_2_UX_SPEC.md) | v0.2 UX仕様とSlice 01の受入条件・実装結果 |
 | [index.html](index.html) | スマホURLの入口。既存HTMLへ安全に引き継ぐ |
+| [manifest.webmanifest](manifest.webmanifest) | ホーム画面追加時のアプリ名・起動先 |
+| [sw.js](sw.js) | 一度開いた後の読み込み補助 |
+| [.github/workflows/pages.yml](.github/workflows/pages.yml) | アプリ用ファイルだけを手動でPagesへ配信する設定 |
 | [docs/MOBILE_ACCESS.md](docs/MOBILE_ACCESS.md) | Pagesの公開範囲、ホーム画面追加、保存データの注意点 |
 
 ## 開発上の基本ルール
@@ -43,4 +46,4 @@ AIごとの入口は [AGENTS.md](AGENTS.md) と [CLAUDE.md](CLAUDE.md) です。
 
 再開時の依頼文:
 
-> GitHubの `kkrod899/kajitori-game` を正本として参照してください。最初に `HANDOFF.md`、`docs/PRODUCT_BRIEF.md`、`docs/COLLABORATION_WORKFLOW.md`、`docs/DECISIONS.md` を読み、次に `reviews/CLAUDE_REVIEW_PACKET_V0_2_R2.md` の契約どおり事後レビューだけを行ってください。今回はアプリ本体を変更しないでください。
+> GitHubの `kkrod899/kajitori-game` を正本として参照してください。最初に `HANDOFF.md`、`docs/PRODUCT_BRIEF.md`、`docs/COLLABORATION_WORKFLOW.md`、`docs/DECISIONS.md`、`docs/V0_2_UX_SPEC.md`、`docs/V0_2_SLICE_01.md`、`reviews/2026-08-30-0004-chatgpt-v0-2-slice-01-post.md` を読み、現行v0.2の保存形式を壊さないでください。Pagesの公開範囲を確認するまでは公開実行しないでください。
