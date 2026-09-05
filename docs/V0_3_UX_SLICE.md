@@ -1,7 +1,7 @@
 # v0.3 UX Slice — 実機フィードバック対応
 
 Date: 2026-09-05
-Status: Implemented / automated Chromium + WebKit validation Pass / physical iPhone acceptance pending
+Status: Deployed to GitHub Pages / automated Chromium + WebKit validation Pass / physical iPhone acceptance pending
 
 ## 1. 背景
 
@@ -107,8 +107,10 @@ v0.3はデータ移行ではなくUX/UI刷新として扱う。
 - [x] service workerのcache名を `kajitori-shell-v3` へ更新
 - [x] Pages artifactへv0.3 CSS/JSを含める
 - [x] `index.html` / manifest / appのtheme colorをブルーグレーで統一する
-- [ ] mainへ反映後、Pages workflowを手動実行する
-- [ ] 公開URLでv0.3配信を確認する
+- [x] PR #1を`main`へsquash mergeする
+- [x] GitHub Pagesへv0.3 artifactを配信する
+- [x] Pages workflowを手動実行のみへ戻す
+- [x] 配信artifactにv0.3 HTML/CSS/JSとtheme color `#5F86A4`が含まれることを確認する
 
 ## 8. 自動検証
 
@@ -128,7 +130,9 @@ GitHub Actions `Validate v0.3 mobile UX` で以下を実行する。
 - console/page error 0
 - スクリーンショット保存
 
-Run #9 `33934349296` は Chromium / WebKitともPass。事後監査は `reviews/2026-09-05-0005-chatgpt-v0-3-ux-post.md` に記録した。
+最終branch validation Run #14 `33934573890` は Chromium / WebKitともPass。事後監査は `reviews/2026-09-05-0005-chatgpt-v0-3-ux-post.md` に記録した。
+
+Pages deployment Run #2 `33934672855` はSuccess。deployment artifact `9959749555`を展開し、v0.3 HTML、CSS、3つのJavaScript、manifest、service worker、`#5F86A4` theme colorが含まれることを確認した。
 
 ## 9. 実装ファイル
 
@@ -144,14 +148,16 @@ Run #9 `33934349296` は Chromium / WebKitともPass。事後監査は `reviews/
 - `tests/v03_smoke.mjs`
 - `.github/workflows/v03-validate.yml`
 
-## 10. 公開前の停止条件
+## 10. 残る受入ゲート
 
-以下のいずれかが残る場合はPages本番公開を止める。
+自動検証とPages deploymentではP0/P1なし。残るゲートは物理iPhone Safari / ホーム画面追加版だけ。
 
-- JavaScript構文エラー
-- 既存保存データを壊す変更
-- 自動WebKit検証で下部ナビの重なりが再発
-- 完了・Undo・状態記録の中心フローが自動検証で動かない
-- P0/P1 findingが未解決
+以下のいずれかが実機で起きた場合、7〜14日実生活テストを再開せずv0.3を修正する。
 
-自動検証ではP0/P1なし。物理iPhone Safari / ホーム画面版はPages反映後の最終受入ゲートとして残す。
+- 下部ナビが本文を隠す
+- 最下部まで正常にスクロールできない
+- 通常項目の1タップ完了が反映されない
+- 状態項目の選択→完了が閉じない
+- 完了取り消しが壊れる
+- `今日 / この先 / 記録`が切り替わらない
+- ホーム画面追加版で旧UIが残り続ける
