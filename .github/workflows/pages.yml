@@ -29,6 +29,7 @@ jobs:
         run: |
           mkdir -p _site/icons
           cp index.html manifest.webmanifest sw.js kajitori_minimal_pictogram_compact.html _site/
+          cp kajitori_v03.css kajitori_v03_core.js kajitori_v03_actions.js kajitori_v03_ui.js _site/
           cp icons/icon.svg icons/icon-180.png icons/icon-192.png icons/icon-512.png _site/icons/
 
       - name: Upload the app-only artifact
