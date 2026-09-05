@@ -29,10 +29,14 @@ for r in rows:
 by_id = {r["id"]: r for r in rows}
 assert "SRC-SLEEP-001" in by_id["INF-SLEEP-004"]["source_ids"]
 assert "SRC-VAX-001" in by_id["CHD-MED-001"]["source_ids"]
+assert "SRC-CHILD-8000-001" in by_id["CHD-MED-008"]["source_ids"]
+assert "SRC-CHILD-8000-001" in by_id["CHD-MED-009"]["source_ids"]
+assert "SRC-CHILD-8000-001" in by_id["SAFE-016"]["source_ids"]
 assert "SRC-HEAT-001" in by_id["SAFE-018"]["source_ids"]
 assert "SRC-CHILDSEAT-001" in by_id["SAFE-011"]["source_ids"]
 assert "SRC-BICYCLE-001" in by_id["SAFE-013"]["source_ids"]
 assert "SRC-DISASTER-001" in by_id["EMG-004"]["source_ids"]
+assert "SRC-FIRE-001" in by_id["EMG-010"]["source_ids"]
 assert "SRC-ORAL-001" in by_id["OLD-DAILY-003"]["source_ids"]
 
 print("responsibility metadata validation: PASS")
