@@ -23,6 +23,9 @@ jobs:
       - name: Validate production-scope metadata
         run: python3 tests/test_responsibility_metadata.py
 
+      - name: Validate health and safety manual integrity gate
+        run: python3 tests/test_health_safety_review.py
+
       - name: Simulate variable-load household days
         run: python3 tools/simulate_household_day.py
 
