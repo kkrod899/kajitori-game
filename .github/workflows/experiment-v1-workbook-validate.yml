@@ -1,0 +1,40 @@
+name: Validate shadow workbook v1
+
+on:
+  push:
+    branches:
+      - experiment/production-scope-v1
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  workbook:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - name: Check out experiment branch
+        uses: actions/checkout@v4
+
+      - name: Install workbook dependency
+        run: python3 -m pip install --disable-pip-version-check openpyxl==3.1.5
+
+      - name: Build prerequisite rule artifacts
+        run: |
+          python3 tools/build_responsibility_metadata.py
+          python3 tools/build_high_impact_activation_rules.py
+          python3 tools/build_full_activation_rules.py
+
+      - name: Validate workbook generation and parser
+        run: python3 tests/test_shadow_workbook.py
+
+      - name: Build downloadable workbook artifact
+        run: python3 tools/build_shadow_workbook.py --out artifacts/kajitori_shadow_test_7days_v1.xlsx
+
+      - name: Upload workbook artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: kajitori-shadow-test-workbook-v1
+          path: artifacts/kajitori_shadow_test_7days_v1.xlsx
+          if-no-files-found: error
