@@ -8,8 +8,8 @@
   "start_url": "./kajitori_minimal_pictogram_compact.html",
   "scope": "./",
   "display": "standalone",
-  "background_color": "#f6f3ee",
-  "theme_color": "#748565",
+  "background_color": "#FBFAF7",
+  "theme_color": "#5F86A4",
   "icons": [
     {
       "src": "./icons/icon.svg",

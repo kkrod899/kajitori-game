@@ -1,8 +1,12 @@
-const CACHE_NAME = "kajitori-shell-v1";
+const CACHE_NAME = "kajitori-shell-v3";
 const APP_SHELL = [
   "./",
   "./index.html",
   "./kajitori_minimal_pictogram_compact.html",
+  "./kajitori_v03.css",
+  "./kajitori_v03_core.js",
+  "./kajitori_v03_actions.js",
+  "./kajitori_v03_ui.js",
   "./manifest.webmanifest",
   "./icons/icon.svg",
   "./icons/icon-180.png",

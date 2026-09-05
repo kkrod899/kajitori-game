@@ -1,0 +1,88 @@
+name: Validate v0.3 mobile UX
+
+on:
+  push:
+    branches:
+      - ux/mobile-v03
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Check JavaScript syntax
+        run: |
+          node --check kajitori_v03_core.js
+          node --check kajitori_v03_actions.js
+          node --check kajitori_v03_ui.js
+          node --check sw.js
+
+      - name: Check required app assets
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          html = Path('kajitori_minimal_pictogram_compact.html').read_text()
+          required = [
+              'kajitori_v03.css',
+              'kajitori_v03_core.js',
+              'kajitori_v03_actions.js',
+              'kajitori_v03_ui.js',
+              'manifest.webmanifest',
+              'sw.js',
+          ]
+          for name in required:
+              if not Path(name).exists():
+                  raise SystemExit(f'missing asset: {name}')
+          for name in required[:4]:
+              if name not in html:
+                  raise SystemExit(f'HTML does not reference: {name}')
+          workflow = Path('.github/workflows/pages.yml').read_text()
+          for name in required[:4]:
+              if name not in workflow:
+                  raise SystemExit(f'Pages workflow does not publish: {name}')
+          print('asset reference check: PASS')
+          PY
+
+      - name: Install Playwright browsers
+        run: |
+          npm init -y >/dev/null 2>&1
+          npm install --no-save playwright@1.55.0
+          npx playwright install --with-deps chromium webkit
+
+      - name: Start static server
+        run: |
+          python3 -m http.server 8000 >/tmp/kajitori-http.log 2>&1 &
+          echo $! > /tmp/kajitori-http.pid
+          for i in {1..20}; do
+            if curl -fsS http://127.0.0.1:8000/kajitori_minimal_pictogram_compact.html >/dev/null; then
+              exit 0
+            fi
+            sleep 1
+          done
+          cat /tmp/kajitori-http.log
+          exit 1
+
+      - name: Run Chromium iPhone-size smoke test
+        env:
+          BROWSER: chromium
+        run: node tests/v03_smoke.mjs
+
+      - name: Run WebKit iPhone-size smoke test
+        env:
+          BROWSER: webkit
+        run: node tests/v03_smoke.mjs
+
+      - name: Upload smoke screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v03-iphone-smoke
+          path: artifacts/v03-iphone-*.png
+          if-no-files-found: ignore
