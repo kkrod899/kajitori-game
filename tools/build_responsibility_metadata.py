@@ -8,8 +8,8 @@ from pathlib import Path
 
 ROW_RE = re.compile(r"^\|\s*([A-Z0-9-]+)\s*\|\s*([^|]+?)\s*\|\s*(.+?)\s*\|\s*$")
 
-INVENTORY_WORDS = ("在庫","残量","不足","補充","足りる","届く","定期購入")
-SCHEDULE_WORDS = ("予約","予定","時刻","締切","期限","回収日","日程","申請","更新書類","当日","翌日","明日","1週間")
+INVENTORY_WORDS = ("在庫","残量","補充","足りる","定期購入")
+SCHEDULE_WORDS = ("予約","予定","時刻","時期","締切","期限","回収日","日程","申請","更新書類","当日","翌日","明日","1週間")
 HANDOFF_WORDS = ("引き継","共有","担当を決め","担当を確認","衝突を解消","バックアップ担当")
 LIFECYCLE_WORDS = ("サイズアウト","サイズ変更","成長","季節","衣替え","行事","イベント用品","買い替え","交換時期")
 MAINTENANCE_WORDS = ("フィルター","清掃","手入れ","修理","故障","カビ","結露","整理","片付け","定位置","衛生的","洗浄","交換要否","破損","劣化")
@@ -82,12 +82,12 @@ def classify_trigger(item):
     label, t = item["label"], item["type"]
     if "R" in t.split("/"):
         return "routine"
-    if any(w in label for w in INVENTORY_WORDS):
-        return "inventory"
     if any(w in label for w in SCHEDULE_WORDS):
         return "schedule"
     if any(w in label for w in HANDOFF_WORDS):
         return "handoff"
+    if any(w in label for w in INVENTORY_WORDS):
+        return "inventory"
     if any(w in label for w in LIFECYCLE_WORDS):
         return "lifecycle"
     if "S" in t.split("/"):
@@ -121,6 +121,12 @@ def cadence_for(trigger, group):
 
 def priority_for(item, trigger, group):
     parts = item["type"].split("/")
+    if group == "FAM" and item["id"] in {"FAM-003","FAM-004","FAM-005","FAM-006","FAM-007"}:
+        return "capacity"
+    if item["id"] in {"FOOD-001","FOOD-002","FOOD-003","FOOD-017"}:
+        return "high"
+    if "S" in parts and trigger == "schedule":
+        return "safety_health_deadline"
     if "S" in parts:
         return "safety_health"
     if trigger == "schedule":
@@ -129,8 +135,6 @@ def priority_for(item, trigger, group):
         return "high"
     if trigger == "routine" and group in ESSENTIAL_ROUTINE_GROUPS:
         return "essential_routine"
-    if group == "FAM" and item["id"] in {"FAM-003","FAM-004","FAM-005","FAM-006","FAM-007"}:
-        return "capacity"
     if trigger in {"state","health_state","task_state"} and group in {"INF-FEED","INF-DIAP","INF-SLEEP","CHD-MED","DAYCARE"}:
         return "high"
     return "maintenance"
@@ -139,16 +143,18 @@ def priority_for(item, trigger, group):
 def surface_for(trigger, priority):
     if trigger == "routine":
         return "routine_stream"
-    if priority == "safety_health":
-        return "now_if_triggered_else_review"
-    if priority == "deadline":
+    if trigger == "schedule":
         return "now_if_due_24h_else_today_if_due"
     if trigger == "inventory":
         return "today_if_threshold"
     if trigger == "handoff":
         return "transition_or_evening"
-    if trigger in ("lifecycle", "maintenance"):
+    if trigger == "lifecycle":
+        return "now_if_context_changed_else_review" if priority.startswith("safety_health") else "review_if_due"
+    if trigger == "maintenance":
         return "review_if_due"
+    if priority == "safety_health":
+        return "now_if_triggered_else_review"
     return "today_if_unknown_changed_or_due"
 
 
@@ -204,10 +210,10 @@ def evidence_for(item, trigger):
 def default_visibility(trigger, priority):
     if trigger == "routine":
         return "collapsed_routine"
-    if priority == "safety_health":
-        return "hidden_until_context_or_review_due"
-    if priority == "deadline":
+    if trigger == "schedule":
         return "hidden_until_horizon"
+    if priority.startswith("safety_health"):
+        return "hidden_until_context_or_review_due"
     return "hidden_until_due"
 
 
