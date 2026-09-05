@@ -1,93 +1,51 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="color-scheme" content="light" />
-  <meta name="theme-color" content="#6f8164" />
-  <meta name="mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-  <meta name="apple-mobile-web-app-title" content="家事取り" />
-  <link rel="manifest" href="./manifest.webmanifest" />
-  <link rel="icon" type="image/svg+xml" href="./icons/icon.svg" />
-  <link rel="apple-touch-icon" href="./icons/icon-180.png" />
-  <title>家事取りゲーム v0.3</title>
-  <link rel="stylesheet" href="./kajitori_v03.css" />
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="color-scheme" content="light" />
+<meta name="theme-color" content="#5F86A4" />
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="default" />
+<meta name="apple-mobile-web-app-title" content="家事取り" />
+<link rel="manifest" href="./manifest.webmanifest" />
+<link rel="icon" type="image/svg+xml" href="./icons/icon.svg" />
+<link rel="apple-touch-icon" href="./icons/icon-180.png" />
+<title>家事取りゲーム v0.3</title>
+<link rel="stylesheet" href="./kajitori_v03.css" />
 </head>
 <body>
-  <div class="shell">
-    <header class="topbar">
-      <div class="topbar-row">
-        <div>
-          <p id="screenKicker" class="screen-kicker"></p>
-          <h1 id="screenTitle" class="screen-title">今日</h1>
-          <p id="screenSubtitle" class="screen-subtitle"></p>
-        </div>
-        <button class="settings-button" type="button" onclick="openSettings()" aria-label="設定を開く">
-          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 8.5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7Z" stroke="currentColor" stroke-width="1.8"/><path d="M19.2 13.2a7.6 7.6 0 0 0 .05-2.35l2-1.55-2-3.45-2.45.98a7.7 7.7 0 0 0-2.02-1.17L14.4 3h-4.02L10 5.66A7.7 7.7 0 0 0 7.98 6.83l-2.45-.98-2 3.45 2 1.55a7.6 7.6 0 0 0 .05 2.35l-2.05 1.58 2 3.45 2.5-1a7.8 7.8 0 0 0 1.97 1.13L10.38 21h4.02l.38-2.64a7.8 7.8 0 0 0 1.97-1.13l2.5 1 2-3.45-2.05-1.58Z" stroke="currentColor" stroke-width="1.45" stroke-linejoin="round"/></svg>
-        </button>
-      </div>
-      <div id="saveError" class="save-error" role="alert">保存できませんでした。変更は元に戻しています。</div>
-    </header>
-
-    <main id="mainScroll">
-      <section id="todayView" class="view active"></section>
-      <section id="forecastView" class="view"></section>
-      <section id="recordView" class="view"></section>
-    </main>
-
-    <nav class="bottom-nav" aria-label="主要ナビゲーション">
-      <button class="tab active" data-tab="today" type="button" onclick="switchTab('today')">
-        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="7" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="2.4" fill="currentColor"/></svg>
-        今日
+<div class="shell">
+  <header class="topbar">
+    <div class="top-row">
+      <div class="brand"><h1>家事取りゲーム</h1><p id="headerSubtitle">v0.3</p></div>
+      <button class="icon-btn" type="button" onclick="openSettings()" aria-label="設定を開く">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="3.2" stroke="currentColor" stroke-width="1.8"/><path d="M19.1 13.1a7.5 7.5 0 0 0 0-2.2l2-1.5-2-3.4-2.45 1a7.4 7.4 0 0 0-1.9-1.1L14.4 3h-4.8l-.35 2.9a7.4 7.4 0 0 0-1.9 1.1L4.9 6l-2 3.4 2 1.5a7.5 7.5 0 0 0 0 2.2l-2 1.5 2 3.4 2.45-1a7.4 7.4 0 0 0 1.9 1.1L9.6 21h4.8l.35-2.9a7.4 7.4 0 0 0 1.9-1.1l2.45 1 2-3.4-2-1.5Z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>
       </button>
-      <button class="tab" data-tab="forecast" type="button" onclick="switchTab('forecast')">
-        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h13M14 7l5 5-5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        この先
-      </button>
-      <button class="tab" data-tab="record" type="button" onclick="switchTab('record')">
-        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M7 5.5h10M7 10h10M7 14.5h7M5 3.5h14v17H5z" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        記録
-      </button>
-    </nav>
-  </div>
-
-  <div id="toast" class="toast" aria-live="polite">
-    <span id="toastText"></span>
-    <button id="toastUndo" type="button" onclick="undoLast()">元に戻す</button>
-  </div>
-
-  <div id="actionOverlay" class="overlay" role="dialog" aria-modal="true" aria-labelledby="actionTitle">
-    <div class="sheet">
-      <div class="sheet-handle"></div>
-      <h2 id="actionTitle">この項目をどうしますか？</h2>
-      <p id="actionText"></p>
-      <div class="sheet-actions">
-        <button class="secondary-button" type="button" onclick="deferSelected()">あとで見る</button>
-        <button class="ghost-button" type="button" onclick="dismissSelected()">今日は出さない</button>
-        <button class="ghost-button" type="button" onclick="alreadyDoneSelected()">もう済んでいる</button>
-      </div>
-      <button class="ghost-button cancel" type="button" onclick="closeActionMenu()">閉じる</button>
     </div>
-  </div>
-
-  <div id="swapOverlay" class="overlay" role="dialog" aria-modal="true" aria-labelledby="swapTitle">
-    <div class="sheet">
-      <div class="sheet-handle"></div>
-      <h2 id="swapTitle">今日やることを入れ替える</h2>
-      <p id="swapText"></p>
-      <div id="swapList" class="sheet-actions"></div>
-      <button class="ghost-button cancel" type="button" onclick="closeSwap()">追加しない</button>
-    </div>
-  </div>
-
-  <div id="onboarding" class="onboarding" aria-live="polite">
-    <div id="onboardingInner" class="onboarding-inner"></div>
-  </div>
-
-  <script src="./kajitori_v03_core.js"></script>
-  <script src="./kajitori_v03_actions.js"></script>
-  <script src="./kajitori_v03_ui.js"></script>
+    <div id="saveError" class="save-error" role="alert">保存できませんでした。変更は元に戻しています。</div>
+  </header>
+  <main id="mainScroll">
+    <section id="todayView" class="view active"></section>
+    <section id="forecastView" class="view"></section>
+    <section id="recordView" class="view"></section>
+  </main>
+  <nav class="bottom-nav" aria-label="主要ナビゲーション">
+    <button class="tab active" data-tab="today" type="button" onclick="switchTab('today')"><svg viewBox="0 0 24 24" fill="none"><path d="M4.5 10.5 12 4l7.5 6.5V20h-5v-5h-5v5h-5v-9.5Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>今日</button>
+    <button class="tab" data-tab="forecast" type="button" onclick="switchTab('forecast')"><svg viewBox="0 0 24 24" fill="none"><rect x="4" y="5.5" width="16" height="14" rx="2" stroke="currentColor" stroke-width="1.7"/><path d="M8 3.5v4M16 3.5v4M4 10h16" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>この先</button>
+    <button class="tab" data-tab="record" type="button" onclick="switchTab('record')"><svg viewBox="0 0 24 24" fill="none"><path d="M6 20V13M12 20V7M18 20V4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>記録</button>
+  </nav>
+</div>
+<div id="toast" class="toast" aria-live="polite"><span id="toastText"></span><button id="toastUndo" type="button" onclick="undoLast()">元に戻す</button></div>
+<div id="detailOverlay" class="overlay" role="dialog" aria-modal="true" aria-labelledby="detailTitle"><div class="sheet">
+  <div class="handle"></div><div class="sheet-head"><button class="sheet-x" type="button" onclick="closeDetail()" aria-label="閉じる">×</button><button class="sheet-more" type="button" onclick="toggleSecondaryMenu()" aria-label="その他の操作">•••</button></div>
+  <div id="detailContent"></div><div id="secondaryMenu" class="secondary-menu"></div>
+</div></div>
+<div id="swapOverlay" class="overlay" role="dialog" aria-modal="true" aria-labelledby="swapTitle"><div class="sheet"><div class="handle"></div><h2 id="swapTitle" style="margin:0 0 6px;font-size:20px">今日やることを入れ替える</h2><p id="swapText" style="margin:0 0 13px;color:var(--muted);font-size:12.5px;line-height:1.55"></p><div id="swapList" class="record-list"></div><button class="btn-secondary" style="margin-top:9px" type="button" onclick="closeSwap()">追加しない</button></div></div>
+<div id="onboarding" class="onboarding" aria-live="polite"><div id="onboardingInner" class="onboarding-inner"></div></div>
+<script src="./kajitori_v03_core.js"></script>
+<script src="./kajitori_v03_actions.js"></script>
+<script src="./kajitori_v03_ui.js"></script>
 </body>
 </html>
