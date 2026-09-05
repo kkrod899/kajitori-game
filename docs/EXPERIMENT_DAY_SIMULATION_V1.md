@@ -1,15 +1,13 @@
 # EXPERIMENT DAY SIMULATION v1 — Result checkpoint
 
 Date: 2026-09-05  
-Branch: `experiment/production-scope-v1`  
-Validation run: `33937031806` — PASS  
-Artifact: `production-scope-experiment-v1` / `9960519602`
+Branch: `experiment/production-scope-v1`
 
 ## 1. 結論
 
-固定の「今日3件」は廃止できる構造になった。
+固定の「今日3件」は実証モデルから廃止した。
 
-293項目の責任マスターから、架空家庭・架空状態を使って `今見る / 今日の候補 / ルーティン / レビュー` を決定論的に生成したところ、同じ家庭でも日によって件数が大きく変動した。
+293項目の責任マスターに対し、架空家庭・架空状態を使って `今見る / 今日の候補 / ルーティン / レビュー` を決定論的に生成したところ、同じ家庭でも日によって件数が大きく変動した。
 
 | シナリオ | 今見る | 今日の候補 | ルーティン | レビュー | 表示対象合計 |
 |---|---:|---:|---:|---:|---:|
@@ -17,7 +15,7 @@ Artifact: `production-scope-experiment-v1` / `9960519602`
 | 高負荷の平日 | 7 | 27 | 19 | 6 | 59 |
 | 低負荷の週末・回復日 | 0 | 11 | 16 | 4 | 31 |
 
-この件数を「正解」とは扱わない。重要なのは、UI都合の3件上限ではなく家庭状態から必要件数が出ることを確認できた点。
+この件数を「正解」「目標件数」とは扱わない。確認できたのは、UI都合の固定上限ではなく家庭状態から表示量を変えられることだけ。
 
 ## 2. `今見る`の例
 
@@ -46,69 +44,99 @@ Artifact: `production-scope-experiment-v1` / `9960519602`
 
 授乳、オムツ替え、寝かしつけ、食器洗い、送迎などの反復実行まで`今日の候補`へ混ぜると、家庭運営上の「気づく・判断する・先回りする」が埋もれる。
 
-そのため次の2種類を分離する。
+そのため次を分離する。
 
 - `ルーティン`: その日何度も起きる実行
 - `今日の候補`: 状態把握、判断、計画、補充、締切管理、完結ループ
 
-実証時には両方を記録するが、UI上で同じ優先リストへ積まない。
+実証時には両方を観測するが、同じ優先リストへ積まない。
 
-## 4. 新たに見つかった重要Finding
+## 4. applicability 289 / 293 の解釈
 
-### [P1 Experiment] applicabilityがまだ粗い
+架空家庭プロフィールへ現時点の粗い条件を当てると、293項目中289項目が「長期的にはこの家庭に関係し得る」と判定された。
 
-架空家庭プロフィールへ粗い適用条件を当てると、293項目中289項目（98.63%）が「この家庭には長期的に関係し得る」と判定された。
+この98.63%という比率だけを失敗とは扱わない。掃除、洗濯、食事、在庫、予定、行政、災害準備等は一般家庭に長期的に存在し得るため、structural applicabilityは高くなり得る。
 
-除外できたのは現時点で以下の4項目のみ。
+一方で、現metadataがgroup-level条件に依存しすぎていることは未解決。
 
-- 搾乳母乳管理 — 搾乳母乳を使わない設定
-- 搾乳器管理 — 搾乳器を使わない設定
-- 自転車幼児座席安全 — 自転車幼児座席を使わない設定
-- 離乳食 — 離乳開始前設定
+production-scopeでは以下を分ける。
 
-これは**成功ではなく、適用条件がまだ粗いことを自動検出できた結果**。
+1. `structural applicability` — その家庭に責任が存在し得るか
+2. `activation eligibility` — 今・今日・今週に出す根拠があるか
 
-今後、293項目ごとに以下を追加しなければ本番想定とは言えない。
+詳細は`docs/APPLICABILITY_REVIEW_V1.md`を正本とする。
 
-- 年齢帯
-- 発達段階
-- 利用設備・移動手段
-- 園・自治体制度
-- 授乳・食事段階
-- 季節
-- 実施頻度
-- 最近の実施状態
-- 家庭独自ルール
+現在入っている明示的な除外例:
 
-このFindingを解消する前にPWAへ293項目を接続しない。
+- 搾乳母乳管理 — 搾乳母乳を使わない設定なら除外
+- 搾乳器管理 — 搾乳器を使わない設定なら除外
+- 自転車幼児座席安全 — 利用しない家庭では除外
+- 離乳食 — 離乳開始前なら除外
 
-## 5. 自動検証済み
+今後は年齢・発達段階・設備・園/自治体制度・食事段階・季節・最近の状態等をitem-levelで詰める。
 
-Run `33937031806` で以下をPass。
+## 5. health / safety gate
+
+42項目をmachine-readable reviewへ載せ、sourceとの整合をCIで確認するところまで進めた。
+
+現在:
+
+- `PASS_DIRECT`: 22
+- `PASS_WITH_BOUNDARY`: 19
+- `REWRITE_OR_SPLIT`: 1
+
+唯一のblockerは`SAFE-018`。
+
+`SAFE-018`は「暑さ・寒さ」を1項目にまとめているが、現時点の直接sourceは暑熱側を主に支えるため、現形のままproduction recommendationへ昇格させない。
+
+詳細は`docs/HEALTH_SAFETY_REVIEW_V1.md`と`data/health_safety_review_v1.json`を参照。
+
+## 6. shadow testまで準備したもの
+
+synthetic simulationだけでは実生活で使えることを証明できないため、次の実証契約を追加した。
+
+- `docs/EXPERIMENT_SHADOW_TEST_V1.md`
+- `data/shadow_observation_schema_v1.json`
+- `tools/evaluate_shadow_test.py`
+- `tests/test_shadow_evaluator.py`
+
+測るもの:
+
+- management miss
+- noise
+- timing error
+- partner prompt dependency
+- close-loop failure
+- master gap
+- evidence overclaim
+
+health/safetyまたはhard deadlineの見落とし、evidence overclaimは1件でもactive relianceへのblockerとする。
+
+## 7. 自動検証
+
+CIでは以下を確認する。
 
 - Master 293 unique items
 - Metadata 293 rows
 - 健康・安全42項目にsource coverage
+- health/safety manual review 42/42 coverage
 - 家庭設定依存37項目にconfig dependency
 - 固定3件 / daily limit metadataなし
-- 架空家庭プロフィールで3シナリオを生成
-- 高負荷日の`今見る` > 通常日
-- 低負荷週末の`今見る` = 0
-- 高負荷日の`今日の候補` > 低負荷日
-- ルーティンを別ストリームに分離
-- 同一シナリオ内の重複表示なし
-- 健康・安全表示にsource IDあり
-- 週末シナリオに園項目なし
-- coarse applicability 289/293をwarningとして検出
+- 3シナリオの可変表示
+- ルーティンの別ストリーム化
+- 重複表示なし
+- health/safety表示にsource IDあり
+- shadow evaluatorのhard gate / soft metric計算
 
-## 6. このシミュレーションでまだ証明していないこと
+一度、health/safety status集計の不一致をCIが検出した。`CHD-MED-009`は#8000の実施時間等が地域依存であるため`PASS_WITH_BOUNDARY`へ修正し、machine-readable reviewと文書を一致させた。
+
+## 8. この段階で証明していないこと
 
 - 293項目で家庭運営を十分網羅できていること
-- 逆に293項目に過剰・重複がないこと
-- それぞれの項目が適切な家庭だけに出ること
-- 出現タイミングが実生活で正しいこと
-- `今見る`の優先順位が人間の判断と一致すること
-- 健康・安全42項目の個別人手レビュー
-- 実生活で配偶者から指摘される見落としが減ること
+- 293項目に過剰・重複がないこと
+- item-level activation eligibilityが最終品質であること
+- `今見る`の優先順位が実生活の人間判断と一致すること
+- health/safety 42項目が臨床的に検証されたこと
+- 実生活でパートナーからの指示依存が減ること
 
-次工程はUI実装ではなく、item-level applicability refinementと実生活shadow testの契約作成。
+次工程はPWA実装ではない。item-level activation refinement → `SAFE-018`解消 → 7日shadow baselineの順で進める。
