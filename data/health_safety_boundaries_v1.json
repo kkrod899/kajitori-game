@@ -1,0 +1,101 @@
+{
+  "schema_version": 1,
+  "description": "PASS_WITH_BOUNDARYのhealth/safety項目をactive recommendationへ出す前に必要な境界条件。診断・事故予防実績の自動断定は禁止。",
+  "items": {
+    "INF-DIAP-007": {
+      "activation_gate":"observed_change_from_usual",
+      "required_context_fields":["observed_urine_or_stool_change"],
+      "forbidden_auto_actions":["diagnose_condition","declare_normal"]
+    },
+    "CHD-MED-001": {
+      "activation_gate":"official_or_local_vaccination_due_window",
+      "required_context_fields":["vaccination_history","official_schedule_source","local_schedule_context"],
+      "forbidden_auto_actions":["infer_due_date_from_age_only"]
+    },
+    "CHD-MED-002": {
+      "activation_gate":"vaccination_due_and_not_booked",
+      "required_context_fields":["confirmed_due_candidate","booking_status","provider_or_local_booking_rule"],
+      "forbidden_auto_actions":["book_without_user_confirmation"]
+    },
+    "CHD-MED-003": {
+      "activation_gate":"vaccination_appointment_within_preparation_horizon",
+      "required_context_fields":["appointment_at","provider_instructions","observed_condition"],
+      "forbidden_auto_actions":["declare_fit_for_vaccination","cancel_on_symptom_inference"]
+    },
+    "CHD-MED-004": {
+      "activation_gate":"vaccination_completed_and_followup_or_observation_context_exists",
+      "required_context_fields":["vaccination_completed_at","provider_followup_instructions"],
+      "forbidden_auto_actions":["diagnose_adverse_event","declare_symptom_safe"]
+    },
+    "CHD-MED-005": {
+      "activation_gate":"local_health_check_due_window",
+      "required_context_fields":["municipality_checkup_schedule","child_eligibility_context"],
+      "forbidden_auto_actions":["infer_local_checkup_date_without_local_source"]
+    },
+    "CHD-MED-006": {
+      "activation_gate":"health_check_invitation_or_due_window_and_open_admin_loop",
+      "required_context_fields":["checkup_due_or_invitation","booking_rule","form_status"],
+      "forbidden_auto_actions":["assume_booking_required"]
+    },
+    "CHD-MED-008": {
+      "activation_gate":"caregiver_records_symptom_change",
+      "required_context_fields":["observed_symptom_change","observation_time"],
+      "forbidden_auto_actions":["diagnose","declare_no_consultation_needed","assign_severity_without_source"]
+    },
+    "CHD-MED-009": {
+      "activation_gate":"setup_review_or_after_hours_consultation_context",
+      "required_context_fields":["prefecture_or_local_area","consultation_contact","service_hours_or_lookup_path"],
+      "forbidden_auto_actions":["assume_8000_available_now_without_local_hours"]
+    },
+    "CHD-MED-014": {
+      "activation_gate":"caregiver_records_development_or_feeding_concern",
+      "required_context_fields":["observed_concern","observation_date"],
+      "forbidden_auto_actions":["diagnose_development","compare_as_failure_against_single_age_norm"]
+    },
+    "SAFE-010": {
+      "activation_gate":"child_eating_context_or_food_preparation_context",
+      "required_context_fields":["eating_context","food_context"],
+      "forbidden_auto_actions":["declare_food_safe_for_individual_child"]
+    },
+    "SAFE-012": {
+      "activation_gate":"stroller_used_or_periodic_equipment_check_due",
+      "required_context_fields":["stroller_used","product_manual_reference"],
+      "forbidden_auto_actions":["invent_product_specific_belt_or_brake_rule"]
+    },
+    "SAFE-014": {
+      "activation_gate":"outing_context_contains_road_parking_stairs_or_similar_hazard",
+      "required_context_fields":["outing_context"],
+      "forbidden_auto_actions":["show_as_constant_daily_warning"]
+    },
+    "SAFE-015": {
+      "activation_gate":"first_aid_location_unknown_or_inventory_review_due",
+      "required_context_fields":["first_aid_storage_known","inventory_review_due"],
+      "forbidden_auto_actions":["claim_preparedness_guarantees_safety"]
+    },
+    "SAFE-017": {
+      "activation_gate":"mobility_or_reach_context_changed",
+      "required_context_fields":["caregiver_recorded_mobility_change_or_environment_change"],
+      "forbidden_auto_actions":["infer_developmental_stage_as_diagnosis"]
+    },
+    "FOOD-016": {
+      "activation_gate":"known_restriction_exists_and_meal_or_caregiver_handoff_context",
+      "required_context_fields":["known_food_restrictions","caregiver_or_meal_context"],
+      "forbidden_auto_actions":["create_new_allergy_diagnosis","remove_medical_restriction"]
+    },
+    "EMG-006": {
+      "activation_gate":"emergency_supply_review_due_or_known_expiry_near",
+      "required_context_fields":["supply_review_due_or_expiry_state"],
+      "forbidden_auto_actions":["claim_first_aid_stock_replaces_medical_care"]
+    },
+    "EMG-008": {
+      "activation_gate":"emergency_document_review_due_or_emergency_kit_change",
+      "required_context_fields":["document_availability_state","privacy_storage_method"],
+      "forbidden_auto_actions":["store_sensitive_document_content_without_explicit_secure_design"]
+    },
+    "EMG-009": {
+      "activation_gate":"official_disaster_weather_context_or_preseason_review_due",
+      "required_context_fields":["official_hazard_or_weather_context_or_review_due"],
+      "forbidden_auto_actions":["invent_weather_warning","show_as_constant_daily_warning"]
+    }
+  }
+}

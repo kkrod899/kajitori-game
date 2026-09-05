@@ -1,0 +1,188 @@
+{
+  "schema_version": 2,
+  "description": "責任IDを入力せず、架空の家庭状態だけから候補生成を検証する。すべてsynthetic。",
+  "scenarios": [
+    {
+      "id": "normal_weekday_v2",
+      "title": "通常の平日",
+      "state": {
+        "date": "2026-09-14",
+        "profile_runtime": {"bottle_used": true},
+        "context": {
+          "day_active": true,
+          "time_block": "morning",
+          "outing": {"planned": false, "with_child": false, "with_infant": false, "car_used": false, "stroller_used": false, "bicycle_childseat_used": false, "hazard_context_available": false, "transport_context_available": false, "return_reset_open": false},
+          "meal_or_food_preparation_active": false,
+          "meal_or_caregiver_handoff_active": false,
+          "hot_food_or_cooking_near_child": false,
+          "water_activity_active": false,
+          "weather": {"official_heat_alert_or_high_wbgt": false, "official_snow_or_blizzard_warning": false, "official_disaster_context_or_preseason_review_due": false}
+        },
+        "daycare": {
+          "attendance_today": true,
+          "attendance_tomorrow": true,
+          "unread_notice": true,
+          "tomorrow_prep_complete": false,
+          "clothing_stock": "ok",
+          "diaper_supply_stock": "low",
+          "deadline_within_hours": 6,
+          "deadline_closed": false,
+          "event_or_payment_admin_open": false,
+          "returned_items_open": true,
+          "pickup_note_unshared": false,
+          "health_or_authorization_update_due": false,
+          "naming_gap_present": false,
+          "infection_context_active": false,
+          "local_infection_rules_available": true
+        },
+        "children": {
+          "infant": {
+            "feeding": {"next_due_known": true, "behavior_changed": false, "milk_stock": "low", "clean_bottles": "low", "prep_environment_ready": true, "night_set_ready": false, "bottle_nipple_review_due": false, "expressed_milk_management_open": false, "pump_parts_management_open": false, "weaning_management_open": false, "weaning_guidance_available": false},
+            "diaper": {"stock": "low", "wipes_stock": "ok", "disposal_bag_stock": "ok", "leak_or_marks": false, "fit_concern": false, "elimination_changed": false, "skin_changed": false},
+            "sleep": {"pattern_review_needed": false, "night_assignment_open": true, "safety_context_changed": false, "room_temperature_status": "ok", "humidity_status": "ok", "season_bedding_change_due": false, "bedding_fit_concern": false, "sheet_change_due": false, "night_flow_review_due": false},
+            "hygiene": {"bath_planned": true, "bath_prep_ready": false, "clean_clothes_stock": "ok", "gauze_towel_stock": "ok", "nail_care_due": false, "nasal_care_needed": false, "skin_care_supplies": "ok", "clothing_fit_concern": false, "season_clothing_change_due": false},
+            "health": {"observed_condition_available": true, "symptom_changed": false, "development_or_feeding_concern": false},
+            "growth": {"mobility_or_reach_changed": false, "clothing_fit_concern": false},
+            "play": {"floor_play_planned": false, "household_guidance_available": true}
+          },
+          "older": {
+            "daily": {"condition_changed": false, "clothing_for_day_decided": false, "shoe_fit_concern": false, "clothing_fit_or_shortage": false, "sleep_pattern_changed": false, "one_to_one_time_needed": false, "sibling_transition_concern": false, "grooming_due": false, "supplies_stock": "ok"},
+            "eating": {"food_context_available": false}
+          },
+          "growth": {"record_review_due": false}
+        },
+        "events": {
+          "vaccination": {"due_candidate": false, "schedule_source_confirmed": true, "history_available": true, "booking_status": "not_due", "booking_rule_available": true, "appointment_within_hours": 999, "prep_complete": true, "provider_instructions_available": true, "followup_closed": true},
+          "health_check": {"due_candidate": false, "local_schedule_available": true, "eligibility_confirmed": true, "invitation_or_due": false, "booking_rule_available": true, "form_status": "not_due"},
+          "medical": {"appointment_within_hours": 999, "prep_complete": true, "followup_open": false},
+          "family_or_seasonal_event": {"within_days": 999, "prep_complete": true}
+        },
+        "household": {
+          "local_area_set": true,
+          "food": {"breakfast_plan_decided": true, "lunch_plan_decided": true, "dinner_plan_decided": false, "expiring_items": true, "missing_items": false, "purchase_required": true, "leftovers_decision_open": false, "child_snack_stock": "ok", "known_restrictions_available": false},
+          "kitchen": {"sink_blocked": true, "counter_blocked": false, "drain_attention": false, "dishwasher_unload_pending": false, "textile_change_due": false, "cleaning_supply_stock": "ok", "fridge_spill_present": false, "child_dish_shortage_or_damage": false, "appliance_safety_issue": false},
+          "laundry": {"urgent_items_pending": true, "dry_items_pending": false, "stain_item_present": false, "baby_textile_stock": "ok", "bedding_change_due": false, "towel_stock_or_change_due": false, "supply_stock": "ok", "machine_maintenance_due": false, "weather_timing_decision_needed": false, "cleaning_or_repair_open": false},
+          "cleaning": {"floor_cleaning_needed": false, "living_path_blocked": false, "toy_area_open": false, "baby_area_open": true, "toilet_due": false, "washroom_due": false, "bathroom_due": false, "entry_open": false, "vehicle_child_mess": false, "child_equipment_dirty": false, "humidifier_due": false, "air_filter_due": false, "mold_or_condensation_present": false, "lost_home_items_present": false, "outgrown_items_pending": false},
+          "supplies": {"core_low": false, "replacement_item_low": false, "daycare_item_low": false, "subscription_mismatch": false, "shared_list_update_needed": true},
+          "waste": {"collection_within_hours": 18, "ready": false, "recycling_due": false, "cardboard_due": false, "special_collection_open": false, "bulk_collection_open": false, "diaper_odor_issue": false, "bin_hygiene_issue": false},
+          "planning": {"tomorrow_open": true, "weekly_review_due": false, "delivery_or_return_open": false, "guest_prep_open": false},
+          "admin": {"deadline_within_hours": 48, "deadline_closed": false, "child_benefit_open": false, "medical_or_insurance_update_open": false, "daycare_application_open": false, "leave_or_benefit_document_open": false, "important_document_storage_open": false, "payment_review_due": false, "payment_anomaly": false, "budget_overrun_signal": false, "subscription_review_due": false, "insurance_family_update_due": false, "address_or_contact_update_due": false, "warranty_record_open": false, "family_data_backup_due": false},
+          "medical": {"after_hours_setup_review_due": false, "after_hours_contact_available": true, "service_hours_or_lookup_path_available": true, "medicine_next_dose_due": false, "medicine_stock": "ok", "medicine_expiry_near": false, "toolkit_review_due": false, "receipts_or_records_pending": false},
+          "safety": {"floor_hazard_present": false, "button_battery_or_magnet_storage_issue": false, "chemical_storage_issue": false, "fall_hazard_present": false, "gate_or_barrier_issue": false, "cord_or_outlet_hazard_present": false, "equipment_or_measure_outgrown": false, "first_aid_storage_known": true, "first_aid_review_due": false},
+          "equipment": {"childseat_check_due": false, "childseat_issue": false, "stroller_manual_available": true, "carrier_adjustment_due": false, "stroller_adjustment_due": false},
+          "play": {"area_safety_issue": false, "toy_damage_or_small_parts": false, "toy_lifecycle_review_due": false, "outing_ideas_needed": false},
+          "season": {"clothing_transition_due": false},
+          "transport": {"fuel_or_charge_low": false, "child_equipment_unavailable": false, "maintenance_due": false},
+          "home": {"aircon_service_due": false, "humidifier_dehumidifier_due": false, "air_purifier_due": false, "bulb_or_battery_out": false, "water_or_drain_issue": false, "appliance_failure_signal": false, "pest_issue": false, "mold_or_condensation_issue": false, "key_management_issue": false, "baby_monitor_power_or_function_issue": false, "seasonal_appliance_transition_due": false},
+          "emergency": {"review_due": false, "first_aid_review_due_or_expiry_known": false, "document_availability_known": true, "privacy_storage_method_defined": true, "fire_alarm_review_due": false}
+        },
+        "family": {"handoff_due": true, "adult_fatigue_high": false, "plan_needs_rebalance": false, "external_support_review_needed": false}
+      }
+    },
+    {
+      "id": "high_load_weekday_v2",
+      "title": "高負荷の平日",
+      "state": {
+        "date": "2026-09-15",
+        "profile_runtime": {"bottle_used": true},
+        "context": {
+          "day_active": true,
+          "time_block": "morning",
+          "outing": {"planned": true, "with_child": true, "with_infant": true, "car_used": true, "stroller_used": true, "bicycle_childseat_used": false, "hazard_context_available": true, "transport_context_available": true, "return_reset_open": false},
+          "meal_or_food_preparation_active": true,
+          "meal_or_caregiver_handoff_active": false,
+          "hot_food_or_cooking_near_child": true,
+          "water_activity_active": false,
+          "weather": {"official_heat_alert_or_high_wbgt": true, "official_snow_or_blizzard_warning": false, "official_disaster_context_or_preseason_review_due": false}
+        },
+        "daycare": {
+          "attendance_today": true,
+          "attendance_tomorrow": true,
+          "unread_notice": true,
+          "tomorrow_prep_complete": false,
+          "clothing_stock": "low",
+          "diaper_supply_stock": "low",
+          "deadline_within_hours": 5,
+          "deadline_closed": false,
+          "event_or_payment_admin_open": true,
+          "returned_items_open": true,
+          "pickup_note_unshared": true,
+          "health_or_authorization_update_due": false,
+          "naming_gap_present": true,
+          "infection_context_active": false,
+          "local_infection_rules_available": true
+        },
+        "children": {
+          "infant": {
+            "feeding": {"next_due_known": true, "behavior_changed": true, "milk_stock": "critical", "clean_bottles": "low", "prep_environment_ready": true, "night_set_ready": false, "bottle_nipple_review_due": false, "expressed_milk_management_open": false, "pump_parts_management_open": false, "weaning_management_open": false, "weaning_guidance_available": false},
+            "diaper": {"stock": "critical", "wipes_stock": "low", "disposal_bag_stock": "low", "leak_or_marks": false, "fit_concern": false, "elimination_changed": true, "observed_at": "2026-09-15T07:05:00+09:00", "skin_changed": true},
+            "sleep": {"pattern_review_needed": false, "night_assignment_open": true, "safety_context_changed": true, "room_temperature_status": "too_hot", "humidity_status": "ok", "season_bedding_change_due": false, "bedding_fit_concern": false, "sheet_change_due": false, "night_flow_review_due": false},
+            "hygiene": {"bath_planned": true, "bath_prep_ready": false, "clean_clothes_stock": "low", "gauze_towel_stock": "low", "nail_care_due": false, "nasal_care_needed": false, "skin_care_supplies": "low", "clothing_fit_concern": false, "season_clothing_change_due": false},
+            "health": {"observed_condition_available": true, "symptom_changed": true, "observed_at": "2026-09-15T07:10:00+09:00", "development_or_feeding_concern": false},
+            "growth": {"mobility_or_reach_changed": true, "change_observed_at": "2026-09-15T06:50:00+09:00", "clothing_fit_concern": false},
+            "play": {"floor_play_planned": false, "household_guidance_available": true}
+          },
+          "older": {
+            "daily": {"condition_changed": false, "clothing_for_day_decided": false, "shoe_fit_concern": false, "clothing_fit_or_shortage": false, "sleep_pattern_changed": false, "one_to_one_time_needed": true, "sibling_transition_concern": true, "grooming_due": false, "supplies_stock": "low"},
+            "eating": {"food_context_available": true}
+          },
+          "growth": {"record_review_due": false}
+        },
+        "events": {
+          "vaccination": {"due_candidate": true, "schedule_source_confirmed": true, "history_available": true, "booking_status": "booked", "booking_rule_available": true, "appointment_within_hours": 4, "appointment_at": "2026-09-15T11:30:00+09:00", "prep_complete": false, "provider_instructions_available": true, "followup_closed": true},
+          "health_check": {"due_candidate": false, "local_schedule_available": true, "eligibility_confirmed": true, "invitation_or_due": false, "booking_rule_available": true, "form_status": "not_due"},
+          "medical": {"appointment_within_hours": 4, "prep_complete": false, "followup_open": false},
+          "family_or_seasonal_event": {"within_days": 10, "prep_complete": false}
+        },
+        "household": {
+          "local_area_set": true,
+          "food": {"breakfast_plan_decided": true, "lunch_plan_decided": false, "dinner_plan_decided": false, "expiring_items": true, "missing_items": true, "purchase_required": true, "leftovers_decision_open": true, "child_snack_stock": "low", "known_restrictions_available": false},
+          "kitchen": {"sink_blocked": true, "counter_blocked": true, "drain_attention": false, "dishwasher_unload_pending": true, "textile_change_due": false, "cleaning_supply_stock": "low", "fridge_spill_present": false, "child_dish_shortage_or_damage": false, "appliance_safety_issue": false},
+          "laundry": {"urgent_items_pending": true, "dry_items_pending": true, "stain_item_present": true, "baby_textile_stock": "low", "bedding_change_due": false, "towel_stock_or_change_due": false, "supply_stock": "low", "machine_maintenance_due": false, "weather_timing_decision_needed": false, "cleaning_or_repair_open": false},
+          "cleaning": {"floor_cleaning_needed": true, "living_path_blocked": true, "toy_area_open": true, "baby_area_open": true, "toilet_due": false, "washroom_due": false, "bathroom_due": false, "entry_open": true, "vehicle_child_mess": false, "child_equipment_dirty": false, "humidifier_due": false, "air_filter_due": false, "mold_or_condensation_present": false, "lost_home_items_present": false, "outgrown_items_pending": false},
+          "supplies": {"core_low": true, "replacement_item_low": false, "daycare_item_low": true, "subscription_mismatch": false, "shared_list_update_needed": true},
+          "waste": {"collection_within_hours": 10, "ready": false, "recycling_due": false, "cardboard_due": false, "special_collection_open": false, "bulk_collection_open": false, "diaper_odor_issue": true, "bin_hygiene_issue": false},
+          "planning": {"tomorrow_open": true, "weekly_review_due": false, "delivery_or_return_open": true, "guest_prep_open": false},
+          "admin": {"deadline_within_hours": 8, "deadline_closed": false, "child_benefit_open": false, "medical_or_insurance_update_open": false, "daycare_application_open": false, "leave_or_benefit_document_open": false, "important_document_storage_open": false, "payment_review_due": false, "payment_anomaly": false, "budget_overrun_signal": false, "subscription_review_due": false, "insurance_family_update_due": false, "address_or_contact_update_due": false, "warranty_record_open": false, "family_data_backup_due": false},
+          "medical": {"after_hours_setup_review_due": false, "after_hours_contact_available": true, "service_hours_or_lookup_path_available": true, "medicine_next_dose_due": false, "medicine_stock": "ok", "medicine_expiry_near": false, "toolkit_review_due": true, "receipts_or_records_pending": false},
+          "safety": {"floor_hazard_present": true, "button_battery_or_magnet_storage_issue": false, "chemical_storage_issue": false, "fall_hazard_present": false, "gate_or_barrier_issue": false, "cord_or_outlet_hazard_present": false, "equipment_or_measure_outgrown": false, "first_aid_storage_known": true, "first_aid_review_due": true},
+          "equipment": {"childseat_check_due": false, "childseat_issue": false, "stroller_manual_available": true, "carrier_adjustment_due": false, "stroller_adjustment_due": false},
+          "play": {"area_safety_issue": false, "toy_damage_or_small_parts": false, "toy_lifecycle_review_due": false, "outing_ideas_needed": false},
+          "season": {"clothing_transition_due": false},
+          "transport": {"fuel_or_charge_low": false, "child_equipment_unavailable": false, "maintenance_due": false},
+          "home": {"aircon_service_due": false, "humidifier_dehumidifier_due": false, "air_purifier_due": false, "bulb_or_battery_out": false, "water_or_drain_issue": false, "appliance_failure_signal": false, "pest_issue": false, "mold_or_condensation_issue": false, "key_management_issue": false, "baby_monitor_power_or_function_issue": false, "seasonal_appliance_transition_due": false},
+          "emergency": {"review_due": false, "first_aid_review_due_or_expiry_known": false, "document_availability_known": true, "privacy_storage_method_defined": true, "fire_alarm_review_due": false}
+        },
+        "family": {"handoff_due": true, "adult_fatigue_high": true, "plan_needs_rebalance": true, "external_support_review_needed": false}
+      }
+    },
+    {
+      "id": "recovery_weekend_v2",
+      "title": "低負荷の週末・回復日",
+      "state": {
+        "date": "2026-09-20",
+        "profile_runtime": {"bottle_used": true},
+        "context": {"day_active": true, "time_block": "morning", "outing": {"planned": false, "with_child": false, "with_infant": false, "car_used": false, "stroller_used": false, "bicycle_childseat_used": false, "hazard_context_available": false, "transport_context_available": false, "return_reset_open": false}, "meal_or_food_preparation_active": false, "meal_or_caregiver_handoff_active": false, "hot_food_or_cooking_near_child": false, "water_activity_active": false, "weather": {"official_heat_alert_or_high_wbgt": false, "official_snow_or_blizzard_warning": false, "official_disaster_context_or_preseason_review_due": false}},
+        "daycare": {"attendance_today": false, "attendance_tomorrow": false, "unread_notice": false, "tomorrow_prep_complete": true, "clothing_stock": "ok", "diaper_supply_stock": "ok", "deadline_within_hours": 999, "deadline_closed": true, "event_or_payment_admin_open": false, "returned_items_open": false, "pickup_note_unshared": false, "health_or_authorization_update_due": false, "naming_gap_present": false, "infection_context_active": false, "local_infection_rules_available": true},
+        "children": {"infant": {"feeding": {"next_due_known": true, "behavior_changed": false, "milk_stock": "ok", "clean_bottles": "ok", "prep_environment_ready": true, "night_set_ready": true, "bottle_nipple_review_due": true, "expressed_milk_management_open": false, "pump_parts_management_open": false, "weaning_management_open": false, "weaning_guidance_available": false}, "diaper": {"stock": "ok", "wipes_stock": "ok", "disposal_bag_stock": "ok", "leak_or_marks": false, "fit_concern": false, "elimination_changed": false, "skin_changed": false}, "sleep": {"pattern_review_needed": false, "night_assignment_open": false, "safety_context_changed": false, "room_temperature_status": "ok", "humidity_status": "ok", "season_bedding_change_due": false, "bedding_fit_concern": false, "sheet_change_due": false, "night_flow_review_due": true}, "hygiene": {"bath_planned": true, "bath_prep_ready": true, "clean_clothes_stock": "ok", "gauze_towel_stock": "ok", "nail_care_due": true, "nasal_care_needed": false, "skin_care_supplies": "ok", "clothing_fit_concern": false, "season_clothing_change_due": false}, "health": {"observed_condition_available": true, "symptom_changed": false, "development_or_feeding_concern": false}, "growth": {"mobility_or_reach_changed": false, "clothing_fit_concern": false}, "play": {"floor_play_planned": false, "household_guidance_available": true}}, "older": {"daily": {"condition_changed": false, "clothing_for_day_decided": true, "shoe_fit_concern": false, "clothing_fit_or_shortage": false, "sleep_pattern_changed": false, "one_to_one_time_needed": false, "sibling_transition_concern": false, "grooming_due": false, "supplies_stock": "ok"}, "eating": {"food_context_available": false}}, "growth": {"record_review_due": false}},
+        "events": {"vaccination": {"due_candidate": false, "schedule_source_confirmed": true, "history_available": true, "booking_status": "not_due", "booking_rule_available": true, "appointment_within_hours": 999, "prep_complete": true, "provider_instructions_available": true, "followup_closed": true}, "health_check": {"due_candidate": false, "local_schedule_available": true, "eligibility_confirmed": true, "invitation_or_due": false, "booking_rule_available": true, "form_status": "not_due"}, "medical": {"appointment_within_hours": 999, "prep_complete": true, "followup_open": false}, "family_or_seasonal_event": {"within_days": 999, "prep_complete": true}},
+        "household": {"local_area_set": true, "food": {"breakfast_plan_decided": true, "lunch_plan_decided": true, "dinner_plan_decided": true, "expiring_items": false, "missing_items": false, "purchase_required": false, "leftovers_decision_open": false, "child_snack_stock": "ok", "known_restrictions_available": false}, "kitchen": {"sink_blocked": false, "counter_blocked": false, "drain_attention": false, "dishwasher_unload_pending": false, "textile_change_due": false, "cleaning_supply_stock": "ok", "fridge_spill_present": false, "child_dish_shortage_or_damage": false, "appliance_safety_issue": false}, "laundry": {"urgent_items_pending": false, "dry_items_pending": false, "stain_item_present": false, "baby_textile_stock": "ok", "bedding_change_due": true, "towel_stock_or_change_due": false, "supply_stock": "ok", "machine_maintenance_due": false, "weather_timing_decision_needed": false, "cleaning_or_repair_open": false}, "cleaning": {"floor_cleaning_needed": false, "living_path_blocked": false, "toy_area_open": false, "baby_area_open": false, "toilet_due": true, "washroom_due": false, "bathroom_due": false, "entry_open": false, "vehicle_child_mess": false, "child_equipment_dirty": false, "humidifier_due": false, "air_filter_due": false, "mold_or_condensation_present": false, "lost_home_items_present": false, "outgrown_items_pending": false}, "supplies": {"core_low": false, "replacement_item_low": false, "daycare_item_low": false, "subscription_mismatch": false, "shared_list_update_needed": false}, "waste": {"collection_within_hours": 999, "ready": true, "recycling_due": false, "cardboard_due": false, "special_collection_open": false, "bulk_collection_open": false, "diaper_odor_issue": false, "bin_hygiene_issue": false}, "planning": {"tomorrow_open": false, "weekly_review_due": true, "delivery_or_return_open": false, "guest_prep_open": false}, "admin": {"deadline_within_hours": 999, "deadline_closed": true, "child_benefit_open": false, "medical_or_insurance_update_open": false, "daycare_application_open": false, "leave_or_benefit_document_open": false, "important_document_storage_open": false, "payment_review_due": false, "payment_anomaly": false, "budget_overrun_signal": false, "subscription_review_due": false, "insurance_family_update_due": false, "address_or_contact_update_due": false, "warranty_record_open": false, "family_data_backup_due": false}, "medical": {"after_hours_setup_review_due": true, "after_hours_contact_available": true, "service_hours_or_lookup_path_available": true, "medicine_next_dose_due": false, "medicine_stock": "ok", "medicine_expiry_near": false, "toolkit_review_due": false, "receipts_or_records_pending": false}, "safety": {"floor_hazard_present": false, "button_battery_or_magnet_storage_issue": false, "chemical_storage_issue": false, "fall_hazard_present": false, "gate_or_barrier_issue": false, "cord_or_outlet_hazard_present": false, "equipment_or_measure_outgrown": false, "first_aid_storage_known": true, "first_aid_review_due": false}, "equipment": {"childseat_check_due": false, "childseat_issue": false, "stroller_manual_available": true, "carrier_adjustment_due": false, "stroller_adjustment_due": false}, "play": {"area_safety_issue": false, "toy_damage_or_small_parts": false, "toy_lifecycle_review_due": true, "outing_ideas_needed": false}, "season": {"clothing_transition_due": false}, "transport": {"fuel_or_charge_low": false, "child_equipment_unavailable": false, "maintenance_due": false}, "home": {"aircon_service_due": false, "humidifier_dehumidifier_due": false, "air_purifier_due": false, "bulb_or_battery_out": false, "water_or_drain_issue": false, "appliance_failure_signal": false, "pest_issue": false, "mold_or_condensation_issue": false, "key_management_issue": false, "baby_monitor_power_or_function_issue": false, "seasonal_appliance_transition_due": false}, "emergency": {"review_due": true, "first_aid_review_due_or_expiry_known": true, "document_availability_known": true, "privacy_storage_method_defined": true, "fire_alarm_review_due": true}},
+        "family": {"handoff_due": false, "adult_fatigue_high": false, "plan_needs_rebalance": false, "external_support_review_needed": false}
+      }
+    },
+    {
+      "id": "winter_weather_outing_v2",
+      "title": "大雪・暴風雪情報がある外出日",
+      "state": {
+        "date": "2026-12-20",
+        "profile_runtime": {"bottle_used": true},
+        "context": {"day_active": true, "time_block": "morning", "outing": {"planned": true, "with_child": true, "with_infant": true, "car_used": false, "stroller_used": false, "bicycle_childseat_used": false, "hazard_context_available": true, "transport_context_available": true, "return_reset_open": false}, "meal_or_food_preparation_active": false, "meal_or_caregiver_handoff_active": false, "hot_food_or_cooking_near_child": false, "water_activity_active": false, "weather": {"official_heat_alert_or_high_wbgt": false, "official_snow_or_blizzard_warning": true, "official_disaster_context_or_preseason_review_due": false}},
+        "daycare": {"attendance_today": false, "attendance_tomorrow": false, "unread_notice": false, "tomorrow_prep_complete": true, "clothing_stock": "ok", "diaper_supply_stock": "ok", "deadline_within_hours": 999, "deadline_closed": true, "event_or_payment_admin_open": false, "returned_items_open": false, "pickup_note_unshared": false, "health_or_authorization_update_due": false, "naming_gap_present": false, "infection_context_active": false, "local_infection_rules_available": true},
+        "children": {"infant": {"feeding": {"next_due_known": true, "behavior_changed": false, "milk_stock": "ok", "clean_bottles": "ok", "prep_environment_ready": true, "night_set_ready": true, "bottle_nipple_review_due": false, "expressed_milk_management_open": false, "pump_parts_management_open": false, "weaning_management_open": false, "weaning_guidance_available": false}, "diaper": {"stock": "ok", "wipes_stock": "ok", "disposal_bag_stock": "ok", "leak_or_marks": false, "fit_concern": false, "elimination_changed": false, "skin_changed": false}, "sleep": {"pattern_review_needed": false, "night_assignment_open": false, "safety_context_changed": false, "room_temperature_status": "ok", "humidity_status": "ok", "season_bedding_change_due": false, "bedding_fit_concern": false, "sheet_change_due": false, "night_flow_review_due": false}, "hygiene": {"bath_planned": true, "bath_prep_ready": true, "clean_clothes_stock": "ok", "gauze_towel_stock": "ok", "nail_care_due": false, "nasal_care_needed": false, "skin_care_supplies": "ok", "clothing_fit_concern": false, "season_clothing_change_due": false}, "health": {"observed_condition_available": true, "symptom_changed": false, "development_or_feeding_concern": false}, "growth": {"mobility_or_reach_changed": false, "clothing_fit_concern": false}, "play": {"floor_play_planned": false, "household_guidance_available": true}}, "older": {"daily": {"condition_changed": false, "clothing_for_day_decided": true, "shoe_fit_concern": false, "clothing_fit_or_shortage": false, "sleep_pattern_changed": false, "one_to_one_time_needed": false, "sibling_transition_concern": false, "grooming_due": false, "supplies_stock": "ok"}, "eating": {"food_context_available": false}}, "growth": {"record_review_due": false}},
+        "events": {"vaccination": {"due_candidate": false, "schedule_source_confirmed": true, "history_available": true, "booking_status": "not_due", "booking_rule_available": true, "appointment_within_hours": 999, "prep_complete": true, "provider_instructions_available": true, "followup_closed": true}, "health_check": {"due_candidate": false, "local_schedule_available": true, "eligibility_confirmed": true, "invitation_or_due": false, "booking_rule_available": true, "form_status": "not_due"}, "medical": {"appointment_within_hours": 999, "prep_complete": true, "followup_open": false}, "family_or_seasonal_event": {"within_days": 999, "prep_complete": true}},
+        "household": {"local_area_set": true, "food": {"breakfast_plan_decided": true, "lunch_plan_decided": true, "dinner_plan_decided": true, "expiring_items": false, "missing_items": false, "purchase_required": false, "leftovers_decision_open": false, "child_snack_stock": "ok", "known_restrictions_available": false}, "kitchen": {"sink_blocked": false, "counter_blocked": false, "drain_attention": false, "dishwasher_unload_pending": false, "textile_change_due": false, "cleaning_supply_stock": "ok", "fridge_spill_present": false, "child_dish_shortage_or_damage": false, "appliance_safety_issue": false}, "laundry": {"urgent_items_pending": false, "dry_items_pending": false, "stain_item_present": false, "baby_textile_stock": "ok", "bedding_change_due": false, "towel_stock_or_change_due": false, "supply_stock": "ok", "machine_maintenance_due": false, "weather_timing_decision_needed": false, "cleaning_or_repair_open": false}, "cleaning": {"floor_cleaning_needed": false, "living_path_blocked": false, "toy_area_open": false, "baby_area_open": false, "toilet_due": false, "washroom_due": false, "bathroom_due": false, "entry_open": false, "vehicle_child_mess": false, "child_equipment_dirty": false, "humidifier_due": false, "air_filter_due": false, "mold_or_condensation_present": false, "lost_home_items_present": false, "outgrown_items_pending": false}, "supplies": {"core_low": false, "replacement_item_low": false, "daycare_item_low": false, "subscription_mismatch": false, "shared_list_update_needed": false}, "waste": {"collection_within_hours": 999, "ready": true, "recycling_due": false, "cardboard_due": false, "special_collection_open": false, "bulk_collection_open": false, "diaper_odor_issue": false, "bin_hygiene_issue": false}, "planning": {"tomorrow_open": false, "weekly_review_due": false, "delivery_or_return_open": false, "guest_prep_open": false}, "admin": {"deadline_within_hours": 999, "deadline_closed": true, "child_benefit_open": false, "medical_or_insurance_update_open": false, "daycare_application_open": false, "leave_or_benefit_document_open": false, "important_document_storage_open": false, "payment_review_due": false, "payment_anomaly": false, "budget_overrun_signal": false, "subscription_review_due": false, "insurance_family_update_due": false, "address_or_contact_update_due": false, "warranty_record_open": false, "family_data_backup_due": false}, "medical": {"after_hours_setup_review_due": false, "after_hours_contact_available": true, "service_hours_or_lookup_path_available": true, "medicine_next_dose_due": false, "medicine_stock": "ok", "medicine_expiry_near": false, "toolkit_review_due": false, "receipts_or_records_pending": false}, "safety": {"floor_hazard_present": false, "button_battery_or_magnet_storage_issue": false, "chemical_storage_issue": false, "fall_hazard_present": false, "gate_or_barrier_issue": false, "cord_or_outlet_hazard_present": false, "equipment_or_measure_outgrown": false, "first_aid_storage_known": true, "first_aid_review_due": false}, "equipment": {"childseat_check_due": false, "childseat_issue": false, "stroller_manual_available": true, "carrier_adjustment_due": false, "stroller_adjustment_due": false}, "play": {"area_safety_issue": false, "toy_damage_or_small_parts": false, "toy_lifecycle_review_due": false, "outing_ideas_needed": false}, "season": {"clothing_transition_due": false}, "transport": {"fuel_or_charge_low": false, "child_equipment_unavailable": false, "maintenance_due": false}, "home": {"aircon_service_due": false, "humidifier_dehumidifier_due": false, "air_purifier_due": false, "bulb_or_battery_out": false, "water_or_drain_issue": false, "appliance_failure_signal": false, "pest_issue": false, "mold_or_condensation_issue": false, "key_management_issue": false, "baby_monitor_power_or_function_issue": false, "seasonal_appliance_transition_due": false}, "emergency": {"review_due": false, "first_aid_review_due_or_expiry_known": false, "document_availability_known": true, "privacy_storage_method_defined": true, "fire_alarm_review_due": false}},
+        "family": {"handoff_due": false, "adult_fatigue_high": false, "plan_needs_rebalance": false, "external_support_review_needed": false}
+      }
+    }
+  ]
+}

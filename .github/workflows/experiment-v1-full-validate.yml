@@ -1,0 +1,69 @@
+name: Validate complete production-scope experiment v1
+
+on:
+  push:
+    branches:
+      - experiment/production-scope-v1
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  full-contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: Check out experiment branch
+        uses: actions/checkout@v4
+
+      - name: Build responsibility metadata
+        run: python3 tools/build_responsibility_metadata.py
+
+      - name: Validate responsibility metadata
+        run: python3 tests/test_responsibility_metadata.py
+
+      - name: Validate health and safety review
+        run: python3 tests/test_health_safety_review.py
+
+      - name: Validate health and safety boundaries
+        run: python3 tests/test_health_safety_boundaries.py
+
+      - name: Build high-impact activation rules
+        run: python3 tools/build_high_impact_activation_rules.py
+
+      - name: Validate high-impact activation rules
+        run: python3 tests/test_high_impact_activation_rules.py
+
+      - name: Build all 293 activation rules
+        run: python3 tools/build_full_activation_rules.py
+
+      - name: Validate all 293 activation rules
+        run: python3 tests/test_full_activation_rules.py
+
+      - name: Simulate variable-load days
+        run: python3 tools/simulate_household_day.py
+
+      - name: Validate variable-load simulation
+        run: python3 tests/test_experiment_day_simulation.py
+
+      - name: Validate shadow metrics
+        run: python3 tests/test_shadow_evaluator.py
+
+      - name: Validate existing private shadow packet
+        run: python3 tests/test_shadow_day_packet.py
+
+      - name: Validate complete shadow packet
+        run: python3 tests/test_full_shadow_packet.py
+
+      - name: Upload generated contracts
+        uses: actions/upload-artifact@v4
+        with:
+          name: production-scope-complete-v1
+          path: |
+            artifacts/responsibility_metadata_v1.jsonl
+            artifacts/high_impact_activation_rules_v1.jsonl
+            artifacts/full_activation_rules_v1.jsonl
+            artifacts/experiment_day_simulation_v1.json
+            artifacts/experiment_day_simulation_v1.md
+          if-no-files-found: error
