@@ -14,7 +14,7 @@ def read_jsonl(path: Path):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--catalog", default="artifacts/responsibility_catalog_v2.jsonl")
-    ap.add_argument("--rules", default="data/activation_rules_core_v2.json")
+    ap.add_argument("--rules", default="artifacts/activation_rules_core_v2.json")
     ap.add_argument("--json-out", default="artifacts/activation_coverage_v2.json")
     ap.add_argument("--md-out", default="artifacts/activation_coverage_v2.md")
     args = ap.parse_args()
