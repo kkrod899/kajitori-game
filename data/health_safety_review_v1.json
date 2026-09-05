@@ -15,7 +15,7 @@
     {"id":"CHD-MED-005","status":"PASS_WITH_BOUNDARY","required_source_ids":["SRC-CHECKUP-001"]},
     {"id":"CHD-MED-006","status":"PASS_WITH_BOUNDARY","required_source_ids":["SRC-CHECKUP-001"]},
     {"id":"CHD-MED-008","status":"PASS_WITH_BOUNDARY","required_source_ids":["SRC-MCH-001","SRC-CHILD-8000-001"]},
-    {"id":"CHD-MED-009","status":"PASS_DIRECT","required_source_ids":["SRC-CHILD-8000-001"]},
+    {"id":"CHD-MED-009","status":"PASS_WITH_BOUNDARY","required_source_ids":["SRC-CHILD-8000-001"]},
     {"id":"CHD-MED-014","status":"PASS_WITH_BOUNDARY","required_source_ids":["SRC-MCH-001"]},
     {"id":"SAFE-001","status":"PASS_DIRECT","required_source_ids":["SRC-SLEEP-001","SRC-ACCIDENT-001"]},
     {"id":"SAFE-002","status":"PASS_DIRECT","required_source_ids":["SRC-ACCIDENT-001"]},
