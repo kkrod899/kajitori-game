@@ -37,7 +37,7 @@ Status: Manual integrity pass 1 / **not clinical validation**
 | 9 | `CHD-MED-005` | 乳幼児健診時期を把握 | PASS_WITH_BOUNDARY | CHECKUP | 自治体差があるためlocal config必須 |
 | 10 | `CHD-MED-006` | 健診予約・書類を閉じる | PASS_WITH_BOUNDARY | CHECKUP | 実施方法・予約要否は地域依存 |
 | 11 | `CHD-MED-008` | 発熱・咳・嘔吐等の変化を観察 | PASS_WITH_BOUNDARY | MCH, CHILD-8000 | 観察＋相談導線。診断・受診要否を確定しない |
-| 12 | `CHD-MED-009` | 受診先・休日夜間相談先を把握 | PASS_DIRECT | CHILD-8000, MCH | #8000の利用時間等は地域確認が必要 |
+| 12 | `CHD-MED-009` | 受診先・休日夜間相談先を把握 | PASS_WITH_BOUNDARY | CHILD-8000, MCH | #8000の利用時間等は地域で異なるためlocal確認が必要 |
 | 13 | `CHD-MED-014` | 発達・動き・食事等の気がかりを記録 | PASS_WITH_BOUNDARY | MCH | 発達診断をしない。相談材料の記録まで |
 | 14 | `SAFE-001` | 睡眠中の窒息リスクを確認 | PASS_DIRECT | SLEEP, ACCIDENT | 状態確認と具体的除去行動のみ記録 |
 | 15 | `SAFE-002` | 小物・誤飲物を確認 | PASS_DIRECT | ACCIDENT | 年齢・到達範囲の変化で再評価 |
