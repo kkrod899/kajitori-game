@@ -1,0 +1,52 @@
+{
+  "schema_version": 1,
+  "date": "2026-09-05",
+  "profile": {
+    "tags": ["household","has_child","infant","older_child","daycare","two_adult_household"],
+    "features": {
+      "dishwasher": true,
+      "cooking_appliances": true,
+      "uses_clothing_service_or_repairs": false,
+      "stroller_or_carrier": true,
+      "uses_car": true,
+      "uses_bicycle": false,
+      "humidifier": false,
+      "air_purifier_or_air_conditioner": true,
+      "recurring_delivery": false,
+      "parental_leave": true,
+      "has_insurance_contracts": true,
+      "digital_family_photos": true,
+      "air_conditioner": true,
+      "humidifier_or_dehumidifier": false,
+      "air_purifier": true,
+      "baby_monitor": true,
+      "seasonal_appliances": true,
+      "family_milestones_used": true,
+      "seasonal_child_events": true,
+      "infant_floor_play": true
+    },
+    "ages_months": {"infant":4,"older_child":42},
+    "household_config": {
+      "daycare": true,
+      "daycare_rules": "configured",
+      "municipality_waste_calendar": "configured",
+      "paper_collection_rule": "configured",
+      "municipality_special_collection": "configured",
+      "municipality_bulk_collection": "configured",
+      "emergency_plan_scope": "configured"
+    }
+  },
+  "signals": {
+    "KIT-002":{"action_required":true},
+    "LAUN-006":{"open_loop_detected":true},
+    "CLEAN-013":{"condition_changed":true},
+    "CLEAN-014":{"condition_changed":true},
+    "SUP-001":{"threshold_breached":true},
+    "WASTE-001":{"due_within_horizon":true},
+    "ADMIN-005":{"hard_deadline_risk":true},
+    "HOME-010":{"maintenance_overdue":true},
+    "EMG-004":{"review_due":true},
+    "GROW-006":{"fit_or_stage_changed":true},
+    "PLAY-004":{"occurrence_due":true}
+  }
+}
