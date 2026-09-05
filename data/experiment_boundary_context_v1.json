@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "synthetic": true,
+  "description": "PASS_WITH_BOUNDARYの項目をsynthetic scenarioで有効化する場合に必要な文脈。値は架空テスト用であり実在家庭データではない。",
+  "scenarios": {
+    "high_load_weekday": {
+      "CHD-MED-003": {
+        "appointment_at": "synthetic_today_plus_4h",
+        "provider_instructions": "synthetic_instructions_present",
+        "observed_condition": "synthetic_observation_recorded"
+      }
+    }
+  }
+}
