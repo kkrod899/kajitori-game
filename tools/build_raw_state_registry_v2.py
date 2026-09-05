@@ -67,7 +67,7 @@ def expected_value_type(ops: set[str]) -> str:
 
 def main() -> None:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--rules", default="data/activation_rules_core_v2.json")
+    ap.add_argument("--rules", default="artifacts/activation_rules_core_v2.json")
     ap.add_argument("--boundaries", default="data/health_safety_boundaries_v2.json")
     ap.add_argument("--out", default="artifacts/raw_state_field_registry_v2.json")
     args = ap.parse_args()
