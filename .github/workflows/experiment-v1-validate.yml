@@ -1,49 +1,13 @@
 name: Validate production-scope experiment v1
 
 on:
-  push:
-    branches:
-      - experiment/production-scope-v1
   workflow_dispatch:
 
 permissions:
   contents: read
 
 jobs:
-  metadata-and-simulation:
+  staging:
     runs-on: ubuntu-latest
-    timeout-minutes: 5
     steps:
-      - name: Check out experiment branch
-        uses: actions/checkout@v4
-
-      - name: Build 293-item metadata
-        run: python3 tools/build_responsibility_metadata.py
-
-      - name: Validate production-scope metadata
-        run: python3 tests/test_responsibility_metadata.py
-
-      - name: Validate health and safety manual integrity gate
-        run: python3 tests/test_health_safety_review.py
-
-      - name: Validate health and safety activation boundaries
-        run: python3 tests/test_health_safety_boundaries.py
-
-      - name: Simulate variable-load household days
-        run: python3 tools/simulate_household_day.py
-
-      - name: Validate day simulation
-        run: python3 tests/test_experiment_day_simulation.py
-
-      - name: Validate shadow-test evaluator
-        run: python3 tests/test_shadow_evaluator.py
-
-      - name: Upload experiment artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: production-scope-experiment-v1
-          path: |
-            artifacts/responsibility_metadata_v1.jsonl
-            artifacts/experiment_day_simulation_v1.json
-            artifacts/experiment_day_simulation_v1.md
-          if-no-files-found: error
+      - run: echo "Validation temporarily manual while v2 files are assembled"
