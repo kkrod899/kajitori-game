@@ -10,7 +10,7 @@ permissions:
   contents: read
 
 jobs:
-  metadata:
+  metadata-and-simulation:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
@@ -23,9 +23,18 @@ jobs:
       - name: Validate production-scope metadata
         run: python3 tests/test_responsibility_metadata.py
 
-      - name: Upload expanded metadata
+      - name: Simulate variable-load household days
+        run: python3 tools/simulate_household_day.py
+
+      - name: Validate day simulation
+        run: python3 tests/test_experiment_day_simulation.py
+
+      - name: Upload experiment artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: responsibility-metadata-v1
-          path: artifacts/responsibility_metadata_v1.jsonl
+          name: production-scope-experiment-v1
+          path: |
+            artifacts/responsibility_metadata_v1.jsonl
+            artifacts/experiment_day_simulation_v1.json
+            artifacts/experiment_day_simulation_v1.md
           if-no-files-found: error
