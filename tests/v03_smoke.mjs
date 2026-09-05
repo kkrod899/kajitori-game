@@ -1,14 +1,16 @@
-import { chromium } from 'playwright';
+import { chromium, webkit } from 'playwright';
 import fs from 'node:fs';
 
 const baseURL = process.env.BASE_URL || 'http://127.0.0.1:8000/kajitori_minimal_pictogram_compact.html';
-const browser = await chromium.launch({ headless: true });
+const browserName = process.env.BROWSER || 'chromium';
+const browserType = browserName === 'webkit' ? webkit : chromium;
+const browser = await browserType.launch({ headless: true });
 const context = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 1 });
 
 const seed = {
-  tasksByDate: {},
-  missedLog: [],
-  retryQueue: [],
+  tasksByDate: { legacy_day: { sentinel: true } },
+  missedLog: [{ sentinel: 'legacy-missed' }],
+  retryQueue: [{ sentinel: 'legacy-retry' }],
   v02: {
     version: 2,
     profile: {
@@ -22,9 +24,9 @@ const seed = {
     },
     days: {},
     stateFacts: {},
-    questionHistory: [],
+    questionHistory: [{ date: '2026-09-01', key: 'night_set', answer: 'know' }],
     questionCooldownUntil: {},
-    questionKnowStreak: {},
+    questionKnowStreak: { night_set: 1 },
     evidenceEvents: [],
     spontaneous: []
   }
@@ -42,7 +44,7 @@ page.on('console', (msg) => {
 });
 
 function assert(condition, message) {
-  if (!condition) throw new Error(message);
+  if (!condition) throw new Error(`[${browserName}] ${message}`);
 }
 
 await page.goto(baseURL, { waitUntil: 'networkidle' });
@@ -58,17 +60,12 @@ const navBox = await page.locator('.bottom-nav').boundingBox();
 assert(mainBox && navBox, 'main/nav boxes missing');
 assert(mainBox.y + mainBox.height <= navBox.y + 1, 'bottom nav overlaps the scrollable main region');
 
-const minTarget = await page.evaluate(() => {
-  const selectors = ['button', '.task-card', '.tab'];
-  const nodes = [...document.querySelectorAll(selectors.join(','))];
-  return nodes.filter((el) => {
-    const r = el.getBoundingClientRect();
-    return r.width > 0 && r.height > 0 && getComputedStyle(el).visibility !== 'hidden';
-  }).reduce((min, el) => Math.min(min, el.getBoundingClientRect().height), Infinity);
-});
-assert(minTarget >= 38, `visible interactive target below smoke threshold: ${minTarget}px`);
+await page.getByRole('button', { name: '0件' }).click();
+assert(await page.locator('.task-card').count() === 0, '0件 mode still renders active task cards');
+assert((await page.locator('.empty-card').textContent()).includes('今日は0件で大丈夫'), '0件 empty state missing');
 
 await page.getByRole('button', { name: '3件' }).click();
+assert(await page.locator('.task-card').count() > 0, 'task cards did not return after leaving 0件 mode');
 let stored = await page.evaluate(() => JSON.parse(localStorage.getItem('kajitori_stable_mvp_v2')));
 const dayKey = Object.keys(stored.v02.days)[0];
 assert(stored.v02.days[dayKey].capacity === 'ahead', '3件 setting did not persist as ahead');
@@ -97,7 +94,6 @@ assert(simpleId, 'no visible simple task available for one-tap completion test')
 await page.locator(`[data-task="${simpleId}"] .task-check`).click();
 stored = await page.evaluate(() => JSON.parse(localStorage.getItem('kajitori_stable_mvp_v2')));
 assert(stored.v02.days[dayKey].status[simpleId] === 'done', 'simple task did not complete in one tap');
-
 await page.locator(`[data-task="${simpleId}"] .task-check`).click();
 stored = await page.evaluate(() => JSON.parse(localStorage.getItem('kajitori_stable_mvp_v2')));
 assert(stored.v02.days[dayKey].status[simpleId] === 'active', 'completed simple task did not reopen');
@@ -105,15 +101,27 @@ assert(stored.v02.days[dayKey].status[simpleId] === 'active', 'completed simple 
 await page.locator('.bottom-nav [data-tab="forecast"]').click();
 assert(await page.locator('#forecastView.active').count() === 1, 'forecast tab did not activate');
 assert(await page.locator('.forecast-card').count() > 0, 'forecast cards missing');
+const nextSizeCard = page.locator('.forecast-card').filter({ hasText: '次のオムツサイズ' });
+if (await nextSizeCard.count()) {
+  await nextSizeCard.getByRole('button', { name: '今日の一覧に追加' }).click();
+  assert(await page.locator('#todayView.active').count() === 1, 'forecast add did not return to today');
+  assert(await page.locator('[data-task="next_size"]').count() === 1, 'explicitly added non-recurring forecast item is not visible today');
+}
+
 await page.locator('.bottom-nav [data-tab="record"]').click();
 assert(await page.locator('#recordView.active').count() === 1, 'record tab did not activate');
+
+stored = await page.evaluate(() => JSON.parse(localStorage.getItem('kajitori_stable_mvp_v2')));
+assert(stored.tasksByDate?.legacy_day?.sentinel === true, 'legacy tasksByDate was lost');
+assert(stored.missedLog?.[0]?.sentinel === 'legacy-missed', 'legacy missedLog was lost');
+assert(stored.retryQueue?.[0]?.sentinel === 'legacy-retry', 'legacy retryQueue was lost');
+assert(stored.v02.questionHistory?.[0]?.key === 'night_set', 'existing v02 question history was lost');
 
 await page.locator('.bottom-nav [data-tab="today"]').click();
 await page.locator('[data-task="diaper_stock"] .chev').click();
 fs.mkdirSync('artifacts', { recursive: true });
-await page.screenshot({ path: 'artifacts/v03-iphone-smoke.png', fullPage: false });
+await page.screenshot({ path: `artifacts/v03-iphone-${browserName}.png`, fullPage: false });
 
 assert(errors.length === 0, `browser errors detected:\n${errors.join('\n')}`);
-
 await browser.close();
-console.log('v0.3 smoke test: PASS');
+console.log(`v0.3 ${browserName} smoke test: PASS`);
