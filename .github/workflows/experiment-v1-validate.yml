@@ -1,0 +1,31 @@
+name: Validate production-scope experiment v1
+
+on:
+  push:
+    branches:
+      - experiment/production-scope-v1
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  metadata:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Check out experiment branch
+        uses: actions/checkout@v4
+
+      - name: Build 293-item metadata
+        run: python3 tools/build_responsibility_metadata.py
+
+      - name: Validate production-scope metadata
+        run: python3 tests/test_responsibility_metadata.py
+
+      - name: Upload expanded metadata
+        uses: actions/upload-artifact@v4
+        with:
+          name: responsibility-metadata-v1
+          path: artifacts/responsibility_metadata_v1.jsonl
+          if-no-files-found: error
