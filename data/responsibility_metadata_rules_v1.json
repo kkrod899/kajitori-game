@@ -40,6 +40,8 @@
     "SRC-DISASTER-001":"Cabinet Office: household disaster preparedness"
   },
   "id_overrides": {
+    "INF-FEED-012":{"applicability":["expressed_milk_used"]},
+    "INF-FEED-013":{"applicability":["breast_pump_used"]},
     "INF-DIAP-007":{"source_ids":["SRC-MCH-001"]},
     "INF-SLEEP-004":{"source_ids":["SRC-SLEEP-001","SRC-ACCIDENT-001"]},
     "INF-SLEEP-005":{"source_ids":["SRC-SLEEP-001","SRC-ACCIDENT-001"]},
@@ -61,11 +63,13 @@
     "FOOD-015":{"source_ids":["SRC-FEED-001"],"applicability":["weaning_started"]},
     "FOOD-016":{"source_ids":["SRC-FEED-001","SRC-MCH-001"]},
     "OLD-DAILY-003":{"source_ids":["SRC-ORAL-001"]},
+    "OLD-DAILY-004":{"applicability":["toilet_support_needed"]},
     "EMG-*":{"source_ids":["SRC-DISASTER-001"]},
     "SAFE-*":{"source_ids":["SRC-ACCIDENT-001"]},
     "PLAY-002":{"source_ids":["SRC-MCH-001"],"applicability":["infant"]},
     "GROW-005":{"source_ids":["SRC-CHILDSEAT-001"],"applicability":["uses_car","has_child"]},
-    "GROW-012":{"source_ids":["SRC-ACCIDENT-001"]}
+    "GROW-012":{"source_ids":["SRC-ACCIDENT-001"]},
+    "HOME-012":{"applicability":["uses_car_or_bicycle"]}
   },
   "household_config_overrides": {
     "INF-FEED-008":["bottle_sterilization_policy"],
