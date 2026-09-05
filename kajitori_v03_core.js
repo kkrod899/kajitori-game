@@ -4,7 +4,7 @@ const TEMPLATES=[
 {id:'tomorrow_plan',category:'other',priority:110,label:'明日の予定を確認',minutes:5,summary:'明日のスケジュールと持ち物をチェック',reason:'前日に予定を持つと、朝の判断を減らせます。',close:'予定・持ち物・移動の不明点を閉じた',recurrence:'daily'},
 {id:'night_set',category:'child',priority:100,label:'夜用セットを準備',stateKey:'night_set',stateLabel:'夜用セット',minutes:8,summary:'オムツ・おしりふき・着替えをまとめる',reason:'寝る前にそろえておくと、夜中に探さずに済みます。',close:'夜用セットの状態を確認し、必要なら補充した',recurrence:'daily',evidence:'inventory',evidenceText:'夜用セットを切らす前に補充できた'},
 {id:'daycare_bag',category:'child',priority:96,label:'次の登園セットを確認',minutes:8,summary:'バッグ・着替え・必要物の差分を確認',reason:'前日に差分を持つと、出発前の判断を減らせます。',close:'バッグ・着替え・必要物の差分を閉じた',recurrence:'daycareTomorrow',evidence:'deadline',evidenceText:'登園前に持ち物の準備を閉じた'},
-{id:'diaper_stock',category:'child',priority:90,label:'オムツの在庫を確認',stateKey:'diaper_stock',stateLabel:'オムツ在庫',minutes:5,summary:'残り枚数を確認し、必要なら購入メモを作る',reason:'急に切らすと慌てるため、早めに把握しておきます。',close:'在庫を確認して、必要なら買うものをメモした',recurrence:'daily',evidence:'inventory',evidenceText:'オムツ在庫を切らす前に補充できた'},
+{id:'diaper_stock',category:'child',priority:90,label:'オムツの在庫を確認',stateKey:'diaper_stock',stateLabel:'オムツ在庫',minutes:5,summary:'残り枚数を確認し、必要なら購入メモを作る',reason:'急に切らすと慌てるため、早めに把握しておきます。',close:'在庫を確認して、必要なら買うものをメモした',recurrence:'daily',evidence:'inventory',evidenceText:'オムツが少ない段階で気づけた'},
 {id:'meal_plan',category:'house',priority:80,label:'夕食の方針を決める',minutes:8,summary:'作る・買う・残り物のどれにするか決める',reason:'夕方に残る判断を、余力のある時間へ前倒しできます。',close:'夕食の方針を決めた',recurrence:'daily'},
 {id:'laundry_next',category:'house',priority:74,label:'洗濯の次工程を進める',minutes:12,summary:'洗う・干す・乾燥・戻すの次を確認',reason:'途中で止まりやすい工程を、次の一手まで閉じます。',close:'洗濯の次工程が止まっていない',recurrence:'daily'},
 {id:'rest_window',category:'other',priority:65,label:'休息時間を1枠決める',minutes:5,summary:'中断されにくい時間帯をひとつ確保',reason:'家事の件数ではなく、今日の余力を守る時間も先に持ちます。',close:'休息の時間帯を1つ決めた',recurrence:'daily'},
@@ -28,7 +28,7 @@ function templateEligible(t,key=today()){const p=rootState.v02.profile;if(t.recu
 function eligibleTasks(){return TEMPLATES.filter(t=>templateEligible(t)).sort((a,b)=>b.priority-a.priority)}
 function taskStatus(id){return ensureTodayDay().status[id]||'active'}function isDone(id){const s=taskStatus(id);return s==='done'||s==='already'}
 function completeTask(id,stateValue){const t=templateById(id);if(!t)return;mutate('完了を記録しました',()=>{const d=ensureTodayDay();if(!d.planIds.includes(id))d.planIds.push(id);if(t.stateKey&&stateValue){rootState.v02.stateFacts[t.stateKey]={value:stateValue,checkedDate:today(),checkedAt:nowIso()}}maybeCreateEvidence(t);d.status[id]='done';d.currentId=null});closeDetail()}
-function reopenTask(id){mutate('完了を戻しました',()=>{const d=ensureTodayDay();d.status[id]='active'})}
+function reopenTask(id){mutate('完了を戻しました',()=>{const d=ensureTodayDay(),key=today();d.status[id]='active';rootState.v02.evidenceEvents=rootState.v02.evidenceEvents.filter(e=>!(e.date===key&&e.templateId===id))})}
 function deferTask(id){mutate('あとで見るに移しました',()=>{const d=ensureTodayDay();if(!d.planIds.includes(id))d.planIds.push(id);d.status[id]='deferred'});closeDetail()}
 function dismissTask(id){mutate('今日は出さないにしました',()=>{const d=ensureTodayDay();if(!d.planIds.includes(id))d.planIds.push(id);d.status[id]='dismissed'});closeDetail()}
 function alreadyDoneTask(id){mutate('もう済んでいるとして記録しました',()=>{const d=ensureTodayDay();if(!d.planIds.includes(id))d.planIds.push(id);d.status[id]='already'});closeDetail()}
