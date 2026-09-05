@@ -1,0 +1,43 @@
+{
+  "schema_version": 1,
+  "profile_id": "synthetic_two_children_infant_preschool_v1",
+  "synthetic": true,
+  "description": "実証エンジン検証用の架空家庭。特定の利用者・実在家庭の記録ではない。乳児1人、就学前の上の子1人、2成人世帯、平日は園利用という代表ケース。",
+  "tags": [
+    "household",
+    "has_child",
+    "infant",
+    "older_child",
+    "daycare",
+    "two_adult_household",
+    "uses_car"
+  ],
+  "household_config": {
+    "daycare": true,
+    "daycare_rules": "configured_for_synthetic_test",
+    "local_infection_rules": "configured_for_synthetic_test",
+    "municipality_waste_calendar": "configured_for_synthetic_test",
+    "municipality_special_collection": "configured_for_synthetic_test",
+    "municipality_bulk_collection": "configured_for_synthetic_test",
+    "bottle_sterilization_policy": "household_defined",
+    "expressed_milk_used": false,
+    "breast_pump_used": false,
+    "nasal_care_policy": "household_defined",
+    "allergy_or_food_reaction_tracking": false,
+    "toilet_support_needed": true,
+    "uses_car_or_bicycle": true,
+    "uses_bicycle_childseat": false,
+    "infant_age_band": "4_to_5_months",
+    "weaning_started": false,
+    "weaning_policy": "not_started",
+    "food_restrictions": "none_recorded_for_synthetic_test"
+  },
+  "experiment_assumptions": {
+    "daycare_weekdays": true,
+    "feeding_mode": "mixed_for_synthetic_test",
+    "weaning_started": false,
+    "bicycle_childseat_used": false,
+    "weather_is_external_state": true,
+    "health_safety_items_require_manual_review": true
+  }
+}
