@@ -1,0 +1,76 @@
+{
+  "schema_version": 2,
+  "base_catalog": "responsibility_metadata_v1.jsonl",
+  "description": "v1 seedを破壊せず、レビューで必要になった責任のrewrite/splitを適用する監査可能なoverlay。",
+  "replacements": {
+    "SAFE-018": {
+      "label": "暑熱時の外出リスクを確認する",
+      "trigger_type": "safety",
+      "cadence": {
+        "mode": "official_heat_context_or_periodic",
+        "review_interval_days": 1
+      },
+      "priority_class": "safety_health",
+      "surface_rule": "now_if_official_heat_context_else_hidden",
+      "state_inputs": [
+        "official_heat_alert_or_wbgt",
+        "outing_context",
+        "child_condition",
+        "mitigation_status"
+      ],
+      "source_ids_replace": [
+        "SRC-HEAT-001"
+      ],
+      "metadata_maturity": "reviewed_v2"
+    }
+  },
+  "additions": [
+    {
+      "id": "SAFE-019",
+      "label": "大雪・暴風雪時の外出・移動リスクを確認する",
+      "type": "M/S",
+      "group": "SAFE",
+      "domain": "child_safety",
+      "applicability": [
+        "has_child"
+      ],
+      "requires_household_config": false,
+      "household_config_fields": [],
+      "trigger_type": "safety",
+      "cadence": {
+        "mode": "official_winter_weather_context",
+        "review_interval_days": 1
+      },
+      "priority_class": "safety_health",
+      "surface_rule": "now_if_official_winter_weather_context_else_hidden",
+      "close_condition": "公式の気象・交通情報を確認し、不要不急の外出回避、時刻変更、移動手段変更、または十分な準備のいずれかを確定する",
+      "state_inputs": [
+        "official_snow_or_blizzard_warning",
+        "outing_needed",
+        "transport_mode",
+        "travel_plan_status"
+      ],
+      "evidence_rule": {
+        "required": [
+          "official_weather_context_snapshot"
+        ],
+        "optional": [
+          "travel_plan_change",
+          "preparation_action"
+        ],
+        "claim_ceiling": "official_context_and_recorded_action_only",
+        "forbidden_claims": [
+          "guaranteed_safe_travel",
+          "medical_cold_risk_diagnosis"
+        ]
+      },
+      "source_class": "official",
+      "source_ids": [
+        "SRC-WINTER-WEATHER-001"
+      ],
+      "default_visibility": "hidden_until_official_context",
+      "manual_review_required": true,
+      "metadata_maturity": "reviewed_v2"
+    }
+  ]
+}
