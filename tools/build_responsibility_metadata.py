@@ -33,7 +33,7 @@ def parse_master(path: Path):
         if not m:
             continue
         item_id, type_text, label = [x.strip() for x in m.groups()]
-        if item_id == "ID":
+        if item_id == "ID" or not item_id.strip("-"):
             continue
         rows.append({"id": item_id, "type": type_text, "label": label})
     return rows
