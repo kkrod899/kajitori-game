@@ -1,0 +1,18 @@
+{
+  "schema_version": 2,
+  "sources": {
+    "SRC-WINTER-WEATHER-001": {
+      "publisher": "気象庁 / 国土交通省",
+      "title": "気象警報・注意報、早期注意情報、大雪時の外出・移動に関する公式情報",
+      "urls": [
+        "https://www.jma.go.jp/jma/kishou/know/bosai/warning.html",
+        "https://www.jma.go.jp/jma/kishou/know/bosai/prob_warning.html",
+        "https://www.jma.go.jp/jma/press/2502/03a/20250203.html"
+      ],
+      "supports": [
+        "SAFE-019"
+      ],
+      "boundary": "大雪・暴風雪等の公式情報と外出・移動計画の確認を支える。乳幼児の低体温症診断や個別医学判断は支えない。"
+    }
+  }
+}
