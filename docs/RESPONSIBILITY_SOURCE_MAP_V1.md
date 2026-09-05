@@ -1,22 +1,31 @@
 # RESPONSIBILITY SOURCE MAP v1
 
-Date: 2026-09-05
-Status: Primary-source baseline
+Date: 2026-09-05  
+Status: Primary-source baseline / high-impact source pass 1
 
 本ファイルは、健康・安全・家庭マネジメント項目を「思いつき」だけで作らないための一次情報マップ。
 
+## Source IDs
+
+| Source ID | 発行主体 | 文書 / ページ | URL | 主な適用範囲 |
+|---|---|---|---|---|
+| `SRC-HOUSEHOLD-001` | 内閣府 男女共同参画局 | 令和2年版男女共同参画白書 特集 第2節「家事・家庭のマネジメントの分担」 | https://www.gender.go.jp/about_danjo/whitepaper/r02/zentai/html/honpen/b1_s00_02.html | 食材・日用品在庫、献立、家族予定、家庭マネジメント責任 |
+| `SRC-MCH-001` | こども家庭庁 | 母子健康手帳 / 母子健康手帳情報支援 | https://www.cfa.go.jp/policies/boshihoken/techou/ / https://mchbook.cfa.go.jp/ | 乳幼児の健康・発達・育児全般の基礎領域 |
+| `SRC-CHECKUP-001` | こども家庭庁 | 乳幼児健診に関する取組み | https://www.cfa.go.jp/policies/boshihoken/nyuyojikenshin | `CHD-MED-005`〜`006`。自治体差を前提に扱う |
+| `SRC-VAX-001` | 厚生労働省 | 予防接種・ワクチン情報 | https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/kenkou_iryou/kenkou/kekkaku-kansenshou/yobou-sesshu/index.html | `CHD-MED-001`〜`004` |
+| `SRC-SLEEP-001` | こども家庭庁 | 赤ちゃんが安全に眠れるように ～1歳未満の赤ちゃんを育てるみなさまへ～ | https://www.cfa.go.jp/policies/boshihoken/kenkou/sids | あおむけ寝、硬く平坦な寝具、寝床周辺、掛け布団等の睡眠環境 |
+| `SRC-ACCIDENT-001` | こども家庭庁 | こどもの事故防止ハンドブック | https://www.cfa.go.jp/policies/child-safety-actions/handbook | 窒息・誤飲、転落、車・自転車、水まわり、やけど等 |
+| `SRC-DAYCARE-INFECT-001` | こども家庭庁 | 保育所における感染症対策ガイドライン（2018年改訂版、2023年一部改訂・修正） | https://www.mhlw.go.jp/content/10900000/20231010_policies_hoiku_25.pdf | 園利用時の感染症情報・登園関連。個別園ルールの上書きが必要 |
+| `SRC-FEED-001` | 厚生労働省 | 授乳・離乳の支援ガイド（2019年3月） | https://www.mhlw.go.jp/content/11908000/000496257.pdf | 授乳、離乳、食物アレルギーを含む栄養支援。個別性を前提に扱う |
+| `SRC-ORAL-001` | 厚生労働省 | 乳幼児期における歯科保健指導 | https://www.mhlw.go.jp/content/001490222.pdf | 歯磨き・仕上げ磨き、口腔観察、年齢・状態に応じた歯科保健 |
+| `SRC-HEAT-001` | 環境省 | 熱中症予防情報サイト / 暑さ指数(WBGT) | https://www.wbgt.env.go.jp/ | 暑熱時の外出・活動判断に使う環境リスク情報 |
+| `SRC-CHILDSEAT-001` | 警察庁 | 子供を守るチャイルドシート | https://www.npa.go.jp/bureau/traffic/anzen/childseat.html | チャイルドシート使用、取付・着座、安全確認 |
+| `SRC-BICYCLE-001` | 警察庁 | 自転車は車のなかま～自転車はルールを守って安全運転～ | https://www.npa.go.jp/bureau/traffic/bicycle/info.html | 子どものヘルメット、幼児用座席利用時の安全 |
+| `SRC-DISASTER-001` | 内閣府 防災 | 自然災害への備えは万全ですか？チェックしてみよう！ | https://www.bousai.go.jp/kyoiku/hokenkyousai/check.html | 乳幼児用哺乳瓶・紙おむつを含む持出品、家庭備蓄、連絡方法 |
+
 ## 1. 家事・家庭マネジメント
 
-### 内閣府 男女共同参画局 — 令和2年版男女共同参画白書 特集 第2節
-
-https://www.gender.go.jp/about_danjo/whitepaper/r02/zentai/html/honpen/b1_s00_02.html
-
-重要点:
-
-- 家事は食事準備・後片付け、掃除、洗濯、衣類・日用品の整理片付け等を含む
-- 育児は乳幼児の世話、付き添い、遊び、送迎、保護者会等を含む
-- 作業時間とは別に、家庭生活を滞りなく送るための「マネジメント責任」がある
-- 例として、食材・日用品の在庫把握、献立、家族予定調整が明示されている
+`SRC-HOUSEHOLD-001`では、実作業とは別に「日々の家事をマネジメントする責任」「家庭生活を滞りなく送る責任」が明示され、例として食材・日用品の在庫、献立、家族予定の調整が扱われている。
 
 Masterへの反映:
 
@@ -28,113 +37,85 @@ Masterへの反映:
 - `DAYCARE-*`
 - `FAM-*`
 
-## 2. 母子健康手帳・育児情報
+## 2. 母子健康・健診
 
-### こども家庭庁 — 母子健康手帳
+`SRC-MCH-001`を乳幼児の一般的な健康・発達領域の基礎ソースとする。ただし個別の安全・医療・栄養項目では、より直接的な一次情報を追加する。
 
-https://www.cfa.go.jp/policies/boshihoken/techou/
+乳幼児健診は自治体運用差があるため、`SRC-CHECKUP-001`だけで実施時期を断定しない。`CHD-MED-005`・`006`は地域設定を必要とする。
 
-### こども家庭庁 — 母子健康手帳情報支援サイト
+## 3. 予防接種
 
-https://mchbook.cfa.go.jp/
+`CHD-MED-001`〜`004`は`SRC-VAX-001`を直接ソースとする。
 
-扱われている主要領域:
+接種候補は単純な月齢固定カードにしない。少なくとも年齢、接種歴、予約状況、自治体・医療機関の運用を状態入力として扱う。
 
-- 新生児
-- 育児のしおり
-- 予防接種
-- 乳幼児期の栄養
-- お口と歯の健康
-- 病気やけが
-- 事故予防
-- 応急手当
+## 4. 睡眠安全・事故予防
 
-Masterへの反映:
+`INF-SLEEP-004`〜`006`と`SAFE-001`は`SRC-SLEEP-001`を直接紐付ける。睡眠環境については、あおむけ、硬く平坦な寝具、顔周辺へ物を置かない等の公式情報を根拠にする。
 
-- `INF-*`
-- `CHD-MED-*`
-- `SAFE-*`
-- `FOOD-*`
-- `GROW-*`
+`SAFE-*`は`SRC-ACCIDENT-001`を基本ソースとし、車・自転車・暑熱など専門情報がある項目は追加ソースを併用する。
 
-## 3. 乳幼児健診
+重要な証拠境界:
 
-### こども家庭庁 — 乳幼児健診に関する取組み
+- 安全状態を確認した記録から「事故を防いだ」とは断定しない
+- 記録できるのは確認時点の状態と、実際に行った除去・回避等のアクションまで
 
-https://www.cfa.go.jp/policies/boshihoken/nyuyojikenshin
+## 5. 保育所・感染症
 
-重要点:
+`CHD-MED-015`等の園利用時の感染症関連は`SRC-DAYCARE-INFECT-001`を基礎にする。
 
-- 出産後から就学前までの切れ目のない乳幼児健診を扱う
-- 実施状況・時期は自治体差があるため、地域設定が必要
+ただし、登園可否や提出方法は個別園・自治体の運用が優先されるため、必ず`daycare_rules` / `local_infection_rules`を設定してから出す。
 
-Masterへの反映:
+## 6. 授乳・離乳・食事制約
 
-- `CHD-MED-005`
-- `CHD-MED-006`
-- 健診項目は `C` (地域依存) を併記する方向でmetadata化する
+`SRC-FEED-001`は2019年改定版を採用する。ガイド自体が親子の個別性を尊重する考え方を示しているため、アプリ側で画一的な食事量・開始時期・進行を「正解」として断定しない。
 
-## 4. 予防接種
+主な紐付け:
 
-### 厚生労働省 — 予防接種・ワクチン情報
+- `INF-FEED-*`
+- `FOOD-015`
+- `FOOD-016`
 
-https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/kenkou_iryou/kenkou/kekkaku-kansenshou/yobou-sesshu/index.html
+## 7. 乳幼児の口腔ケア
 
-### 生後2か月から推奨される予防接種
+`OLD-DAILY-003`等の歯磨き・仕上げ磨き関連は`SRC-ORAL-001`を直接ソースとする。
 
-https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/kenkou_iryou/kenkou/kekkaku-kansenshou/yobou-sesshu/vaccine/months-2.html
+年齢・口腔内状態に応じた対応が必要なため、歯の生え方や個別相談の必要性を機械的に診断しない。
 
-### 生後5か月から推奨される予防接種
+## 8. 暑熱・季節安全
 
-https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/kenkou_iryou/kenkou/kekkaku-kansenshou/yobou-sesshu/vaccine/months-5.html
+`SAFE-018`は`SRC-HEAT-001`を追加ソースとし、将来リアルタイム化する場合はWBGT等の外部状態を入力として扱う。
 
-Masterへの反映:
+現段階の実証では、シナリオ側から`context_changed`や暑熱リスク状態を与え、アプリが独自に気象値を推定しない。
 
-- `CHD-MED-001`〜`CHD-MED-004`
-- 実際の接種スケジュールは年齢・接種歴・自治体運用を踏まえる必要があるため、単純な月齢固定カードにしない
+## 9. 車・自転車
 
-## 5. こどもの事故予防
+- `SAFE-011` / `GROW-005`: `SRC-CHILDSEAT-001`
+- `SAFE-013`: `SRC-BICYCLE-001`
 
-### こども家庭庁 — こどもの事故防止ハンドブック
+車・自転車を使わない家庭には出さない。チャイルドシートは使用有無だけでなく、取付・着座状態の確認を別の状態として扱う。
 
-https://www.cfa.go.jp/policies/child-safety-actions/handbook
+## 10. 災害・緊急時準備
 
-対象領域:
+`EMG-*`は`SRC-DISASTER-001`を基本ソースとする。
 
-- 窒息・誤飲
-- 転落・転倒
-- 自動車・自転車
-- 水まわり
-- やけど
-- 挟む・切る等
-- 応急手当
+内閣府情報では、乳幼児がいる家庭の持出品として哺乳瓶や紙おむつ等を挙げ、家庭備蓄は最低3日、できれば1週間を目安としている。実証ではこの数字をそのまま毎日のノルマにせず、備蓄レビューの根拠として使う。
 
-### 窒息・誤飲事故
+## 11. Source rule
 
-https://www.cfa.go.jp/policies/child-safety-actions/handbook/content-1/
-
-Masterへの反映:
-
-- `SAFE-001`〜`SAFE-018`
-- `INF-SLEEP-004`〜`INF-SLEEP-006`
-- `EMG-*`
-
-特に睡眠安全は「何となく安全」ではなく公式ガイダンスを根拠にする。
-
-## 6. 今後追加する一次情報
-
-- 自治体ごとの保育園・健診・予防接種運用
-- 年齢別の歯科・口腔ケア
-- 離乳食・栄養
-- 熱中症・季節安全
-- 災害時の乳幼児家庭向け備蓄
-- 車・自転車の乳幼児安全
-
-これらはmetadata pass時に各責任項目へ紐付ける。
-
-## 7. Source rule
-
-- 健康・安全: official source必須
-- 園・自治体固有: household/local config必須
-- 一般家事: official survey + household config +実証データ
+- 健康・安全 (`S`): official source必須 + manual review必須
+- 園・自治体固有 (`C`): household/local config必須
+- 一般家事: official survey + household config + 実証データ
 - 事実表示: evidence ruleがないものは「できた」「防げた」と断定しない
+- ソースがあっても、個別診断・個別医療判断を自動生成しない
+
+## 12. 次のsource pass
+
+今後、293項目を個別レビューする際に追加する。
+
+- 自治体ごとのごみ・健診・予防接種・保育園運用
+- 個別の設備・製品安全（ベビーカー、抱っこ紐等）の製品説明書 / 安全基準
+- 食品衛生・家庭内衛生のより直接的な公的資料
+- 行政・給付・保険項目の制度別一次情報
+
+source passは「URLを付けたら完了」ではなく、そのソースが当該項目の表示条件・完了条件・断定可能範囲を実際に支えているかまで確認する。
