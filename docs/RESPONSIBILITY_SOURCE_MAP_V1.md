@@ -1,7 +1,7 @@
 # RESPONSIBILITY SOURCE MAP v1
 
 Date: 2026-09-05  
-Status: Primary-source baseline / high-impact source pass 1
+Status: Primary-source baseline / high-impact source pass 2
 
 本ファイルは、健康・安全・家庭マネジメント項目を「思いつき」だけで作らないための一次情報マップ。
 
@@ -22,6 +22,8 @@ Status: Primary-source baseline / high-impact source pass 1
 | `SRC-CHILDSEAT-001` | 警察庁 | 子供を守るチャイルドシート | https://www.npa.go.jp/bureau/traffic/anzen/childseat.html | チャイルドシート使用、取付・着座、安全確認 |
 | `SRC-BICYCLE-001` | 警察庁 | 自転車は車のなかま～自転車はルールを守って安全運転～ | https://www.npa.go.jp/bureau/traffic/bicycle/info.html | 子どものヘルメット、幼児用座席利用時の安全 |
 | `SRC-DISASTER-001` | 内閣府 防災 | 自然災害への備えは万全ですか？チェックしてみよう！ | https://www.bousai.go.jp/kyoiku/hokenkyousai/check.html | 乳幼児用哺乳瓶・紙おむつを含む持出品、家庭備蓄、連絡方法 |
+| `SRC-CHILD-8000-001` | 厚生労働省 | 子ども医療電話相談事業（#8000） | https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/newpage_55223.html | 休日・夜間の子どもの症状で判断に迷う際の相談先。地域別実施時間も確認対象 |
+| `SRC-FIRE-001` | 総務省消防庁 | 住宅用火災警報器Q&A / 点検・交換 | https://www.fdma.go.jp/relocation/html/life/yobou_contents/qa/ | 住宅用火災警報器の作動確認、維持管理、交換 |
 
 ## 1. 家事・家庭マネジメント
 
@@ -88,6 +90,8 @@ Masterへの反映:
 
 現段階の実証では、シナリオ側から`context_changed`や暑熱リスク状態を与え、アプリが独自に気象値を推定しない。
 
+**Finding:** 現行masterの`SAFE-018`は「暑さ・寒さ」を一つにまとめているが、現sourceは暑熱側を直接支える。寒冷側を同じ根拠で出さない。item-level reviewで分割または文言修正が必要。
+
 ## 9. 車・自転車
 
 - `SAFE-011` / `GROW-005`: `SRC-CHILDSEAT-001`
@@ -95,24 +99,36 @@ Masterへの反映:
 
 車・自転車を使わない家庭には出さない。チャイルドシートは使用有無だけでなく、取付・着座状態の確認を別の状態として扱う。
 
-## 10. 災害・緊急時準備
+## 10. 休日・夜間の子どもの症状
+
+`CHD-MED-008`・`CHD-MED-009`・`SAFE-016`の「相談先」部分には`SRC-CHILD-8000-001`を追加する。
+
+#8000は診断ロジックではなく、休日・夜間に保護者が判断に迷った時の専門相談導線として使う。実施時間は都道府県で異なるため、表示時に地域情報を確認する。
+
+アプリ側は症状から独自に診断・受診要否を確定しない。
+
+## 11. 災害・緊急時準備
 
 `EMG-*`は`SRC-DISASTER-001`を基本ソースとする。
 
 内閣府情報では、乳幼児がいる家庭の持出品として哺乳瓶や紙おむつ等を挙げ、家庭備蓄は最低3日、できれば1週間を目安としている。実証ではこの数字をそのまま毎日のノルマにせず、備蓄レビューの根拠として使う。
 
-## 11. Source rule
+`EMG-010`の住宅用火災警報器は、防災一般情報だけでなく`SRC-FIRE-001`を直接ソースとする。作動確認・維持管理・交換は消防庁情報を基準にする。
+
+## 12. Source rule
 
 - 健康・安全 (`S`): official source必須 + manual review必須
 - 園・自治体固有 (`C`): household/local config必須
 - 一般家事: official survey + household config + 実証データ
 - 事実表示: evidence ruleがないものは「できた」「防げた」と断定しない
 - ソースがあっても、個別診断・個別医療判断を自動生成しない
+- source coverageは「URLが付いている」だけでPassにしない。項目の表示条件・完了条件・断定範囲を直接支えているかを確認する
 
-## 12. 次のsource pass
+## 13. 次のsource pass
 
 今後、293項目を個別レビューする際に追加する。
 
+- `SAFE-018`寒冷側の分割/直接source
 - 自治体ごとのごみ・健診・予防接種・保育園運用
 - 個別の設備・製品安全（ベビーカー、抱っこ紐等）の製品説明書 / 安全基準
 - 食品衛生・家庭内衛生のより直接的な公的資料
