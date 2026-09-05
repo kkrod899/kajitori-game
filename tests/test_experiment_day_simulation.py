@@ -10,22 +10,22 @@ assert set(reports) == {"normal_weekday", "high_load_weekday", "low_load_weekend
 
 app = payload["applicability_summary"]
 assert app["master_count"] == 293
-assert app["coarsely_applicable_count"] < 293, "feature-gated items should be excluded"
+assert app["structurally_applicable_count"] < 293, "feature-gated items should be excluded"
 assert app["excluded_count"] >= 4
-# This warning is intentional at v1: it proves the next gate is item-level applicability refinement,
-# rather than pretending group-level filtering is production-ready.
-assert app["coarse_applicability_warning"] is True
+assert app["item_level_applicability_review_complete"] is False
+# Structural applicability ratio is descriptive only; it is not an acceptance threshold.
+assert 0 < app["structurally_applicable_ratio"] <= 1
 
 normal = reports["normal_weekday"]
 high = reports["high_load_weekday"]
 low = reports["low_load_weekend"]
 
 # No fixed-three behavior: the system should surface variable counts from state.
-assert normal["counts"]["now"] >= 1
+assert normal["counts"] == {"now": 2, "today": 18, "routine": 19, "review": 5}
+assert high["counts"] == {"now": 6, "today": 27, "routine": 19, "review": 6}
+assert low["counts"] == {"now": 0, "today": 11, "routine": 16, "review": 4}
 assert high["counts"]["now"] > normal["counts"]["now"]
-assert low["counts"]["now"] == 0
 assert high["counts"]["today"] > low["counts"]["today"]
-assert len({normal["counts"]["today"], high["counts"]["today"], low["counts"]["today"]}) >= 2
 
 # Repeated care must be separated from today's management candidates.
 for r in reports.values():
@@ -35,24 +35,28 @@ for r in reports.values():
         ids.extend(x["id"] for x in r["layers"][layer])
     assert len(ids) == len(set(ids)), f"duplicate surfaced item in {r['id']}"
 
-# Safety/health items that surface still carry source coverage.
+# Safety/health items that surface must be reviewed, sourced, and not blocked.
 for r in reports.values():
     for layer in ("now", "today", "review"):
         for item in r["layers"][layer]:
             if item["manual_review_required"]:
                 assert item["source_ids"], item["id"]
+                assert item["health_safety_review_status"] in {"PASS_DIRECT", "PASS_WITH_BOUNDARY"}, item
 
-# Stress scenario must bring actual safety/health and capacity signals into Now.
+# Stress scenario: boundary-ready vaccination preparation can surface, blocked SAFE-018 cannot.
 high_now = {x["id"] for x in high["layers"]["now"]}
-assert "SAFE-018" in high_now
 assert "CHD-MED-003" in high_now
 assert "FAM-004" in high_now
+assert "SAFE-018" not in high_now
+suppressed = {x["id"]: x["reason"] for x in high["suppressed"]}
+assert high["suppressed_count"] == 1
+assert suppressed["SAFE-018"] == "manual_review_status=REWRITE_OR_SPLIT"
 
 # Weekend recovery scenario intentionally has no daycare items.
 low_ids = {x["id"] for layer in low["layers"].values() for x in layer}
 assert not any(x.startswith("DAYCARE-") for x in low_ids)
 
 print("experiment day simulation validation: PASS")
-print("coarse_applicability", app["coarsely_applicable_count"], "/", app["master_count"], "warning=", app["coarse_applicability_warning"])
+print("structural_applicability", app["structurally_applicable_count"], "/", app["master_count"])
 for r in (normal, high, low):
-    print(r["id"], r["counts"])
+    print(r["id"], r["counts"], "suppressed=", r["suppressed_count"])
