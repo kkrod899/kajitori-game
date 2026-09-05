@@ -1,0 +1,92 @@
+name: Validate production-scope experiment v2
+
+on:
+  push:
+    branches:
+      - experiment/production-scope-v1
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  production-scope-v2:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: Check out experiment branch
+        uses: actions/checkout@v4
+
+      - name: Run v1 regression gates
+        run: |
+          python3 tools/build_responsibility_metadata.py
+          python3 tests/test_responsibility_metadata.py
+          python3 tests/test_health_safety_review.py
+          python3 tests/test_health_safety_boundaries.py
+          python3 tests/test_shadow_evaluator.py
+
+      - name: Build effective v2 catalog
+        run: |
+          python3 tools/build_responsibility_catalog_v2.py
+          python3 tests/test_responsibility_catalog_v2.py
+          python3 tests/test_health_safety_v2.py
+
+      - name: Build v2 activation rules and surface bundles
+        run: |
+          python3 tools/build_activation_rules_v2.py
+          python3 tools/build_surface_bundles_v2.py
+          python3 tests/test_activation_rules_v2.py
+
+      - name: Build and validate raw-state registry
+        run: |
+          python3 tools/build_raw_state_registry_v2.py \
+            --rules artifacts/activation_rules_core_v2.json \
+            --boundaries data/health_safety_boundaries_v2.json \
+            --out artifacts/raw_state_registry_v2.json
+          python3 tests/test_raw_state_registry_v2.py
+
+      - name: Simulate raw-state activation engine
+        run: |
+          python3 tools/simulate_activation_engine_v2.py \
+            --catalog artifacts/responsibility_catalog_v2.jsonl \
+            --rules artifacts/activation_rules_core_v2.json \
+            --profile data/experiment_household_profile_v1.json \
+            --scenarios data/experiment_raw_state_scenarios_v2.json \
+            --review data/health_safety_review_v2.json \
+            --boundaries data/health_safety_boundaries_v2.json \
+            --bundles artifacts/surface_bundles_v2.json \
+            --json-out artifacts/activation_engine_v2.json \
+            --md-out artifacts/activation_engine_v2.md
+          python3 tests/test_activation_engine_v2.py
+
+      - name: Audit activation coverage
+        run: |
+          python3 tools/audit_activation_coverage_v2.py \
+            --catalog artifacts/responsibility_catalog_v2.jsonl \
+            --rules artifacts/activation_rules_core_v2.json \
+            --json-out artifacts/activation_coverage_v2.json \
+            --md-out artifacts/activation_coverage_v2.md
+
+      - name: Validate v2 shadow evaluator
+        run: |
+          python3 tools/evaluate_shadow_test_v2.py \
+            --input data/shadow_observation_example_v2.jsonl \
+            --out artifacts/shadow_evaluation_v2.json
+          python3 tests/test_shadow_evaluator_v2.py
+
+      - name: Upload v2 experiment artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: production-scope-experiment-v2
+          path: |
+            artifacts/responsibility_metadata_v1.jsonl
+            artifacts/responsibility_catalog_v2.jsonl
+            artifacts/activation_rules_core_v2.json
+            artifacts/surface_bundles_v2.json
+            artifacts/raw_state_registry_v2.json
+            artifacts/activation_engine_v2.json
+            artifacts/activation_engine_v2.md
+            artifacts/activation_coverage_v2.json
+            artifacts/activation_coverage_v2.md
+            artifacts/shadow_evaluation_v2.json
+          if-no-files-found: error
