@@ -8,6 +8,7 @@ from pathlib import Path
 
 LAYERS = ["now", "today", "routine", "review"]
 LAYER_JA = {"now":"今見る", "today":"今日の候補", "routine":"ルーティン", "review":"レビュー"}
+BLOCKED_REVIEW_STATUSES = {"NEEDS_DIRECT_SOURCE", "REWRITE_OR_SPLIT"}
 
 
 def read_jsonl(path: Path):
@@ -54,10 +55,10 @@ def summarize_applicability(metadata, profile):
     ratio = len(applicable) / len(metadata) if metadata else 0
     return {
         "master_count": len(metadata),
-        "coarsely_applicable_count": len(applicable),
-        "coarsely_applicable_ratio": round(ratio, 4),
-        "coarse_applicability_warning": ratio >= 0.85,
-        "warning_reason": "profile適用率が85%以上。group-level条件が粗く、年齢・設備・生活習慣・制度条件のitem-level refinementが必要" if ratio >= 0.85 else "",
+        "structurally_applicable_count": len(applicable),
+        "structurally_applicable_ratio": round(ratio, 4),
+        "item_level_applicability_review_complete": False,
+        "interpretation": "high structural applicability is not itself a failure; daily activation eligibility must be evaluated separately",
         "excluded_count": len(excluded),
         "config_blocked_count": len(config_blocked),
         "excluded_examples": excluded[:12],
@@ -122,12 +123,54 @@ def decide_layer(meta, signal):
     return None, "表示条件なし"
 
 
-def simulate(metadata, profile, scenarios):
+def load_health_review(path: Path):
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    return {x["id"]: x for x in payload["items"]}
+
+
+def load_boundaries(path: Path):
+    return json.loads(path.read_text(encoding="utf-8"))["items"]
+
+
+def load_boundary_context(path: Path):
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    if not payload.get("synthetic"):
+        raise ValueError("boundary context fixture must be explicitly synthetic")
+    return payload.get("scenarios", {})
+
+
+def health_safety_gate(meta, scenario_id, health_review, boundaries, boundary_context):
+    if not meta.get("manual_review_required"):
+        return True, None
+
+    item_id = meta["id"]
+    review = health_review.get(item_id)
+    if not review:
+        raise ValueError(f"health/safety item {item_id} has no manual review entry")
+    status = review["status"]
+
+    if status in BLOCKED_REVIEW_STATUSES:
+        return False, f"manual_review_status={status}"
+
+    if status == "PASS_WITH_BOUNDARY":
+        rule = boundaries.get(item_id)
+        if not rule:
+            raise ValueError(f"boundary-dependent item {item_id} has no boundary rule")
+        context = boundary_context.get(scenario_id, {}).get(item_id, {})
+        missing = [field for field in rule["required_context_fields"] if field not in context]
+        if missing:
+            return False, "missing_boundary_context=" + ",".join(missing)
+
+    return True, None
+
+
+def simulate(metadata, profile, scenarios, health_review, boundaries, boundary_context):
     by_id = {row["id"]: row for row in metadata}
     reports = []
     for scenario in scenarios["scenarios"]:
         seen = set()
         buckets = {k: [] for k in LAYERS}
+        suppressed = []
         for act in scenario.get("activations", []):
             item_id = act["id"]
             if item_id in seen:
@@ -148,6 +191,18 @@ def simulate(metadata, profile, scenarios):
             if meta.get("manual_review_required") and not meta.get("source_ids"):
                 raise ValueError(f"{scenario['id']}: safety/health item {item_id} lacks official source")
 
+            allowed, suppression_reason = health_safety_gate(
+                meta, scenario["id"], health_review, boundaries, boundary_context
+            )
+            if not allowed:
+                suppressed.append({
+                    "id": item_id,
+                    "label": meta["label"],
+                    "reason": suppression_reason,
+                    "scenario_note": act.get("note", "")
+                })
+                continue
+
             signal = act.get("signal", {})
             layer, reason = decide_layer(meta, signal)
             if layer is None:
@@ -162,7 +217,8 @@ def simulate(metadata, profile, scenarios):
                 "reason": reason,
                 "scenario_note": act.get("note", ""),
                 "source_ids": meta.get("source_ids", []),
-                "manual_review_required": meta.get("manual_review_required", False)
+                "manual_review_required": meta.get("manual_review_required", False),
+                "health_safety_review_status": health_review.get(item_id, {}).get("status") if meta.get("manual_review_required") else None
             })
 
         reports.append({
@@ -172,6 +228,8 @@ def simulate(metadata, profile, scenarios):
             "context_tags": scenario.get("context_tags", []),
             "counts": {layer: len(buckets[layer]) for layer in LAYERS},
             "total_surfaced": sum(len(buckets[layer]) for layer in LAYERS),
+            "suppressed_count": len(suppressed),
+            "suppressed": suppressed,
             "layers": buckets
         })
     return reports
@@ -187,22 +245,19 @@ def to_markdown(profile, applicability, reports):
     out.append("")
     out.append(f"Profile: `{profile['profile_id']}`")
     out.append("")
-    out.append("## 粗い家庭適用フィルタ")
+    out.append("## Structural applicability")
     out.append("")
-    out.append(f"293項目中、現時点のgroup-level + feature-level条件で `{applicability['coarsely_applicable_count']}` 項目がこの架空家庭へ適用可能と判定された。")
+    out.append(f"293項目中、現時点のgroup-level + feature-level条件で `{applicability['structurally_applicable_count']}` 項目がこの架空家庭に長期的には関係し得ると判定された。")
     out.append("")
-    if applicability["coarse_applicability_warning"]:
-        out.append("**Finding:** この適用率は高すぎる。現段階のapplicabilityはまだ粗く、年齢・設備・生活習慣・制度・頻度をitem-levelで絞る必要がある。これは実証の未解決課題として扱う。")
-        out.append("")
-    out.append("ここでの`適用可能`は『今日表示する』という意味ではない。長期・季節・保守項目も含む母集団であり、日次表示は下記の状態信号でさらに絞る。")
+    out.append("この比率自体を合否に使わない。一般家庭に長期的に存在する責任は多いため、`structural applicability`と`今・今日に出す activation eligibility`を分けて評価する。item-level applicability reviewは未完了。")
     out.append("")
     out.append("## 件数比較")
     out.append("")
-    out.append("| シナリオ | 今見る | 今日の候補 | ルーティン | レビュー | 表示対象合計 |")
-    out.append("|---|---:|---:|---:|---:|---:|")
+    out.append("| シナリオ | 今見る | 今日の候補 | ルーティン | レビュー | 抑制 | 表示対象合計 |")
+    out.append("|---|---:|---:|---:|---:|---:|---:|")
     for r in reports:
         c = r["counts"]
-        out.append(f"| {r['title']} | {c['now']} | {c['today']} | {c['routine']} | {c['review']} | {r['total_surfaced']} |")
+        out.append(f"| {r['title']} | {c['now']} | {c['today']} | {c['routine']} | {c['review']} | {r['suppressed_count']} | {r['total_surfaced']} |")
     out.append("")
     out.append("`ルーティン`は授乳・オムツ替え等の反復実行を別ストリームに分けたもので、`今日の候補`の件数を水増ししない。")
     out.append("")
@@ -211,6 +266,12 @@ def to_markdown(profile, applicability, reports):
         out.append("")
         out.append(f"Context: {', '.join(r['context_tags'])}")
         out.append("")
+        if r["suppressed"]:
+            out.append(f"### Safety gateで抑制 — {len(r['suppressed'])}件")
+            out.append("")
+            for x in r["suppressed"]:
+                out.append(f"- `{x['id']}` {x['label']} — {x['reason']}")
+            out.append("")
         for layer in LAYERS:
             items = r["layers"][layer]
             out.append(f"### {LAYER_JA[layer]} — {len(items)}件")
@@ -229,7 +290,7 @@ def to_markdown(profile, applicability, reports):
     out.append("- このシミュレーションの件数自体が適正であること")
     out.append("- 293項目のitem-level applicabilityが最終品質であること")
     out.append("- 293項目の個別trigger/cadence/close conditionが最終品質であること")
-    out.append("- 健康・安全42項目の人手レビューが完了したこと")
+    out.append("- health/safetyが臨床的に検証されたこと")
     out.append("- 実際の家庭状態を自動取得できること")
     out.append("")
     out.append("次の実証では、実生活で『出すべきだったのに出なかった』『出したが不要だった』『タイミングが違った』を記録し、見落とし率・ノイズ率・タイミング誤りを測る。")
@@ -241,6 +302,9 @@ def main():
     ap.add_argument("--metadata", default="artifacts/responsibility_metadata_v1.jsonl")
     ap.add_argument("--profile", default="data/experiment_household_profile_v1.json")
     ap.add_argument("--scenarios", default="data/experiment_scenarios_v1.json")
+    ap.add_argument("--health-review", default="data/health_safety_review_v1.json")
+    ap.add_argument("--boundaries", default="data/health_safety_boundaries_v1.json")
+    ap.add_argument("--boundary-context", default="data/experiment_boundary_context_v1.json")
     ap.add_argument("--json-out", default="artifacts/experiment_day_simulation_v1.json")
     ap.add_argument("--md-out", default="artifacts/experiment_day_simulation_v1.md")
     args = ap.parse_args()
@@ -251,8 +315,12 @@ def main():
     if not profile.get("synthetic"):
         raise SystemExit("experiment profile must be explicitly synthetic")
 
+    health_review = load_health_review(Path(args.health_review))
+    boundaries = load_boundaries(Path(args.boundaries))
+    boundary_context = load_boundary_context(Path(args.boundary_context))
+
     applicability = summarize_applicability(metadata, profile)
-    reports = simulate(metadata, profile, scenarios)
+    reports = simulate(metadata, profile, scenarios, health_review, boundaries, boundary_context)
     payload = {
         "schema_version": 1,
         "profile_id": profile["profile_id"],
@@ -266,7 +334,7 @@ def main():
 
     print(json.dumps({
         "applicability": applicability,
-        "scenarios": {r["id"]: r["counts"] for r in reports}
+        "scenarios": {r["id"]: {**r["counts"], "suppressed": r["suppressed_count"]} for r in reports}
     }, ensure_ascii=False, indent=2))
 
 
