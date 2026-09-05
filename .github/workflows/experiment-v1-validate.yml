@@ -1,13 +1,99 @@
 name: Validate production-scope experiment v1
 
 on:
+  push:
+    branches:
+      - experiment/production-scope-v1
   workflow_dispatch:
 
 permissions:
   contents: read
 
 jobs:
-  staging:
+  production-scope-model:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
-      - run: echo "Validation temporarily manual while v2 files are assembled"
+      - name: Check out experiment branch
+        uses: actions/checkout@v4
+
+      - name: Compile Python sources
+        run: python3 -m py_compile tools/*.py tests/*.py
+
+      - name: Build v1 metadata base
+        run: python3 tools/build_responsibility_metadata.py
+
+      - name: Validate v1 metadata contract
+        run: python3 tests/test_responsibility_metadata.py
+
+      - name: Validate v1 health and safety review
+        run: python3 tests/test_health_safety_review.py
+
+      - name: Validate v1 health and safety boundaries
+        run: python3 tests/test_health_safety_boundaries.py
+
+      - name: Validate v1 shadow evaluator
+        run: python3 tests/test_shadow_evaluator.py
+
+      - name: Assemble modular v2 rules, bundles, and raw-state scenarios
+        run: python3 tools/build_activation_inputs_v2.py
+
+      - name: Build effective v2 catalog
+        run: python3 tools/build_responsibility_catalog_v2.py
+
+      - name: Validate v2 catalog and source split
+        run: python3 tests/test_responsibility_catalog_v2.py
+
+      - name: Build v2 raw-state registry
+        run: python3 tools/build_raw_state_registry_v2.py
+
+      - name: Validate v2 activation rules
+        run: python3 tests/test_activation_rules_v2.py
+
+      - name: Audit v2 activation coverage
+        run: python3 tools/audit_activation_coverage_v2.py
+
+      - name: Validate v2 coverage report
+        run: python3 tests/test_activation_coverage_v2.py
+
+      - name: Simulate v2 raw-state activation engine
+        run: >-
+          python3 tools/simulate_activation_engine_v2.py
+          --rules artifacts/activation_rules_core_v2.json
+          --scenarios artifacts/experiment_raw_state_scenarios_v2.json
+          --bundles artifacts/surface_bundles_v2.json
+
+      - name: Validate v2 activation engine
+        run: python3 tests/test_activation_engine_v2.py
+
+      - name: Validate v2 shadow intake burden and privacy
+        run: python3 tests/test_shadow_intake_spec_v2.py
+
+      - name: Validate v2 shadow evaluator
+        run: python3 tests/test_shadow_evaluator_v2.py
+
+      - name: Build v2 synthetic shadow evaluation example
+        run: >-
+          python3 tools/evaluate_shadow_test_v2.py
+          data/shadow_observation_example_v2.jsonl
+          --json-out artifacts/shadow_evaluation_example_v2.json
+          --md-out artifacts/shadow_evaluation_example_v2.md
+
+      - name: Upload production-scope experiment artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: production-scope-experiment-v2
+          path: |
+            artifacts/responsibility_metadata_v1.jsonl
+            artifacts/activation_rules_core_v2.json
+            artifacts/surface_bundles_v2.json
+            artifacts/experiment_raw_state_scenarios_v2.json
+            artifacts/responsibility_catalog_v2.jsonl
+            artifacts/raw_state_field_registry_v2.json
+            artifacts/activation_coverage_v2.json
+            artifacts/activation_coverage_v2.md
+            artifacts/activation_engine_simulation_v2.json
+            artifacts/activation_engine_simulation_v2.md
+            artifacts/shadow_evaluation_example_v2.json
+            artifacts/shadow_evaluation_example_v2.md
+          if-no-files-found: error
