@@ -1,0 +1,43 @@
+{
+  "schema_version": 1,
+  "description": "1行=1日内の意味のある家庭運営責任またはengine提案。実在データ保存形式の契約であり、このファイル自体に利用者データは含まない。",
+  "required_fields": [
+    "date",
+    "actual_needed",
+    "surfaced",
+    "responsibility_kind",
+    "risk_class",
+    "timing_assessment",
+    "source_of_discovery",
+    "partner_prompted",
+    "loop_closed",
+    "duplicate_or_granular",
+    "evidence_overclaim"
+  ],
+  "fields": {
+    "date": {"type":"string","format":"YYYY-MM-DD"},
+    "responsibility_id": {"type":["string","null"],"description":"masterに無い場合null"},
+    "actual_label": {"type":"string","description":"master gapでも必須の人間向け内容"},
+    "responsibility_kind": {"enum":["management","routine"]},
+    "risk_class": {"enum":["standard","hard_deadline","health_safety"]},
+    "actual_needed": {"type":"boolean"},
+    "surfaced": {"type":"boolean"},
+    "surfaced_layer": {"enum":["now","today","routine","review",null]},
+    "timing_assessment": {"enum":["on_time","too_early","too_late","not_surfaced","not_applicable"]},
+    "source_of_discovery": {"enum":["self","partner","environment","calendar","daycare","official_notice","other"]},
+    "partner_prompted": {"type":"boolean"},
+    "loop_closed": {"type":"boolean"},
+    "duplicate_or_granular": {"type":"boolean"},
+    "evidence_overclaim": {"type":"boolean"},
+    "notes": {"type":"string"}
+  },
+  "rules": [
+    "actual_needed=false and surfaced=false observations are normally unnecessary",
+    "surfaced=false requires surfaced_layer=null",
+    "surfaced=false and actual_needed=true requires timing_assessment=not_surfaced",
+    "actual_needed=false should use timing_assessment=not_applicable",
+    "responsibility_id=null and actual_needed=true counts as a master gap",
+    "health_safety or hard_deadline actual_needed=true surfaced=false is a critical miss",
+    "evidence_overclaim=true is always a hard gate failure"
+  ]
+}
