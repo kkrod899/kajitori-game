@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "synthetic": true,
+  "private": false,
+  "date": "2026-09-05",
+  "signals": {
+    "INF-DIAP-002":{"threshold_breached":true},
+    "DAYCARE-008":{"hard_deadline_risk":true},
+    "LAUN-006":{"open_loop_detected":true},
+    "SUP-001":{"threshold_breached":true},
+    "WASTE-001":{"due_within_horizon":true},
+    "ADMIN-005":{"hard_deadline_risk":true},
+    "EMG-004":{"review_due":true},
+    "PLAY-004":{"occurrence_due":true}
+  }
+}
