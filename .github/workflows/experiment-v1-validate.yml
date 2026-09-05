@@ -29,6 +29,9 @@ jobs:
       - name: Validate day simulation
         run: python3 tests/test_experiment_day_simulation.py
 
+      - name: Validate shadow-test evaluator
+        run: python3 tests/test_shadow_evaluator.py
+
       - name: Upload experiment artifacts
         uses: actions/upload-artifact@v4
         with:
