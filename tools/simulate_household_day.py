@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import argparse
 import json
+from collections import Counter
 from pathlib import Path
 
 LAYERS = ["now", "today", "routine", "review"]
@@ -13,9 +14,17 @@ def read_jsonl(path: Path):
     return [json.loads(line) for line in path.read_text(encoding="utf-8").splitlines() if line.strip()]
 
 
+def profile_capabilities(profile):
+    caps = set(profile.get("tags", []))
+    for key, value in profile.get("household_config", {}).items():
+        if value is True:
+            caps.add(key)
+    return caps
+
+
 def is_applicable(meta, profile):
-    tags = set(profile.get("tags", []))
-    missing = [tag for tag in meta.get("applicability", []) if tag not in tags]
+    caps = profile_capabilities(profile)
+    missing = [tag for tag in meta.get("applicability", []) if tag not in caps]
     return not missing, missing
 
 
@@ -25,6 +34,36 @@ def validate_config(meta, profile):
     config = profile.get("household_config", {})
     missing = [key for key in meta.get("household_config_fields", []) if key not in config]
     return not missing, missing
+
+
+def summarize_applicability(metadata, profile):
+    applicable = []
+    excluded = []
+    config_blocked = []
+    for meta in metadata:
+        ok, missing_tags = is_applicable(meta, profile)
+        if not ok:
+            excluded.append({"id": meta["id"], "missing_applicability": missing_tags})
+            continue
+        config_ok, missing_config = validate_config(meta, profile)
+        if not config_ok:
+            config_blocked.append({"id": meta["id"], "missing_config": missing_config})
+            continue
+        applicable.append(meta)
+    domains = Counter(x["domain"] for x in applicable)
+    ratio = len(applicable) / len(metadata) if metadata else 0
+    return {
+        "master_count": len(metadata),
+        "coarsely_applicable_count": len(applicable),
+        "coarsely_applicable_ratio": round(ratio, 4),
+        "coarse_applicability_warning": ratio >= 0.85,
+        "warning_reason": "profile適用率が85%以上。group-level条件が粗く、年齢・設備・生活習慣・制度条件のitem-level refinementが必要" if ratio >= 0.85 else "",
+        "excluded_count": len(excluded),
+        "config_blocked_count": len(config_blocked),
+        "excluded_examples": excluded[:12],
+        "config_blocked_examples": config_blocked[:12],
+        "applicable_by_domain": dict(sorted(domains.items()))
+    }
 
 
 def decide_layer(meta, signal):
@@ -138,7 +177,7 @@ def simulate(metadata, profile, scenarios):
     return reports
 
 
-def to_markdown(profile, reports):
+def to_markdown(profile, applicability, reports):
     out = []
     out.append("# EXPERIMENT DAY SIMULATION v1")
     out.append("")
@@ -147,6 +186,15 @@ def to_markdown(profile, reports):
     out.append("目的は件数を3件等へ固定することではなく、同じ家庭でも状態によって `今見る / 今日の候補 / ルーティン / レビュー` の件数が自然に変動することを検証すること。")
     out.append("")
     out.append(f"Profile: `{profile['profile_id']}`")
+    out.append("")
+    out.append("## 粗い家庭適用フィルタ")
+    out.append("")
+    out.append(f"293項目中、現時点のgroup-level + feature-level条件で `{applicability['coarsely_applicable_count']}` 項目がこの架空家庭へ適用可能と判定された。")
+    out.append("")
+    if applicability["coarse_applicability_warning"]:
+        out.append("**Finding:** この適用率は高すぎる。現段階のapplicabilityはまだ粗く、年齢・設備・生活習慣・制度・頻度をitem-levelで絞る必要がある。これは実証の未解決課題として扱う。")
+        out.append("")
+    out.append("ここでの`適用可能`は『今日表示する』という意味ではない。長期・季節・保守項目も含む母集団であり、日次表示は下記の状態信号でさらに絞る。")
     out.append("")
     out.append("## 件数比較")
     out.append("")
@@ -179,11 +227,12 @@ def to_markdown(profile, reports):
     out.append("## この段階で証明していないこと")
     out.append("")
     out.append("- このシミュレーションの件数自体が適正であること")
-    out.append("- 293項目の個別メタデータが最終品質であること")
+    out.append("- 293項目のitem-level applicabilityが最終品質であること")
+    out.append("- 293項目の個別trigger/cadence/close conditionが最終品質であること")
     out.append("- 健康・安全42項目の人手レビューが完了したこと")
     out.append("- 実際の家庭状態を自動取得できること")
     out.append("")
-    out.append("次の実証では、実生活で『出すべきだったのに出なかった』『出したが不要だった』を記録し、見落とし率とノイズ率で調整する。")
+    out.append("次の実証では、実生活で『出すべきだったのに出なかった』『出したが不要だった』『タイミングが違った』を記録し、見落とし率・ノイズ率・タイミング誤りを測る。")
     return "\n".join(out) + "\n"
 
 
@@ -202,13 +251,23 @@ def main():
     if not profile.get("synthetic"):
         raise SystemExit("experiment profile must be explicitly synthetic")
 
+    applicability = summarize_applicability(metadata, profile)
     reports = simulate(metadata, profile, scenarios)
-    payload = {"schema_version": 1, "profile_id": profile["profile_id"], "synthetic": True, "reports": reports}
+    payload = {
+        "schema_version": 1,
+        "profile_id": profile["profile_id"],
+        "synthetic": True,
+        "applicability_summary": applicability,
+        "reports": reports
+    }
     Path(args.json_out).parent.mkdir(parents=True, exist_ok=True)
     Path(args.json_out).write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
-    Path(args.md_out).write_text(to_markdown(profile, reports), encoding="utf-8")
+    Path(args.md_out).write_text(to_markdown(profile, applicability, reports), encoding="utf-8")
 
-    print(json.dumps({r["id"]: r["counts"] for r in reports}, ensure_ascii=False, indent=2))
+    print(json.dumps({
+        "applicability": applicability,
+        "scenarios": {r["id"]: r["counts"] for r in reports}
+    }, ensure_ascii=False, indent=2))
 
 
 if __name__ == "__main__":
