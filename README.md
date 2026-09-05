@@ -2,7 +2,7 @@
 
 育休中の家事・育児を、単なる作業消化ではなく「気づく・考える・計画する・最後まで閉じる」家庭運営のゲームとして扱うプロジェクトです。
 
-現在は、v0.2のプロダクト思想と保存形式を維持しながら、iPhone実利用で確認されたUI摩擦を解消するv0.3 UX/UI刷新を実装しています。
+現在は、v0.2のプロダクト思想と保存形式を維持しながら、iPhone実利用で確認されたUI摩擦を解消するv0.3をGitHub Pagesへ配信済みです。物理iPhone Safari / ホーム画面追加版の最終受入だけが残っています。
 
 ## 入口
 
@@ -22,7 +22,7 @@ AIごとの入口は [AGENTS.md](AGENTS.md) と [CLAUDE.md](CLAUDE.md) です。
 - 白〜暖灰 + ブルーグレー `#5F86A4`、イラストなし
 - `今日 / この先 / 記録` の3タブ
 - 今日の負荷を `0 / 1 / 2 / 3件` から直接選択
-- コンパクトなToday一覧
+- 最大5件のコンパクトなToday一覧
 - 通常項目は一覧から1タップ完了
 - 状態確認項目はボトムシートで3段階状態を確認して完了
 - 理由・終了条件は `判断のヒントを見る` へ格納
@@ -58,17 +58,21 @@ v0.3はデータ移行ではなくUX/UI刷新です。
 - 旧root `tasksByDate / missedLog / retryQueue` を保持
 - 既存profile、日別状態、stateFacts、evidenceEvents等を継続利用
 
-## 検証
+## 検証・配信
 
-GitHub ActionsでJavaScript構文、配信資産、Chromium 390×844、WebKit 390×844の主要フローを検証しています。Run #9までChromium / WebKitともPassし、P0/P1の未解決Findingはありません。
+- 最終branch validation: GitHub Actions run #14 `33934573890` — Chromium / WebKitともPass
+- PR #1を`main`へsquash merge済み
+- Pages deployment run #2 `33934672855` — Success
+- deployment artifactを展開し、v0.3 HTML/CSS/JS、manifest、service worker、`#5F86A4` theme colorを確認済み
+- Pages workflowは配信後に`workflow_dispatch`のみへ戻している
 
-物理iPhone Safariとホーム画面追加版はPages反映後の最終受入ゲートです。
+物理iPhone Safariとホーム画面追加版は最終受入ゲートです。
 
 ## スマホから使う
 
 公開URLは [https://kkrod899.github.io/kajitori-game/](https://kkrod899.github.io/kajitori-game/) です。iPhoneはSafariの共有メニューから「ホーム画面に追加」できます。
 
-Pagesは手動公開です。mainの更新だけでは自動公開されないため、更新内容を確認した後に `Publish the app to GitHub Pages` workflowを実行します。
+更新後も旧UIが一時的に表示される場合は、Safariで公開URLを一度開き直してからホーム画面版を再起動してください。service workerのcache名はv3へ更新済みです。
 
 ## ChatGPTのチャット側で再開する
 
