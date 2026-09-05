@@ -8,15 +8,15 @@
 |---|---|
 | プロダクト | 家事取りゲーム v0.3 UX刷新 |
 | 正本リポジトリ | `kkrod899/kajitori-game` |
-| 本番ブランチ | `main` — 現時点では公開中のv0.2 |
-| 実装ブランチ | `ux/mobile-v03` |
-| Pull Request | PR #1 `v0.3: iPhone向けUX/UI刷新` |
+| 本番ブランチ | `main` |
+| Pull Request | PR #1 `v0.3: iPhone向けUX/UI刷新` — squash merge済み |
 | 公開URL | `https://kkrod899.github.io/kajitori-game/` |
+| Pages | v0.3 deployment run #2 `33934672855` — Success |
 | 保存 | `localStorage` / key `kajitori_stable_mvp_v2` / `v02` namespace version 2を維持 |
 | v0.3仕様 | `docs/V0_3_UX_SLICE.md` |
 | 事後監査 | `reviews/2026-09-05-0005-chatgpt-v0-3-ux-post.md` |
-| Decision | D-026〜D-030をAccepted |
-| 現在フェーズ | 最終branch CI → mainへmerge → Pages手動配信 → 物理iPhone受入 |
+| Decision | D-026〜D-030 Accepted |
+| 現在フェーズ | **物理iPhone受入 → 問題なければ7〜14日実生活テスト再開** |
 
 ## v0.3へ進んだ理由
 
@@ -51,7 +51,7 @@
 | 0件 | Today候補一覧を閉じる |
 | 1日1問 | 独立カードを廃止し、必要な状態確認を該当タスク詳細へ統合 |
 
-## 実装済みファイル — `ux/mobile-v03`
+## 本番実装済みファイル
 
 - `kajitori_minimal_pictogram_compact.html`
 - `kajitori_v03.css`
@@ -70,7 +70,7 @@
 
 ### 保存互換性
 
-v0.3はデータ移行ではなくUX/UI刷新として実装した。
+v0.3はデータ移行ではなくUX/UI刷新。
 
 - `STORAGE_KEY='kajitori_stable_mvp_v2'`を維持
 - `v02.version=2`を維持
@@ -92,9 +92,7 @@ P0/P1の未解決Findingはない。
 
 ## 自動検証
 
-GitHub Actions `Validate v0.3 mobile UX` を追加した。
-
-Run #9 `33934349296` の結果:
+最終branch validation Run #14 `33934573890`:
 
 | 検証 | 結果 |
 |---|---|
@@ -116,11 +114,20 @@ Run #9 `33934349296` の結果:
 
 WebKitスクリーンショットも目視し、ボトムシートと背景レイアウトに大きな崩れは確認されなかった。
 
+## Pages配信
+
+- PR #1を`main`へsquash merge
+- merge SHA: `fcaceb15f4026f802a52bc974b91e46ed1fc2075`
+- 一度だけ`main` pushをPages triggerへ追加してv0.3を配信
+- Pages deployment run #2 `33934672855`: **Success**
+- deployment artifact `9959749555`を展開し、v0.3 HTML/CSS/JS、manifest、service worker、theme color `#5F86A4`を確認
+- 配信成功後、`.github/workflows/pages.yml`を`workflow_dispatch`のみへ復元済み
+
 ## レビュー境界
 
 事後監査は実装と同じChatGPTセッション内で役割を切り替えて実施しており、Claude等の独立レビューではない。この制約はレビュー記録にも明記している。
 
-自動検証を含めP0/P1は解消済みのため、v0.3を限定Pages配信し、物理iPhone受入へ進める。物理端末で問題が出た場合は7〜14日実生活テストを再開せず、v0.3を修正する。
+自動検証を含めP0/P1は解消済みのため、v0.3をPagesへ配信し、物理iPhone受入へ進んだ。物理端末で問題が出た場合は7〜14日実生活テストを再開せず、v0.3を修正する。
 
 ## 残存リスク
 
@@ -132,19 +139,18 @@ WebKitスクリーンショットも目視し、ボトムシートと背景レ�
 
 ## 次の一手
 
-1. `ux/mobile-v03`最終headのCIがPassしていることを確認
-2. PR #1を`main`へmerge
-3. `Publish the app to GitHub Pages`を手動実行
-4. 公開URLがv0.3資産を配信していることを確認
-5. 主要利用者本人のiPhoneで以下を受入確認
-   - 下ナビが本文を隠さない
-   - 最下部まで普通にスクロールできる
-   - 通常項目1タップ完了
-   - オムツ状態選択→完了
-   - 完了を戻せる
-   - `今日 / この先 / 記録`が切り替わる
-   - ホーム画面追加版でも同じ表示
-6. 問題がなければv0.3で7〜14日実生活テストを再開
+主要利用者本人のiPhoneで公開URLを開き、以下だけ確認する。
+
+1. v0.3のブルーグレーUIへ更新されている
+2. 下部ナビが本文を隠さない
+3. 一番下まで普通にスクロールできる
+4. 通常項目を左チェック1タップで完了できる
+5. オムツ等の状態項目でボトムシート→状態選択→完了できる
+6. 完了を再タップして戻せる
+7. `今日 / この先 / 記録`が切り替わる
+8. ホーム画面追加版でも同じUI・保存内容になる
+
+問題がなければ、v0.3で7〜14日実生活テストを再開する。
 
 ## 再開時の読み順
 
@@ -154,4 +160,5 @@ WebKitスクリーンショットも目視し、ボトムシートと背景レ�
 4. `docs/DECISIONS.md`
 5. `docs/V0_3_UX_SLICE.md`
 6. `reviews/2026-09-05-0005-chatgpt-v0-3-ux-post.md`
-7. `docs/V0_2_UX_SPEC.md` — v0.3でも維持するプロダクト原則・データルール確認用
+7. `docs/MOBILE_ACCESS.md`
+8. `docs/V0_2_UX_SPEC.md` — v0.3でも維持するプロダクト原則・データルール確認用
