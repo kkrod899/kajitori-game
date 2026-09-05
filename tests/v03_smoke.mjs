@@ -81,6 +81,18 @@ assert(stored.v02.days[dayKey].status.diaper_stock === 'done', 'diaper task was 
 assert(stored.v02.stateFacts.diaper_stock?.value === 'soon', 'diaper state was not persisted as soon');
 assert(stored.v02.stateFacts.diaper_stock?.checkedDate === dayKey, 'diaper state freshness date missing');
 assert(stored.v02.evidenceEvents.some((e) => e.templateId === 'diaper_stock'), 'inventory evidence event was not created');
+assert(stored.v02.evidenceEvents.find((e) => e.templateId === 'diaper_stock')?.text === 'オムツが少ない段階で気づけた', 'inventory evidence wording is not fact-safe');
+
+await page.locator('[data-task="diaper_stock"] .task-check').click();
+stored = await page.evaluate(() => JSON.parse(localStorage.getItem('kajitori_stable_mvp_v2')));
+assert(stored.v02.days[dayKey].status.diaper_stock === 'active', 'diaper completion did not reopen');
+assert(!stored.v02.evidenceEvents.some((e) => e.templateId === 'diaper_stock' && e.date === dayKey), 'reopened completion left stale evidence behind');
+
+await page.locator('[data-task="diaper_stock"] .chev').click();
+await page.getByRole('button', { name: 'これで完了' }).click();
+stored = await page.evaluate(() => JSON.parse(localStorage.getItem('kajitori_stable_mvp_v2')));
+assert(stored.v02.days[dayKey].status.diaper_stock === 'done', 'diaper task did not re-complete with fresh state');
+assert(stored.v02.evidenceEvents.some((e) => e.templateId === 'diaper_stock'), 'diaper evidence did not recreate after re-completion');
 
 const simpleCandidates = ['meal_plan', 'laundry_next', 'tomorrow_plan', 'rest_window'];
 let simpleId = null;
