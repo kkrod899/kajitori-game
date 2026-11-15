@@ -4,8 +4,11 @@ import fs from 'node:fs';
 const baseURL = process.env.BASE_URL || 'http://127.0.0.1:8000/kajitori_minimal_pictogram_compact.html';
 const browserName = process.env.BROWSER || 'chromium';
 const browserType = browserName === 'webkit' ? webkit : chromium;
+// Today's candidates are reordered by time of day, so pin the clock to keep the scenario reproducible.
+const fixedTime = process.env.FIXED_TIME || '2026-09-05T09:30:00+09:00';
 const browser = await browserType.launch({ headless: true });
-const context = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 1 });
+const context = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 1, timezoneId: 'Asia/Tokyo' });
+await context.clock.setFixedTime(new Date(fixedTime));
 
 const seed = {
   tasksByDate: { legacy_day: { sentinel: true } },
